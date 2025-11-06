@@ -1,8 +1,10 @@
-import { _decorator, Component, Node, Prefab, tween, easing, Vec3 } from "cc";
+import { _decorator, Component, Node, Prefab, tween, easing, Vec3, UIOpacity, Button, find } from "cc";
 import { BasePopup } from "./BasePopup";
 import { PopupManager } from "./PopupManager";
 import { RoundBox } from "../../common/RoundBox";
 import { AudioManager } from "../../managers/AudioManager";
+import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
+import { SlotMachine } from "../SlotMachine";
 
 const { ccclass, property } = _decorator;
 
@@ -22,12 +24,26 @@ export class PopupSetting extends BasePopup {
     CloseSoundButton: Node = null;
     @property(Node)
     RuleButton: Node = null;
+    @property(Node)
+    HistoryButton: Node = null;
 
     private duration = 0.4;
+
+    override onLoad(): void {
+        super.onLoad();
+        EventManager.on(E_GAME_EVENT.GAME_NEW_BET, this.BanButton, this);
+        EventManager.on(E_GAME_EVENT.GAME_BET_END, this.UnBanButton, this);
+    }
 
     start() {
         this.playRotateEffect(-180);
         this.updateSoundButton();
+        const slotMachine = find("Canvas/Grid/SlotGroup/SlotMachine")?.getComponent(SlotMachine);
+        slotMachine && this.updateButtonBan(slotMachine.isRolling);
+    }
+
+    protected onDestroy(): void {
+        EventManager.removeAllByTarget(this);
     }
 
     public override close(): Promise<void> {
@@ -79,5 +95,27 @@ export class PopupSetting extends BasePopup {
         const volume = AudioManager.GetInstance().getVolumeForType("bgm");
         this.CloseSoundButton.active = volume > 0;
         this.OpenSoundButton.active = volume <= 0;
+    }
+
+    BanButton() {
+        this.updateButtonBan(true);
+        this.getComponentInChildren(RoundBox).segment = 10;
+    }
+
+    UnBanButton() {
+        this.updateButtonBan(false);
+        this.getComponentInChildren(RoundBox).segment = 10;
+    }
+
+    updateButtonBan(isBan: boolean) {
+        const banOp = 120;
+        const unBanOp = 255;
+        const op = isBan ? banOp : unBanOp;
+        const ruleOp = this.RuleButton.getComponent(UIOpacity) ?? this.RuleButton.addComponent(UIOpacity);
+        ruleOp.opacity = op;
+        ruleOp.getComponent(Button).interactable = !isBan;
+        const historyOp = this.HistoryButton.getComponent(UIOpacity) ?? this.HistoryButton.addComponent(UIOpacity);
+        historyOp.opacity = op;
+        historyOp.getComponent(Button).interactable = !isBan;
     }
 }

@@ -3,7 +3,7 @@ import { Singleton } from "../common/Singleton";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import proto from "../network/MLWZ_msg.js";
 import GlobalConfig from "../common/GlobalConfig";
-import { AutoManager } from "./AutoManager";
+import { SocketManager } from "../network/SocketManager";
 
 const { ccclass, property } = _decorator;
 
@@ -52,6 +52,18 @@ export class GridManager extends Singleton {
 
     // 下注后返回的freeGame场景信息
     public parseFreeGameLogicBetInfo(curScene: proto.newxxs.ICurScene) {
+        // if (
+        //     curScene.panel
+        //         .split(",")
+        //         .map(Number)
+        //         .filter((i) => i == 14).length > 2
+        // ) {
+        //     console.log("找到l");
+        //     return;
+        // } else {
+        //     SocketManager.GetInstance().curBet();
+        //     return;
+        // }
         if (curScene.run > 1) {
             if (curScene.comboCount > 1) {
                 // 查询返回 combo持续中

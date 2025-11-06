@@ -13,9 +13,14 @@ export class AutoManager extends Singleton {
     }
 
     public beginAuto(autoTimes: number) {
-        this._isAuto = true;
-        this._autoTimes = autoTimes;
-        this.continueAuto(true);
+        if (this._isAuto) {
+            this._autoTimes = autoTimes;
+            EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN);
+        } else {
+            this._isAuto = true;
+            this._autoTimes = autoTimes;
+            this.continueAuto(true);
+        }
     }
 
     public stopAuto() {

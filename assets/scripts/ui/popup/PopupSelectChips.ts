@@ -30,7 +30,7 @@ export class PopupSelectChips extends BasePopup {
         });
         this.selectNumBtns.forEach((btn, index) => {
             const buttonLabel = btn.getComponentInChildren(Label);
-            buttonLabel.string = "Rp " + UItools.GetInstance().formatCurrency(chipsInfo.curBetChips, false);
+            buttonLabel.string = "Rp " + UItools.GetInstance().formatCurrency(betChipsSelects[index], false);
         });
         this.selectedIndex = betChipsSelects.indexOf(chipsInfo.curBetChips);
     }

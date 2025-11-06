@@ -160,7 +160,7 @@
         "__expectedType__": "cc.SpriteFrame"
       }
     ],
-    "frameRate": 14,
+    "frameRate": 18,
     "loop": false,
     "autoDestroy": false,
     "autoPlay": true,

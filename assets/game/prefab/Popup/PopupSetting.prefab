@@ -1456,6 +1456,9 @@
     "RuleButton": {
       "__id__": 30
     },
+    "HistoryButton": {
+      "__id__": 39
+    },
     "_id": ""
   },
   {

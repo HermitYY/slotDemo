@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, tween, Vec3, Label, Button, find, Tween, Color } from "cc";
+import { _decorator, Component, Node, Prefab, instantiate, tween, Vec3, Label, Button, find, Tween, Color, UIOpacity } from "cc";
 
 import { SlotItem } from "../ui/SlotItem";
 import { EffectManager } from "../managers/EffectManager";
@@ -68,6 +68,9 @@ export class SlotMachine extends Component {
     }
     private grid: number[][] = []; // 保存当前图案ID
     private rolling: boolean = false;
+    public get isRolling() {
+        return this.rolling;
+    }
 
     private ModeParents: Array<Node> = [];
 
@@ -88,8 +91,8 @@ export class SlotMachine extends Component {
         EventManager.on(E_GAME_EVENT.GAME_GRID_UPDATA_NO_CONSECUTIVE, this.consecutiveEnd, this);
         EventManager.on(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.updateChipGroup, this);
         // 自动相关
-        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoModeBegin, this);
-        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.autoModeEnd, this);
+        // EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoModeBegin, this);
+        // EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.autoModeEnd, this);
         // 免费游戏相关
         EventManager.on(E_GAME_EVENT.GAME_FREE_REFRESH_NO_CONSECUTIVE, this.freeConsecutiveEnd, this);
         EventManager.on(E_GAME_EVENT.GAME_FREE_REFRESH_CONSECUTIVE, this.freeConsecutiveBegin, this);
@@ -215,7 +218,7 @@ export class SlotMachine extends Component {
                 const endScene = args[0];
                 await this.refillColumns(endScene);
                 this.updateChipGroup(endScene);
-                await this.stopEffect();
+                await this.stopEffect(200);
                 await this.checkPlayLadybirdMultipleEffect(endScene);
                 this.comboAttack();
                 this.updateRollButtonIsBan(false);
@@ -243,7 +246,7 @@ export class SlotMachine extends Component {
         SocketManager.GetInstance().curBet();
         this.updateWinChipsText(curScene);
         await this.clearAwardGrid(awardIndexArrs ?? []);
-        this.comboEffect(curScene.comboCount);
+        await this.comboEffect(curScene.comboCount);
     }
 
     /** 刷新无奖励 */
@@ -346,7 +349,7 @@ export class SlotMachine extends Component {
                 if (!args?.length) return;
                 const endScene = args[0];
                 await this.refillColumns(endScene);
-                await this.stopEffect();
+                await this.stopEffect(200);
                 await this.checkPlayLadybirdMultipleEffect(endScene);
                 this.comboAttack();
                 await this.freeRoundEnd(endScene);
@@ -357,7 +360,7 @@ export class SlotMachine extends Component {
         SocketManager.GetInstance().curBet();
         this.updateWinChipsText(curScene);
         await this.clearAwardGrid(awardIndexArrs ?? []);
-        this.comboEffect(curScene.comboCount);
+        await this.comboEffect(curScene.comboCount);
     }
 
     async freeConsecutiveEnd(curScene: proto.newxxs.ICurScene) {
@@ -506,18 +509,40 @@ export class SlotMachine extends Component {
                             if (curScene.curChips) {
                                 await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene));
                             }
-                            await this._queue.wait(this.stopEffect());
+                            await this._queue.wait(this.stopEffect(300));
                             if (this._queue.isAborted) return;
+                            const isAttack = this.curComboCount >= 2;
                             this.comboAttack();
                             if (!curScene.curChips) {
                                 await this._queue.wait(this.updateFreeCtrl(curScene));
                             }
-                            await this._queue.wait(LogicTools.Delay(1500), true);
+                            await this._queue.wait(LogicTools.Delay(isAttack ? 2000 : 0), true);
                             console.log("回放结束");
                             EventManager.emit(E_GAME_EVENT.GAME_REPLAY_STOP);
                             return;
                         } else {
                             // 3.freeCombo结束
+                            // checkFreeAddTimes
+                            const gridArr = curScene.panel.split(",").map(Number);
+                            const icon14 = 14;
+                            if (gridArr.filter((i) => i == icon14).length > 2) {
+                                for (let index = 0; index < gridArr.length; index++) {
+                                    if (gridArr[index] == icon14) {
+                                        EffectManager.playEffect(`SlotEffectClear_${icon14}`, this.getGridNode(index.toString()), new Vec3(0, 0, 0));
+                                    }
+                                }
+                                await this._queue.wait(LogicTools.Delay(EffectManager.getEffectDuration(`SlotEffectClear_${icon14}`) * 1000));
+                                gridArr.forEach((mId, index) => {
+                                    if (mId == icon14) {
+                                        EffectManager.playEffect(`SlotEffectClear_${icon14}`, this.getGridNode(index.toString()), new Vec3(0, 0, 0));
+                                    }
+                                });
+                                await this._queue.wait(LogicTools.Delay(EffectManager.getEffectDuration(`SlotEffectClear_${icon14}`) * 1000));
+                                this.freeTimes = this.freeTimes ??= find("Canvas/Mode/FreeText/RemainingTimes/times");
+                                AudioControlManager.GetInstance().playSfxFireExplosion();
+                                await this._queue.wait(EffectManager.playEffect("FireMultiple", this.freeTimes.parent, Vec3.ZERO));
+                                this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
+                            }
                             if (curScene.curChips) {
                                 await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene));
                             }
@@ -614,11 +639,11 @@ export class SlotMachine extends Component {
                 const columnNode = this.columns[c];
                 const oldItems = columnNode.children;
                 totalItems += oldItems.length;
-                const { columnInterval, dropTime } = GameSpeedManager.GetInstance().getOldColumnDropTimeConfig();
-                oldItems.forEach((item) => {
+                const { columnInterval, dropTime, girdInterval } = GameSpeedManager.GetInstance().getOldColumnDropTimeConfig();
+                oldItems.forEach((item, r) => {
                     tween(item)
-                        .delay(columnInterval * c)
-                        .to(dropTime, { position: new Vec3(0, -800, 0) })
+                        .delay(columnInterval * c - girdInterval * r)
+                        .to(dropTime, { position: new Vec3(0, -600, 0) })
                         .call(() => {
                             item.destroy();
                             finished++;
@@ -664,12 +689,12 @@ export class SlotMachine extends Component {
                     slotItem.SetData(id, { row: r, column: c });
 
                     const targetY = -r * this.cellHeight;
-                    const { columnInterval, girdInterval, dropTime, boundTime } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig();
+                    const { columnInterval, girdInterval, dropTime, boundDis, boundTime } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig();
                     tween(item)
                         // 每列间隔，每个格子再叠加
                         .delay(columnInterval * c - girdInterval * r)
                         // 先快速下落，超过目标
-                        .to(dropTime, { position: new Vec3(0, targetY - 30, 0) }, { easing: "quadIn" })
+                        .to(dropTime, { position: new Vec3(0, targetY - boundDis * r, 0) }, { easing: "quadIn" })
                         // 最后缓和落到目标
                         .to(boundTime, { position: new Vec3(0, targetY, 0) }, { easing: "quadOut" })
                         .call(async () => {
@@ -740,16 +765,16 @@ export class SlotMachine extends Component {
         //         if (!node || !node.isValid) return;
         //         const parent = node.parent;
         //         const pos = node.position.clone();
-        //         // 透明度
+        //         // // 透明度
         //         const uiOpacity = node.getComponent(UIOpacity) || node.addComponent(UIOpacity);
         //         // 确保 initial opacity 为 255
         //         uiOpacity.opacity = uiOpacity.opacity ?? 255;
         //         tween(uiOpacity)
-        //             .to(EffectManager.getEffectDuration(`SlotEffect_${m.removeId}`) + EffectManager.getEffectDuration("SlotEffect_explode") / 2, { opacity: 0 })
+        //             .to(EffectManager.getEffectDuration(`SlotEffectClear_${m.removeId}`), { opacity: 0 })
         //             .start();
         //         // 特效
-        //         await EffectManager.playEffect(`SlotEffectClear_${m.removeId}`, parent, pos);
-        //         // await EffectManager.playEffect("SlotEffect_explode", parent, pos);
+        //         await EffectManager.playEffect(`SlotEffectClear_${m.removeId}`, node, Vec3.ZERO);
+        //         await EffectManager.playEffect(`SlotEffect_${m.removeId <= 5 ? "low" : "high"}_explode`, node, Vec3.ZERO);
 
         //         // 播放完销毁节点
         //         if (node.isValid) {
@@ -822,7 +847,7 @@ export class SlotMachine extends Component {
                         continue;
                     }
                     totalTweens++;
-                    const { dropTime, girdInterval, boundTime } = GameSpeedManager.GetInstance().getCollapseTimeConfig();
+                    const { dropTime, girdInterval, boundTime, boundDis } = GameSpeedManager.GetInstance().getCollapseTimeConfig();
                     tween(node)
                         // 每个格子再叠加 0.02s
                         .delay(girdInterval * N)
@@ -830,7 +855,7 @@ export class SlotMachine extends Component {
                         .to(
                             dropTime,
                             {
-                                position: new Vec3(0, targetY - 6 * distFromBottom, 0),
+                                position: new Vec3(0, targetY - boundDis * distFromBottom, 0),
                             },
                             { easing: "quadIn" }
                         )
@@ -867,26 +892,26 @@ export class SlotMachine extends Component {
                 totalNew += need;
 
                 // 新的应占顶端空位 row=0..need-1
-                for (let j = 0; j < need; j++) {
+                for (let g = 0; g < need; g++) {
                     // const id = Math.floor(Math.random() * this.icons.length);
-                    const id = newGridArrs[c][j];
+                    const id = newGridArrs[c][g];
                     const item = instantiate(this.slotItemPrefab);
 
-                    columnNode.insertChild(item, j);
+                    columnNode.insertChild(item, g);
                     const slotItem = item.getComponent(SlotItem);
-                    slotItem.SetData(id, { row: j, column: c });
+                    slotItem.SetData(id, { row: g, column: c });
 
                     // 从上方很高的位置掉下来
-                    const startY = this.cellHeight * (this.rows + 2 + j); // 足够高
-                    const targetRow = j;
+                    const startY = this.cellHeight * (this.rows + g); // 足够高
+                    const targetRow = g;
                     const targetY = -targetRow * this.cellHeight;
                     item.setPosition(0, startY, 0);
-                    const { dropTime, columnInterval, boundTime } = GameSpeedManager.GetInstance().getFillTimeConfig();
+                    const { dropTime, boundTime, boundDis, girdInterval } = GameSpeedManager.GetInstance().getFillTimeConfig();
                     tween(item)
-                        // 每列间隔 0.02s
-                        .delay(columnInterval * j)
+                        // 每格间隔
+                        .delay(girdInterval * (need - g - 1))
                         // 先快速下落，超过目标
-                        .to(dropTime, { position: new Vec3(0, targetY - 15, 0) }, { easing: "quadIn" })
+                        .to(dropTime, { position: new Vec3(0, targetY - boundDis, 0) }, { easing: "quadIn" })
                         // 最后缓和落到目标
                         .to(boundTime, { position: new Vec3(0, targetY, 0) }, { easing: "quadOut" })
                         .call(async () => {
@@ -934,19 +959,10 @@ export class SlotMachine extends Component {
     private updateRollButtonIsBan(isBanButton: boolean) {
         this.rolling = isBanButton;
         this.rollButton.interactable = !isBanButton;
-        this.AutoButton.getComponent(Button).interactable = !isBanButton;
         this.AddButton.getComponent(Button).interactable = !isBanButton;
         this.SubmitButton.getComponent(Button).interactable = !isBanButton;
         this.FreeGameButton.getComponent(Button).interactable = !isBanButton;
         this.HighButton.getComponent(Button).interactable = !isBanButton;
-        this.SettingButton.getComponent(Button).interactable = !isBanButton;
-
-        if (isBanButton) {
-        } else {
-            // setTimeout(() => {
-            // this.roll();
-            // }, 500);
-        }
     }
 
     //#endregion
@@ -962,7 +978,7 @@ export class SlotMachine extends Component {
                 this.updateRollButtonIsBan(true);
             }
             AutoManager.GetInstance().continueAuto();
-            this.updateAutoButtonOrPanel();
+            // this.updateAutoButtonOrPanel();
             if (autoTimes <= 0) {
                 EventManager.emit(E_GAME_EVENT.GAME_BET_END);
             }
@@ -996,15 +1012,18 @@ export class SlotMachine extends Component {
         if (comboCount == 2) {
             EventManager.emit(E_GAME_EVENT.GAME_MORO_UPGRADE_BOW, { lev: 2 });
             AudioControlManager.GetInstance().playSfxBowUpgrade1();
-            return this.comboRoundEffect();
+            await this.comboRoundEffect();
+            return await LogicTools.Delay(100);
         } else if (comboCount === 4) {
             EventManager.emit(E_GAME_EVENT.GAME_MORO_UPGRADE_BOW, { lev: 3 });
             AudioControlManager.GetInstance().playSfxBowUpgrade2();
-            return this.comboGridEffect();
+            await this.comboGridEffect();
+            return await LogicTools.Delay(100);
         } else if (comboCount === 6) {
             EventManager.emit(E_GAME_EVENT.GAME_MORO_UPGRADE_BOW, { lev: 4 });
             AudioControlManager.GetInstance().playSfxBowUpgrade3();
-            return this.comboBackgroundEffect();
+            await this.comboBackgroundEffect();
+            return await LogicTools.Delay(100);
         }
     }
 
@@ -1057,8 +1076,12 @@ export class SlotMachine extends Component {
         return EffectManager.playEffect("ComboBackgroundOnceEffect", this.node.parent, new Vec3(0, 0, 0), { siblingIndex: currentSiblingIndex });
     }
 
-    private stopEffect(): Promise<void> {
-        const pos = new Vec3(1, this.node.parent.position.y, 0);
+    /**
+     * 停止combo持续性特效
+     * @param StartupTime 停止前摇时间
+     */
+    private async stopEffect(StartupTime?: number): Promise<void> {
+        // const pos = new Vec3(1, this.node.parent.position.y, 0);
         const tasks: Promise<void>[] = [];
 
         // 回退效果
@@ -1072,6 +1095,11 @@ export class SlotMachine extends Component {
         //     const currentSiblingIndex = this.node.getSiblingIndex();
         //     tasks.push(EffectManager.playEffect("ComboBackgroundOnceStopEffect", this.node.parent, new Vec3(0, 0, 0), { siblingIndex: currentSiblingIndex }));
         // }
+
+        // 停特效前摇
+        if (StartupTime) {
+            await LogicTools.Delay(300);
+        }
 
         // 同时停掉持续特效
         EffectManager.stopEffect("ComboRoundSustainEffect");
@@ -1139,6 +1167,10 @@ export class SlotMachine extends Component {
             if (this._ladybirdCancel) return;
             const item = myCurMultiples[i];
             const slotItem = this.getGridNode(item.index);
+            if (!slotItem) {
+                console.log("意外跳过", item.index);
+                continue;
+            }
             const multipleFont = slotItem.getChildByName("MultipleFont");
             if (i === 0) {
                 firstFont = multipleFont;

@@ -32,8 +32,7 @@ export class PopupAutoBuy extends BasePopup {
         const data = SocketManager.GetInstance().CurScene;
         const { chipsInfo } = LogicTools.GetInstance().transGridInfo(data);
         if (this.bankLabel) this.bankLabel.string = UItools.GetInstance().formatCurrency(chipsInfo.havenChips);
-        if (this.selectNeedNumLabel) this.selectNeedNumLabel.string = UItools.GetInstance().formatCurrency(PopupAutoBuy.times[this.selectedIndex] * chipsInfo.curBetChips);
-
+        if (this.selectNeedNumLabel) this.selectNeedNumLabel.string = UItools.GetInstance().formatCurrency(chipsInfo.curBetChips);
         this.initSelectButtons();
     }
 
@@ -67,9 +66,9 @@ export class PopupAutoBuy extends BasePopup {
         this.setButtonSelected(this.selectNumBtns[this.selectedIndex], true);
 
         // 更新对应数值显示
-        const data = SocketManager.GetInstance().CurScene;
-        const { chipsInfo } = LogicTools.GetInstance().transGridInfo(data);
-        if (this.selectNeedNumLabel) this.selectNeedNumLabel.string = UItools.GetInstance().formatCurrency(PopupAutoBuy.times[this.selectedIndex] * chipsInfo.curBetChips);
+        // const data = SocketManager.GetInstance().CurScene;
+        // const { chipsInfo } = LogicTools.GetInstance().transGridInfo(data);
+        // if (this.selectNeedNumLabel) this.selectNeedNumLabel.string = UItools.GetInstance().formatCurrency(PopupAutoBuy.times[this.selectedIndex] * chipsInfo.curBetChips);
     }
 
     /** 设置按钮选中状态 */

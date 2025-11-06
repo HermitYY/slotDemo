@@ -106,8 +106,8 @@ export class SlotItem extends Component {
         this.MultipleLabelNode.scale = Vec3.ZERO;
         await new Promise<void>((resolve) => {
             tween(this.MultipleLabelNode)
-                .to(0.5, { scale: new Vec3(1.3, 1.3, 1) })
-                .to(0.2, { scale: new Vec3(1.1, 1.1, 1) })
+                .to(0.3, { scale: new Vec3(1.4, 1.4, 1) })
+                .to(0.15, { scale: new Vec3(1.1, 1.1, 1) })
                 .call(() => {
                     resolve();
                 })

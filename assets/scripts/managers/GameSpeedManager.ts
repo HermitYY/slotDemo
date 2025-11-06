@@ -4,7 +4,7 @@ import { E_GAME_EVENT, EventManager } from "./EventManager";
 export enum E_GAME_SPEED_TYPE {
     NORMAL = 1,
     FAST = 2,
-    SUPER_FAST = 3,
+    // SUPER_FAST = 3,
 }
 
 export class GameSpeedManager extends Singleton {
@@ -26,8 +26,8 @@ export class GameSpeedManager extends Singleton {
                 return 1;
             case E_GAME_SPEED_TYPE.FAST:
                 return 2;
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return 3;
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return 3;
         }
     }
 
@@ -35,11 +35,11 @@ export class GameSpeedManager extends Singleton {
     public getOldColumnDropTimeConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { dropTime: 0.3, columnInterval: 0.1 };
+                return { dropTime: 0.3, columnInterval: 0.1, girdInterval: 0.02 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { dropTime: 0.2, columnInterval: 0.05 };
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return { dropTime: 0.1, columnInterval: 0 };
+                return { dropTime: 0.2, columnInterval: 0, girdInterval: 0.02 };
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return { dropTime: 0.1, columnInterval: 0, girdInterval: 0 };
         }
     }
 
@@ -47,11 +47,11 @@ export class GameSpeedManager extends Singleton {
     public getNewColumnDropTimeConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { dropTime: 0.45, boundTime: 0.25, columnInterval: 0.12, girdInterval: 0.01 };
+                return { dropTime: 0.45, boundTime: 0.25, boundDis: 6, columnInterval: 0.12, girdInterval: 0.01 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { dropTime: 0.2, boundTime: 0.15, columnInterval: 0.075, girdInterval: 0.01 };
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return { dropTime: 0.2, boundTime: 0.15, columnInterval: 0, girdInterval: 0 };
+                return { dropTime: 0.4, boundTime: 0.25, boundDis: 8, columnInterval: 0, girdInterval: 0.02 };
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return { dropTime: 0.2, boundTime: 0.15, columnInterval: 0, girdInterval: 0 };
         }
     }
 
@@ -59,11 +59,11 @@ export class GameSpeedManager extends Singleton {
     public getCollapseTimeConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { dropTime: 0.25, boundTime: 0.15, girdInterval: 0.02 };
+                return { dropTime: 0.35, boundTime: 0.15, boundDis: 6, girdInterval: 0.02 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { dropTime: 0.1, boundTime: 0.08, girdInterval: 0.01 };
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return { dropTime: 0.05, boundTime: 0.03, girdInterval: 0 };
+                return { dropTime: 0.25, boundTime: 0, boundDis: 0, girdInterval: 0.01 };
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return { dropTime: 0.05, boundTime: 0.03, girdInterval: 0 };
         }
     }
 
@@ -71,11 +71,11 @@ export class GameSpeedManager extends Singleton {
     public getFillTimeConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { dropTime: 0.35, boundTime: 0.25, columnInterval: 0.02 };
+                return { dropTime: 0.4, boundTime: 0.1, boundDis: 15, girdInterval: 0.015 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { dropTime: 0.2, boundTime: 0.15, columnInterval: 0.01 };
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return { dropTime: 0.1, boundTime: 0.08, columnInterval: 0 };
+                return { dropTime: 0.3, boundTime: 0.08, boundDis: 8, girdInterval: 0.015 };
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return { dropTime: 0.1, boundTime: 0.08, columnInterval: 0 };
         }
     }
 
@@ -86,8 +86,8 @@ export class GameSpeedManager extends Singleton {
                 return { rotateSpeed: 30, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1 };
             case E_GAME_SPEED_TYPE.FAST:
                 return { rotateSpeed: 50, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1 };
-            case E_GAME_SPEED_TYPE.SUPER_FAST:
-                return { rotateSpeed: 80, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1 };
+            // case E_GAME_SPEED_TYPE.SUPER_FAST:
+            //     return { rotateSpeed: 80, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1 };
 
             // return { rotateSpeed: 50, magnify: 0.1, shrink: 0.1, magnify2: 0.1, shrinkNormal: 0.07 };
             // return { rotateSpeed: 80, magnify: 0.05, shrink: 0.05, magnify2: 0.05, shrinkNormal: 0.03 };

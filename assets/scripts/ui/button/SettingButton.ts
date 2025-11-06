@@ -10,8 +10,6 @@ export class SettingButton extends Component {
 
     start() {}
 
-    update(deltaTime: number) {}
-
     onClickOpen() {
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
         const worldPos = this.node.worldPosition.clone();

@@ -64,8 +64,6 @@ export enum E_GAME_EVENT {
 
     /** 下落动画结束 */
     GAME_GRID_DROP_END,
-    /** roll按钮播放动画 */
-    GAME_GRID_ROLL_ANIMATION,
 
     /** 新的一轮BET */
     GAME_NEW_BET,

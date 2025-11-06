@@ -3,7 +3,7 @@ import { SlotMachine } from "../SlotMachine";
 import { EffectManager } from "../../managers/EffectManager";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { AutoManager } from "../../managers/AutoManager";
-import { GameSpeedManager } from "../../managers/GameSpeedManager";
+import { E_GAME_SPEED_TYPE, GameSpeedManager } from "../../managers/GameSpeedManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
 
 const { ccclass, property } = _decorator;
@@ -22,43 +22,36 @@ export class RollButton extends Component {
     private spinOp: UIOpacity = null;
 
     private _isPlayingEffect = false;
+    private _isPlayingSpinEffect = false;
     private get duration() {
         return Math.max(0, EffectManager.getEffectDuration("RollButton_UpLight") - 0.1);
     }
 
-    onLoad(): void {
-        EventManager.on(E_GAME_EVENT.GAME_GRID_ROLL_ANIMATION, this.playAllEffect, this);
-    }
-
-    onDestroy(): void {
-        EventManager.removeAllByTarget(this);
-    }
-
     onClick() {
+        if (this._isPlayingEffect) return;
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
-        this.playAllEffect();
+        this.playEffect();
         this.slotMachine.roll();
     }
 
-    playAllEffect() {
-        this.playEffect();
-    }
-
     playEffect() {
-        if (this._isPlayingEffect) return;
+        this._isPlayingEffect = true;
         this.playerScaleEffect();
         const pos = this.node.position.clone();
+        EffectManager.stopEffect("RollButton_UpLight", this.node.parent);
+        EffectManager.stopEffect("RollButton_MidLight", this.node);
         EffectManager.playEffect("RollButton_UpLight", this.node.parent, pos);
         EffectManager.playEffect("RollButton_MidLight", this.node, Vec3.ZERO);
         const midLightNode = EffectManager.getEffectNode("RollButton_MidLight", this.node);
         this.spinOp ??= this.spinNode.getComponent(UIOpacity);
-        // 先放大再缩小
+        // 十字光 先放大再缩小
         midLightNode.scale = Vec3.ZERO;
         tween(midLightNode)
             .to(this.duration / 6, { scale: new Vec3(3.2, 1.8, 1.8) })
             .to(this.duration / 6, { scale: Vec3.ZERO })
             .call(() => {
                 this.playRotateEffect(() => {
+                    this._isPlayingSpinEffect = false;
                     this._isPlayingEffect = false;
                 });
             })
@@ -70,7 +63,13 @@ export class RollButton extends Component {
     }
 
     playRotateEffect(onFinish?: () => void) {
-        this._isPlayingEffect = true;
+        if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.FAST) {
+            this.spinOp.opacity = 255;
+            onFinish && onFinish();
+            return;
+        }
+
+        this._isPlayingSpinEffect = true;
         const smellButtonNode = this.smallButton;
         const startRotation = smellButtonNode.rotation.clone();
         EffectManager.playEffect("RollButton_OutLight", smellButtonNode, Vec3.ZERO);
@@ -114,7 +113,7 @@ export class RollButton extends Component {
     }
 
     update(deltaTime: number) {
-        if (!this._isPlayingEffect && this.smallButton) {
+        if (!this._isPlayingSpinEffect && this.smallButton) {
             const btn = this.smallButton as Node & { rotation: Quat };
             const { rotateSpeed: rotateSpeedBase } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
             const rotateSpeed = AutoManager.GetInstance().isAutoIng ? rotateSpeedBase * 8 : rotateSpeedBase;

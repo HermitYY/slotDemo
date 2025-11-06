@@ -29,7 +29,7 @@ export class GameSpeedButton extends Component {
         const gameSpeed = GameSpeedManager.GetInstance().speed;
         this.normalSpeed.active = gameSpeed === E_GAME_SPEED_TYPE.NORMAL;
         this.fastSpeed.active = gameSpeed === E_GAME_SPEED_TYPE.FAST;
-        this.superSpeed.active = gameSpeed === E_GAME_SPEED_TYPE.SUPER_FAST;
+        // this.superSpeed.active = gameSpeed === E_GAME_SPEED_TYPE.SUPER_FAST;
     }
 
     normalSpeedClick() {
@@ -44,6 +44,6 @@ export class GameSpeedButton extends Component {
 
     superSpeedClick() {
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
-        GameSpeedManager.GetInstance().switchToSpeed(E_GAME_SPEED_TYPE.SUPER_FAST);
+        // GameSpeedManager.GetInstance().switchToSpeed(E_GAME_SPEED_TYPE.SUPER_FAST);
     }
 }
