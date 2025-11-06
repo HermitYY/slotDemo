@@ -1,0 +1,13 @@
+{
+  "ver": "1.1.45",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "b0898fb3-1edd-43ea-bf2e-f38f5077fb54",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "ComboBackgroundOnceStopEffect"
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "ver": "1.0.26",
+  "importer": "image",
+  "imported": true,
+  "uuid": "6c21615a-2c07-47ab-a0b8-f62ca1df4150",
+  "files": [
+    ".json",
+    ".png"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "6c21615a-2c07-47ab-a0b8-f62ca1df4150@6c48a",
+      "displayName": "射箭升级3~4_00017",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "clamp-to-edge",
+        "wrapModeT": "clamp-to-edge",
+        "imageUuidOrDatabaseUri": "6c21615a-2c07-47ab-a0b8-f62ca1df4150",
+        "isUuid": true,
+        "visible": false,
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "f9941": {
+      "importer": "sprite-frame",
+      "uuid": "6c21615a-2c07-47ab-a0b8-f62ca1df4150@f9941",
+      "displayName": "射箭升级3~4_00017",
+      "id": "f9941",
+      "name": "spriteFrame",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 28,
+        "offsetY": 49.5,
+        "trimX": 204,
+        "trimY": 75,
+        "width": 366,
+        "height": 522,
+        "rawWidth": 718,
+        "rawHeight": 771,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [
+            -183,
+            -261,
+            0,
+            183,
+            -261,
+            0,
+            -183,
+            261,
+            0,
+            183,
+            261,
+            0
+          ],
+          "indexes": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            3
+          ],
+          "uv": [
+            204,
+            696,
+            570,
+            696,
+            204,
+            174,
+            570,
+            174
+          ],
+          "nuv": [
+            0.2841225626740947,
+            0.22568093385214008,
+            0.7938718662952646,
+            0.22568093385214008,
+            0.2841225626740947,
+            0.9027237354085603,
+            0.7938718662952646,
+            0.9027237354085603
+          ],
+          "minPos": [
+            -183,
+            -261,
+            0
+          ],
+          "maxPos": [
+            183,
+            261,
+            0
+          ]
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "6c21615a-2c07-47ab-a0b8-f62ca1df4150@6c48a",
+        "atlasUuid": ""
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "type": "sprite-frame",
+    "fixAlphaTransparencyArtifacts": true,
+    "hasAlpha": true,
+    "redirect": "6c21615a-2c07-47ab-a0b8-f62ca1df4150@f9941"
+  }
+}

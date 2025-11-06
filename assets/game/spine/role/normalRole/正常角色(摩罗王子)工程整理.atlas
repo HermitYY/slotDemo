@@ -1,0 +1,678 @@
+
+正常角色(摩罗王子)工程整理.png
+size: 1969,1254
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+1
+  rotate: true
+  xy: 1813, 72
+  size: 104, 69
+  orig: 104, 69
+  offset: 0, 0
+  index: -1
+10
+  rotate: false
+  xy: 119, 824
+  size: 7, 7
+  orig: 7, 7
+  offset: 0, 0
+  index: -1
+11
+  rotate: false
+  xy: 102, 427
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+12
+  rotate: true
+  xy: 1775, 801
+  size: 29, 40
+  orig: 29, 40
+  offset: 0, 0
+  index: -1
+13
+  rotate: true
+  xy: 487, 178
+  size: 19, 29
+  orig: 19, 29
+  offset: 0, 0
+  index: -1
+14
+  rotate: true
+  xy: 561, 650
+  size: 19, 7
+  orig: 19, 7
+  offset: 0, 0
+  index: -1
+15
+  rotate: true
+  xy: 1906, 17
+  size: 45, 50
+  orig: 45, 50
+  offset: 0, 0
+  index: -1
+16
+  rotate: false
+  xy: 1887, 263
+  size: 80, 92
+  orig: 80, 92
+  offset: 0, 0
+  index: -1
+17
+  rotate: false
+  xy: 1779, 935
+  size: 166, 96
+  orig: 166, 96
+  offset: 0, 0
+  index: -1
+18
+  rotate: false
+  xy: 126, 2
+  size: 85, 34
+  orig: 85, 34
+  offset: 0, 0
+  index: -1
+19
+  rotate: true
+  xy: 219, 19
+  size: 95, 45
+  orig: 95, 45
+  offset: 0, 0
+  index: -1
+2
+  rotate: true
+  xy: 381, 1052
+  size: 85, 291
+  orig: 85, 291
+  offset: 0, 0
+  index: -1
+20
+  rotate: false
+  xy: 1896, 650
+  size: 47, 43
+  orig: 47, 43
+  offset: 0, 0
+  index: -1
+21
+  rotate: false
+  xy: 126, 38
+  size: 91, 76
+  orig: 91, 76
+  offset: 0, 0
+  index: -1
+22
+  rotate: true
+  xy: 1915, 555
+  size: 44, 41
+  orig: 44, 41
+  offset: 0, 0
+  index: -1
+23
+  rotate: true
+  xy: 1915, 601
+  size: 47, 40
+  orig: 47, 40
+  offset: 0, 0
+  index: -1
+24
+  rotate: false
+  xy: 1813, 2
+  size: 29, 18
+  orig: 29, 18
+  offset: 0, 0
+  index: -1
+25
+  rotate: false
+  xy: 266, 2
+  size: 31, 25
+  orig: 31, 25
+  offset: 0, 0
+  index: -1
+26
+  rotate: false
+  xy: 128, 1043
+  size: 251, 209
+  orig: 251, 209
+  offset: 0, 0
+  index: -1
+27
+  rotate: true
+  xy: 2, 2
+  size: 94, 122
+  orig: 94, 122
+  offset: 0, 0
+  index: -1
+28
+  rotate: true
+  xy: 1813, 22
+  size: 48, 91
+  orig: 48, 91
+  offset: 0, 0
+  index: -1
+29
+  rotate: true
+  xy: 102, 116
+  size: 113, 162
+  orig: 113, 162
+  offset: 0, 0
+  index: -1
+3
+  rotate: true
+  xy: 1887, 452
+  size: 196, 26
+  orig: 196, 26
+  offset: 0, 0
+  index: -1
+30
+  rotate: false
+  xy: 1775, 832
+  size: 115, 101
+  orig: 115, 101
+  offset: 0, 0
+  index: -1
+4
+  rotate: true
+  xy: 381, 1139
+  size: 113, 298
+  orig: 113, 298
+  offset: 0, 0
+  index: -1
+5
+  rotate: false
+  xy: 1915, 520
+  size: 40, 33
+  orig: 40, 33
+  offset: 0, 0
+  index: -1
+6
+  rotate: true
+  xy: 1896, 760
+  size: 67, 35
+  orig: 67, 35
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 1870, 268
+  size: 15, 59
+  orig: 15, 59
+  offset: 0, 0
+  index: -1
+8
+  rotate: true
+  xy: 1906, 64
+  size: 21, 61
+  orig: 21, 61
+  offset: 0, 0
+  index: -1
+9
+  rotate: true
+  xy: 323, 359
+  size: 40, 13
+  orig: 40, 13
+  offset: 0, 0
+  index: -1
+baiqqing3
+  rotate: false
+  xy: 1887, 357
+  size: 80, 93
+  orig: 80, 93
+  offset: 0, 0
+  index: -1
+biaoqing1
+  rotate: true
+  xy: 1870, 181
+  size: 80, 92
+  orig: 80, 92
+  offset: 0, 0
+  index: -1
+biaoqing2
+  rotate: false
+  xy: 1884, 87
+  size: 80, 92
+  orig: 80, 92
+  offset: 0, 0
+  index: -1
+gongjian3
+  rotate: false
+  xy: 2, 437
+  size: 115, 394
+  orig: 115, 394
+  offset: 0, 0
+  index: -1
+gongjian4
+  rotate: false
+  xy: 2, 833
+  size: 124, 419
+  orig: 124, 419
+  offset: 0, 0
+  index: -1
+jian2
+  rotate: false
+  xy: 2, 98
+  size: 98, 337
+  orig: 98, 337
+  offset: 0, 0
+  index: -1
+lagongqianbi
+  rotate: false
+  xy: 1896, 695
+  size: 32, 63
+  orig: 32, 63
+  offset: 0, 0
+  index: -1
+图层 222
+  rotate: true
+  xy: 1892, 829
+  size: 104, 44
+  orig: 104, 44
+  offset: 0, 0
+  index: -1
+射箭1~2_00001
+  rotate: false
+  xy: 902, 1103
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00002
+  rotate: false
+  xy: 681, 1103
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00003
+  rotate: false
+  xy: 1123, 1103
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00004
+  rotate: false
+  xy: 1344, 1103
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00005
+  rotate: false
+  xy: 1565, 1103
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00006
+  rotate: false
+  xy: 674, 952
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00007
+  rotate: false
+  xy: 895, 952
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00008
+  rotate: false
+  xy: 1116, 952
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00009
+  rotate: false
+  xy: 1337, 952
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭1~2_00010
+  rotate: false
+  xy: 1558, 952
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00001
+  rotate: false
+  xy: 119, 401
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00002
+  rotate: true
+  xy: 349, 822
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00003
+  rotate: false
+  xy: 128, 722
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00004
+  rotate: false
+  xy: 670, 801
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00005
+  rotate: false
+  xy: 891, 801
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00006
+  rotate: false
+  xy: 1112, 801
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00007
+  rotate: false
+  xy: 1333, 801
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00008
+  rotate: false
+  xy: 1554, 801
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00009
+  rotate: false
+  xy: 349, 671
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭2~3_00010
+  rotate: false
+  xy: 340, 350
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00001
+  rotate: false
+  xy: 570, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00002
+  rotate: false
+  xy: 791, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00003
+  rotate: false
+  xy: 1012, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00004
+  rotate: false
+  xy: 1233, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00005
+  rotate: false
+  xy: 1454, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00006
+  rotate: false
+  xy: 561, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00007
+  rotate: false
+  xy: 782, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00008
+  rotate: false
+  xy: 323, 199
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00009
+  rotate: false
+  xy: 1003, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00010
+  rotate: false
+  xy: 1224, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00011
+  rotate: false
+  xy: 1445, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00012
+  rotate: false
+  xy: 544, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00013
+  rotate: false
+  xy: 765, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00014
+  rotate: false
+  xy: 986, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00015
+  rotate: false
+  xy: 1207, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00016
+  rotate: false
+  xy: 1428, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00017
+  rotate: false
+  xy: 1675, 650
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00018
+  rotate: false
+  xy: 1666, 329
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭3_00019
+  rotate: false
+  xy: 1649, 178
+  size: 219, 149
+  orig: 219, 149
+  offset: 0, 0
+  index: -1
+射箭4_00001
+  rotate: true
+  xy: 1786, 1033
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00002
+  rotate: false
+  xy: 119, 552
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00003
+  rotate: false
+  xy: 128, 873
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00004
+  rotate: false
+  xy: 102, 231
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00005
+  rotate: true
+  xy: 500, 831
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00006
+  rotate: false
+  xy: 340, 501
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00007
+  rotate: false
+  xy: 561, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00008
+  rotate: false
+  xy: 782, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00009
+  rotate: false
+  xy: 1003, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00010
+  rotate: false
+  xy: 1224, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00011
+  rotate: false
+  xy: 1445, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00012
+  rotate: false
+  xy: 1666, 480
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00013
+  rotate: false
+  xy: 266, 29
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00014
+  rotate: false
+  xy: 487, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00015
+  rotate: false
+  xy: 708, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00016
+  rotate: false
+  xy: 929, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00017
+  rotate: false
+  xy: 1150, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00018
+  rotate: false
+  xy: 1371, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1
+射箭4_00019
+  rotate: false
+  xy: 1592, 8
+  size: 219, 168
+  orig: 219, 168
+  offset: 0, 0
+  index: -1

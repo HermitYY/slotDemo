@@ -1,0 +1,69 @@
+
+中奖金额弹窗怪兽.png
+size: 2007,482
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+右手
+  rotate: false
+  xy: 1668, 2
+  size: 264, 224
+  orig: 265, 225
+  offset: 0, 1
+  index: -1
+图层 40
+  rotate: false
+  xy: 1401, 281
+  size: 332, 199
+  orig: 340, 207
+  offset: 3, 5
+  index: -1
+头
+  rotate: true
+  xy: 1735, 228
+  size: 252, 270
+  orig: 254, 274
+  offset: 1, 2
+  index: -1
+头背部
+  rotate: false
+  xy: 717, 39
+  size: 352, 441
+  orig: 371, 459
+  offset: 9, 8
+  index: -1
+左手
+  rotate: false
+  xy: 1401, 55
+  size: 265, 224
+  orig: 266, 225
+  offset: 1, 1
+  index: -1
+翅膀右
+  rotate: false
+  xy: 2, 12
+  size: 355, 468
+  orig: 357, 470
+  offset: 2, 0
+  index: -1
+翅膀左
+  rotate: false
+  xy: 359, 13
+  size: 356, 467
+  orig: 357, 470
+  offset: 0, 0
+  index: -1
+腰带
+  rotate: false
+  xy: 1071, 88
+  size: 282, 119
+  orig: 290, 122
+  offset: 7, 1
+  index: -1
+身体
+  rotate: false
+  xy: 1071, 209
+  size: 328, 271
+  orig: 386, 328
+  offset: 28, 29
+  index: -1

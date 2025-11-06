@@ -1,0 +1,509 @@
+
+freegame战斗场景整理.png
+size: 1922,2030
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+1
+  rotate: false
+  xy: 292, 1576
+  size: 33, 162
+  orig: 33, 162
+  offset: 0, 0
+  index: -1
+10
+  rotate: false
+  xy: 327, 1579
+  size: 36, 27
+  orig: 36, 27
+  offset: 0, 0
+  index: -1
+11
+  rotate: false
+  xy: 536, 1584
+  size: 59, 22
+  orig: 59, 22
+  offset: 0, 0
+  index: -1
+12
+  rotate: false
+  xy: 732, 1615
+  size: 87, 36
+  orig: 87, 36
+  offset: 0, 0
+  index: -1
+13
+  rotate: true
+  xy: 683, 1670
+  size: 34, 20
+  orig: 34, 20
+  offset: 0, 0
+  index: -1
+14
+  rotate: true
+  xy: 1128, 1671
+  size: 67, 164
+  orig: 67, 164
+  offset: 0, 0
+  index: -1
+15
+  rotate: true
+  xy: 597, 1583
+  size: 23, 17
+  orig: 23, 17
+  offset: 0, 0
+  index: -1
+16
+  rotate: true
+  xy: 582, 1258
+  size: 26, 22
+  orig: 26, 22
+  offset: 0, 0
+  index: -1
+17
+  rotate: true
+  xy: 581, 1608
+  size: 94, 100
+  orig: 94, 100
+  offset: 0, 0
+  index: -1
+18
+  rotate: true
+  xy: 1128, 1617
+  size: 52, 63
+  orig: 52, 63
+  offset: 0, 0
+  index: -1
+19
+  rotate: false
+  xy: 865, 1631
+  size: 31, 20
+  orig: 31, 20
+  offset: 0, 0
+  index: -1
+2
+  rotate: false
+  xy: 618, 1706
+  size: 98, 32
+  orig: 98, 32
+  offset: 0, 0
+  index: -1
+20
+  rotate: true
+  xy: 1294, 1677
+  size: 61, 67
+  orig: 61, 67
+  offset: 0, 0
+  index: -1
+21
+  rotate: false
+  xy: 365, 1579
+  size: 30, 27
+  orig: 30, 27
+  offset: 0, 0
+  index: -1
+22
+  rotate: true
+  xy: 821, 1615
+  size: 36, 42
+  orig: 36, 42
+  offset: 0, 0
+  index: -1
+3
+  rotate: false
+  xy: 490, 1582
+  size: 44, 24
+  orig: 44, 24
+  offset: 0, 0
+  index: -1
+4
+  rotate: false
+  xy: 397, 1580
+  size: 48, 26
+  orig: 48, 26
+  offset: 0, 0
+  index: -1
+5
+  rotate: true
+  xy: 683, 1613
+  size: 38, 47
+  orig: 38, 47
+  offset: 0, 0
+  index: -1
+6
+  rotate: true
+  xy: 865, 1609
+  size: 20, 22
+  orig: 20, 22
+  offset: 0, 0
+  index: -1
+7
+  rotate: false
+  xy: 898, 1631
+  size: 24, 20
+  orig: 24, 20
+  offset: 0, 0
+  index: -1
+8
+  rotate: true
+  xy: 889, 1613
+  size: 16, 55
+  orig: 16, 55
+  offset: 0, 0
+  index: -1
+9
+  rotate: true
+  xy: 447, 1580
+  size: 26, 41
+  orig: 26, 41
+  offset: 0, 0
+  index: -1
+free game主角射箭1~2_00023
+  rotate: true
+  xy: 328, 2
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00026
+  rotate: true
+  xy: 600, 666
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00027
+  rotate: true
+  xy: 1258, 765
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00028
+  rotate: false
+  xy: 1258, 493
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00029
+  rotate: true
+  xy: 328, 634
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00030
+  rotate: false
+  xy: 1530, 819
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00031
+  rotate: true
+  xy: 1560, 1414
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00032
+  rotate: false
+  xy: 1596, 1758
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00033
+  rotate: false
+  xy: 1560, 1142
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00034
+  rotate: true
+  xy: 600, 340
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00035
+  rotate: false
+  xy: 2, 200
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00036
+  rotate: true
+  xy: 328, 308
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00037
+  rotate: true
+  xy: 872, 381
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00038
+  rotate: true
+  xy: 1584, 493
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00039
+  rotate: false
+  xy: 1144, 221
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00040
+  rotate: true
+  xy: 872, 55
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00041
+  rotate: true
+  xy: 600, 14
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00042
+  rotate: false
+  xy: 1470, 221
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00026
+  rotate: true
+  xy: 328, 1704
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00027
+  rotate: true
+  xy: 2, 1414
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00028
+  rotate: false
+  xy: 292, 1286
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00029
+  rotate: false
+  xy: 2, 1740
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00030
+  rotate: true
+  xy: 2, 1088
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00031
+  rotate: false
+  xy: 618, 1740
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00032
+  rotate: true
+  xy: 618, 1282
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00033
+  rotate: true
+  xy: 292, 960
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00034
+  rotate: true
+  xy: 2, 762
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00035
+  rotate: false
+  xy: 944, 1740
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00036
+  rotate: false
+  xy: 606, 992
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00037
+  rotate: false
+  xy: 908, 1323
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00038
+  rotate: false
+  xy: 1270, 1740
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00039
+  rotate: true
+  xy: 932, 997
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00040
+  rotate: false
+  xy: 932, 707
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00041
+  rotate: false
+  xy: 1234, 1381
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00042
+  rotate: false
+  xy: 1234, 1091
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+free game主角射箭4_00043
+  rotate: false
+  xy: 2, 472
+  size: 324, 288
+  orig: 324, 288
+  offset: 0, 0
+  index: -1
+jian2
+  rotate: true
+  xy: 939, 1666
+  size: 72, 187
+  orig: 72, 187
+  offset: 0, 0
+  index: -1
+jian3
+  rotate: true
+  xy: 718, 1653
+  size: 85, 219
+  orig: 85, 219
+  offset: 0, 0
+  index: -1
+jian4
+  rotate: true
+  xy: 327, 1608
+  size: 94, 252
+  orig: 94, 252
+  offset: 0, 0
+  index: -1
+
+freegame战斗场景整理2.png
+size: 1552,544
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+free game主角射箭1~2_00020
+  rotate: false
+  xy: 2, 2
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭1~2_00021
+  rotate: false
+  xy: 308, 2
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭1~2_00022
+  rotate: false
+  xy: 328, 274
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭1~2_00024
+  rotate: false
+  xy: 634, 274
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭2~3_00020
+  rotate: false
+  xy: 1246, 274
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭2~3_00021
+  rotate: false
+  xy: 614, 4
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭2~3_00022
+  rotate: false
+  xy: 940, 274
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭2~3_00023
+  rotate: false
+  xy: 920, 4
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭2~3_00024
+  rotate: false
+  xy: 1226, 4
+  size: 304, 268
+  orig: 304, 268
+  offset: 0, 0
+  index: -1
+free game主角射箭3~4_00043
+  rotate: false
+  xy: 2, 272
+  size: 324, 270
+  orig: 324, 270
+  offset: 0, 0
+  index: -1

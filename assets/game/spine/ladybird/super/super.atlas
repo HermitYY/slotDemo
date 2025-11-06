@@ -1,0 +1,152 @@
+super.png
+size: 476,551
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+big右翅
+  rotate: true
+  xy: 144, 213
+  size: 115, 53
+  orig: 117, 55
+  offset: 1, 1
+  index: -1
+big右翅模糊
+  rotate: false
+  xy: 338, 201
+  size: 123, 62
+  orig: 126, 64
+  offset: 1, 1
+  index: -1
+big左翅
+  rotate: true
+  xy: 146, 2
+  size: 116, 53
+  orig: 117, 54
+  offset: 0, 0
+  index: -1
+big左翅模糊
+  rotate: false
+  xy: 199, 167
+  size: 124, 62
+  orig: 126, 64
+  offset: 1, 1
+  index: -1
+suoer右翅
+  rotate: false
+  xy: 201, 99
+  size: 118, 66
+  orig: 121, 69
+  offset: 1, 1
+  index: -1
+suoer右翅模糊
+  rotate: false
+  xy: 338, 265
+  size: 123, 73
+  orig: 129, 78
+  offset: 3, 2
+  index: -1
+suoer左翅
+  rotate: false
+  xy: 201, 31
+  size: 118, 66
+  orig: 121, 69
+  offset: 1, 1
+  index: -1
+suoer左翅模糊
+  rotate: false
+  xy: 325, 126
+  size: 123, 73
+  orig: 129, 78
+  offset: 3, 2
+  index: -1
+右
+  rotate: true
+  xy: 321, 9
+  size: 42, 90
+  orig: 43, 92
+  offset: 0, 1
+  index: -1
+右上翅
+  rotate: false
+  xy: 199, 231
+  size: 137, 107
+  orig: 143, 112
+  offset: 2, 1
+  index: -1
+右上翅模糊
+  rotate: false
+  xy: 2, 216
+  size: 140, 112
+  orig: 151, 121
+  offset: 4, 3
+  index: -1
+右下翅
+  rotate: false
+  xy: 2, 2
+  size: 142, 100
+  orig: 146, 105
+  offset: 0, 3
+  index: -1
+右下翅模糊
+  rotate: false
+  xy: 183, 445
+  size: 145, 104
+  orig: 154, 113
+  offset: 3, 5
+  index: -1
+右翅
+  rotate: false
+  xy: 321, 54
+  size: 76, 70
+  orig: 76, 72
+  offset: 0, 1
+  index: -1
+左
+  rotate: false
+  xy: 142, 120
+  size: 42, 91
+  orig: 42, 92
+  offset: 0, 0
+  index: -1
+左上翅
+  rotate: false
+  xy: 330, 442
+  size: 138, 107
+  orig: 143, 112
+  offset: 3, 1
+  index: -1
+左上翅模糊
+  rotate: false
+  xy: 2, 104
+  size: 138, 110
+  orig: 151, 121
+  offset: 8, 4
+  index: -1
+左下翅
+  rotate: false
+  xy: 329, 340
+  size: 141, 100
+  orig: 146, 105
+  offset: 4, 3
+  index: -1
+左下翅模糊
+  rotate: false
+  xy: 183, 340
+  size: 144, 103
+  orig: 154, 113
+  offset: 6, 6
+  index: -1
+左翅
+  rotate: false
+  xy: 399, 53
+  size: 75, 71
+  orig: 76, 72
+  offset: 1, 1
+  index: -1
+身体
+  rotate: false
+  xy: 2, 330
+  size: 179, 219
+  orig: 183, 223
+  offset: 2, 2
+  index: -1

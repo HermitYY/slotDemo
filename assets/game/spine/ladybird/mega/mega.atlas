@@ -1,0 +1,97 @@
+
+mega.png
+size: 278,759
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+右
+  rotate: false
+  xy: 227, 665
+  size: 43, 92
+  orig: 43, 92
+  offset: 0, 0
+  index: -1
+右上翅
+  rotate: false
+  xy: 117, 189
+  size: 143, 112
+  orig: 143, 112
+  offset: 0, 0
+  index: -1
+右上翅模糊
+  rotate: false
+  xy: 2, 451
+  size: 151, 121
+  orig: 151, 121
+  offset: 0, 0
+  index: -1
+右下翅
+  rotate: false
+  xy: 116, 82
+  size: 146, 105
+  orig: 146, 105
+  offset: 0, 0
+  index: -1
+右下翅模糊
+  rotate: true
+  xy: 2, 295
+  size: 154, 113
+  orig: 154, 113
+  offset: 0, 0
+  index: -1
+右翅
+  rotate: false
+  xy: 109, 8
+  size: 76, 72
+  orig: 76, 72
+  offset: 0, 0
+  index: -1
+左
+  rotate: false
+  xy: 227, 571
+  size: 42, 92
+  orig: 42, 92
+  offset: 0, 0
+  index: -1
+左上翅
+  rotate: true
+  xy: 2, 150
+  size: 143, 112
+  orig: 143, 112
+  offset: 0, 0
+  index: -1
+左上翅模糊
+  rotate: true
+  xy: 155, 418
+  size: 151, 121
+  orig: 151, 121
+  offset: 0, 0
+  index: -1
+左下翅
+  rotate: true
+  xy: 2, 2
+  size: 146, 105
+  orig: 146, 105
+  offset: 0, 0
+  index: -1
+左下翅模糊
+  rotate: false
+  xy: 117, 303
+  size: 154, 113
+  orig: 154, 113
+  offset: 0, 0
+  index: -1
+左翅
+  rotate: false
+  xy: 187, 8
+  size: 76, 72
+  orig: 76, 72
+  offset: 0, 0
+  index: -1
+身体
+  rotate: true
+  xy: 2, 574
+  size: 183, 223
+  orig: 183, 223
+  offset: 0, 0
+  index: -1
