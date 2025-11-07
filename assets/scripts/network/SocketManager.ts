@@ -6,12 +6,12 @@ import proto from "./MLWZ_msg.js";
 import { loginByToken, getdetailSlot } from "./request";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 
-export enum E_GAME_SCENE_TYPE {
+export const enum E_GAME_SCENE_TYPE {
     NORMAL = 1,
     FREE_GAME = 2,
 }
 
-export enum E_GAME_MULTIPLE_TYPE {
+export const enum E_GAME_MULTIPLE_TYPE {
     IS_MULTIPLE = 1,
     NOT_MULTIPLE = 2,
 }

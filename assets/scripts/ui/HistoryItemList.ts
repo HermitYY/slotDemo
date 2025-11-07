@@ -2,6 +2,7 @@ import { _decorator, Component, Node, Prefab, instantiate, tween, Vec3, UITransf
 import { HistoryItem } from "./HistoryItem";
 import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 import { E_GAME_SCENE_TYPE } from "../network/SocketManager";
+import { EffectManager } from "../managers/EffectManager";
 const { ccclass, property } = _decorator;
 
 @ccclass("HistoryItemList")
@@ -19,6 +20,8 @@ export class HistoryItemList extends Component {
 
     private normalModeHistoryCachePos: Vec3 = null;
 
+    private _timer: number = null;
+
     onLoad(): void {
         EventManager.on(E_GAME_EVENT.GAME_NEW_BET, this.clearHistory, this);
         EventManager.on(E_GAME_EVENT.GAME_FREE_INIT, this.clearHistory, this);
@@ -30,10 +33,12 @@ export class HistoryItemList extends Component {
 
     protected start(): void {
         this.normalModeHistoryCachePos = this.normalModeHistoryCachePos ??= this.node.parent.parent.position.clone();
+        this.playPNGIconEffect();
     }
 
     onDestroy(): void {
         EventManager.removeAllByTarget(this);
+        clearInterval(this._timer);
     }
 
     /** 添加一条历史记录 */
@@ -51,7 +56,7 @@ export class HistoryItemList extends Component {
         const itemHeight = ui ? ui.height * originScale.y : 100;
 
         // 计算新节点初始位置（在最上方）
-        const startY = this._items.length > 0 ? this._items[this._items.length - 1].node.position.y + itemHeight * 1.6 : 0;
+        const startY = this._items.length > 0 ? this._items[this._items.length - 1].node.position.y + itemHeight * 3.6 : 0;
         node.setPosition(0, startY, 0);
         node.setScale(originScale);
 
@@ -164,5 +169,13 @@ export class HistoryItemList extends Component {
 
     gameModeToggle(mode: E_GAME_SCENE_TYPE) {
         mode == E_GAME_SCENE_TYPE.NORMAL ? this.node.parent.parent.setPosition(this.normalModeHistoryCachePos) : this.node.parent.parent.setPosition(new Vec3(-0, -400, 0));
+    }
+
+    private playPNGIconEffect() {
+        EffectManager.playEffect("PNGIcon", this.node.parent.parent, new Vec3(5, 85));
+        this._timer = setInterval(() => {
+            EffectManager.stopEffect("PNGIcon", this.node.parent.parent);
+            EffectManager.playEffect("PNGIcon", this.node.parent.parent, new Vec3(5, 85));
+        }, 10000);
     }
 }

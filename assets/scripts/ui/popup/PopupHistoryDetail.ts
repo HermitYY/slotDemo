@@ -5,11 +5,9 @@ import { SlotItem } from "../SlotItem";
 import { UItools } from "../../Tools/UItools";
 import { HistoryItem } from "../HistoryItem";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
-import { EffectManager } from "../../managers/EffectManager";
 import { HistoryWindowManager } from "../../managers/HistoryWindowManager";
 import { PopupManager } from "./PopupManager";
 import { PopupMask } from "./PopupMask";
-import { LogicTools } from "../../Tools/LogicTools";
 const { ccclass, property } = _decorator;
 
 type HistoryItemData = {
@@ -66,6 +64,15 @@ export class PopupHistoryDetail extends BasePopup {
     private replayControlWindow: Prefab = null;
     @property(Prefab)
     public popupMaskPrefab: Prefab = null;
+
+    @property(Node)
+    private totalChipsNode: Node = null;
+    @property(Label)
+    private totalChipsLabel: Label = null;
+    @property(Node)
+    private multipleNode: Node = null;
+    @property(Label)
+    private multipleLabel: Label = null;
 
     private curPage: number = 1;
     private listData: HistoryItemData = null;
@@ -126,7 +133,7 @@ export class PopupHistoryDetail extends BasePopup {
     }
 
     updateAwardList() {
-        const { awardList } = this.parseInfo();
+        const { awardList, curpageInfo } = this.parseInfo();
         this.getComponentsInChildren(HistoryItem).forEach((item, index) => {
             if (!awardList.length || !awardList[index]) {
                 item.node.active = false;
@@ -139,6 +146,10 @@ export class PopupHistoryDetail extends BasePopup {
                 });
             }
         });
+        this.totalChipsNode.active = curpageInfo.ieEnd == 2 && curpageInfo.curChips > 0;
+        this.totalChipsLabel.string = UItools.GetInstance().formatCurrency(curpageInfo.curChips ?? 0, false);
+        this.multipleNode.active = curpageInfo.ieEnd == 1;
+        this.multipleLabel.string = curpageInfo.allMultiple + "";
     }
 
     updateButtons() {
@@ -170,7 +181,8 @@ export class PopupHistoryDetail extends BasePopup {
 
     private parseInfo() {
         const allList = this.listData.model.moroSlotTracks;
-        const curPageAwardInfo = allList[this.curPage - 1].awardResult.split("|").filter(Boolean);
+        const curpageInfo = allList[this.curPage - 1];
+        const curPageAwardInfo = curpageInfo.awardResult.split("|").filter(Boolean);
         const awardList = curPageAwardInfo.map((item) => item.split(",").map(Number));
         const awardIdArr = awardList.map((item) => item[0]);
 
@@ -188,7 +200,7 @@ export class PopupHistoryDetail extends BasePopup {
                 };
             });
 
-        return { allList, awardList, curPageGirdData, awardIdArr, multipleArr };
+        return { allList, curpageInfo, awardList, curPageGirdData, awardIdArr, multipleArr };
     }
 
     private responseReplayQuery(data) {

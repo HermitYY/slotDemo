@@ -63,6 +63,8 @@ export class HistoryWindowItem extends Component {
     awardChipsLabel: Label = null;
     @property(Sprite)
     bgSprite: Sprite = null;
+    @property(Node)
+    freeSign: Node = null;
 
     private myData: HistoryItemData;
     start() {}
@@ -74,6 +76,7 @@ export class HistoryWindowItem extends Component {
         this.payBetLabel.string = UItools.GetInstance().formatCurrency(data.betChips, false);
         this.awardChipsLabel.string = UItools.GetInstance().formatCurrency(data.payChips, false);
         this.bgSprite.node.active = isShowBg;
+        this.freeSign.active = data.isFree != 1;
         this.myData = data;
     }
 

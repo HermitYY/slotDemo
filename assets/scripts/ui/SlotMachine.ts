@@ -451,7 +451,7 @@ export class SlotMachine extends Component {
     }
     private async _continueReplayLoopQueueStyle(): Promise<void> {
         if (!this._curReplayArr || !this._queue) return;
-
+        let isEnterFree = false;
         while (this._currentReplayIndex < this._curReplayArr.length) {
             if (this._queue.isAborted) return;
             const curScene = this._curReplayArr[this._currentReplayIndex];
@@ -459,6 +459,7 @@ export class SlotMachine extends Component {
                 case 1:
                     if (curScene?.free?.index) {
                         // 1.进入免费模式
+                        isEnterFree = true;
                         this.updateChipGroup(curScene);
                         await this._queue.wait(this.stopEffect());
                         await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene), true);
@@ -506,17 +507,17 @@ export class SlotMachine extends Component {
                     } else {
                         if (!curScene?.allCount && !curScene.freeCount) {
                             // 2.结束
+                            await this._queue.wait(this.stopEffect(300));
                             if (curScene.curChips) {
                                 await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene));
                             }
-                            await this._queue.wait(this.stopEffect(300));
                             if (this._queue.isAborted) return;
                             const isAttack = this.curComboCount >= 2;
                             this.comboAttack();
-                            if (!curScene.curChips) {
+                            if (!curScene.curChips || isEnterFree) {
                                 await this._queue.wait(this.updateFreeCtrl(curScene));
                             }
-                            await this._queue.wait(LogicTools.Delay(isAttack ? 2000 : 0), true);
+                            await this._queue.wait(LogicTools.Delay(isAttack || isEnterFree ? 2000 : 0), true);
                             console.log("回放结束");
                             EventManager.emit(E_GAME_EVENT.GAME_REPLAY_STOP);
                             return;
@@ -543,10 +544,10 @@ export class SlotMachine extends Component {
                                 await this._queue.wait(EffectManager.playEffect("FireMultiple", this.freeTimes.parent, Vec3.ZERO));
                                 this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
                             }
+                            await this._queue.wait(this.stopEffect());
                             if (curScene.curChips) {
                                 await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene));
                             }
-                            await this._queue.wait(this.stopEffect());
                             if (this._queue.isAborted) return;
                             this.comboAttack();
                             await this._queue.wait(this.updateFreeCtrl(curScene));
@@ -791,24 +792,37 @@ export class SlotMachine extends Component {
                 const pos = node.getWorldPosition();
                 node.destroy();
                 const isLowNumver = m.removeId <= 5;
-                const destoryEffectArr = [
-                    {
-                        effectName: `SlotEffectClear_${m.removeId}`,
-                        wordPos: pos,
-                    },
-                    {
-                        effectName: `SlotEffect_${isLowNumver ? "low" : "high"}_explode`,
-                        wordPos: pos,
-                    },
-                ];
-                removeGridArr.push(destoryEffectArr);
-                if (isLowNumver) {
-                    removeGridArr.push([
-                        {
-                            effectName: "SlotEffect_ring",
-                            wordPos: pos,
-                        },
-                    ]);
+                switch (GameSpeedManager.GetInstance().speed) {
+                    case E_GAME_SPEED_TYPE.NORMAL:
+                        const destoryEffectArr = [
+                            {
+                                effectName: `SlotEffectClear_${m.removeId}`,
+                                wordPos: pos,
+                            },
+                            {
+                                effectName: `SlotEffect_${isLowNumver ? "low" : "high"}_explode`,
+                                wordPos: pos,
+                            },
+                        ];
+                        removeGridArr.push(destoryEffectArr);
+                        if (isLowNumver) {
+                            removeGridArr.push([
+                                {
+                                    effectName: "SlotEffect_ring",
+                                    wordPos: pos,
+                                },
+                            ]);
+                        }
+                        break;
+                    case E_GAME_SPEED_TYPE.FAST:
+                        removeGridArr.push([
+                            { effectName: `SlotEffectQuickClear_${m.removeId}`, wordPos: pos },
+                            {
+                                effectName: `SlotEffect_quick_${isLowNumver ? "low" : "high"}_explode`,
+                                wordPos: pos,
+                            },
+                        ]);
+                        break;
                 }
             }
         }
@@ -952,7 +966,11 @@ export class SlotMachine extends Component {
         const { chipsInfo } = LogicTools.GetInstance().transGridInfo(curScene);
         if (this.chipLabel3) {
             const computeChips = chipsInfo.comboChips || chipsInfo.winChips;
-            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, true, 500, false);
+            this.chipLabel3.node.active = computeChips > 0;
+            if (+this.chipLabel3.string.replace(/,/g, "") >= computeChips) {
+                this.chipLabel3.string = "0";
+            }
+            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, true, 500, false, false);
         }
     }
 
@@ -1224,7 +1242,7 @@ export class SlotMachine extends Component {
         if (this._ladybirdCancel) return;
         AudioControlManager.GetInstance().playSfxFireBurning();
         EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
-        await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent, "", 0.4, {
+        await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent.parent, "", 0.4, {
             target: firstFont,
             easing: "quadIn",
         });
@@ -1247,17 +1265,16 @@ export class SlotMachine extends Component {
                 if (!this._ladybirdCancel) {
                     await LogicTools.waitNextFrame();
                     if (this._ladybirdCancel) return;
-                    // const localPosIn = multipleLabel.parent.parent.getComponent(UITransform)?.convertToNodeSpaceAR(multipleLabel.getWorldPosition(new Vec3()));
                     const localPosIn = multipleLabel.parent.parent.inverseTransformPoint(new Vec3(), multipleLabel.worldPosition);
                     await EffectManager.playEffect("MultipleMoveLight", multipleLabel.parent.parent, new Vec3(localPosIn.x, localPosIn.y - 75), { siblingIndex: 2 });
                     multipleLabel.active = false;
-                    this.updateWinChipsText(curScene);
                     if (this._ladybirdCancel) return;
+                    this.updateWinChipsText(curScene);
                 }
             })
             .start();
 
-        await LogicTools.Delay(800);
+        await LogicTools.Delay(1500);
         if (this._ladybirdCancel) return;
         EffectManager.stopEffect("MultipleBoxFireing", midRect);
     }

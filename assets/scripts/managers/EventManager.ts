@@ -6,7 +6,7 @@ interface Subscription {
     once?: boolean;
 }
 
-export enum E_GAME_EVENT {
+export const enum E_GAME_EVENT {
     NONE,
     /** 分包资源加载完成 */
     RESOURCE_LOAD_END,

@@ -104,71 +104,39 @@
     },
     "frames": [
       {
-        "__uuid__": "b3cadaab-f870-482f-b3fc-797877195ae9@f9941",
+        "__uuid__": "b6e7705e-2770-46b6-905d-e1eff43145b1@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "e3757bf3-0229-40e2-a139-98334fb78b6c@f9941",
+        "__uuid__": "21f7440e-bf11-47f5-ba73-35be698bb71f@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "e14c6d12-5b97-43b0-881a-bee3de11ff01@f9941",
+        "__uuid__": "007aa232-776f-4409-94a6-b99bd54a76f9@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "b19196f6-dabb-43a7-b782-36237415246f@f9941",
+        "__uuid__": "2ded5880-2fd6-4872-9cfc-99f26345140a@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "7fe3eb6f-ee87-488f-a74c-eaf59f91d779@f9941",
+        "__uuid__": "6cfe267d-336f-42c5-b937-610653885676@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "f43abbff-6a12-4cab-8e42-575d03b3e5c9@f9941",
+        "__uuid__": "4bc0d870-5371-42a7-8058-7d842f4a25ec@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "978c56d7-92fe-47cb-a925-89ae5795d800@f9941",
+        "__uuid__": "c441551d-a5b9-4033-82e4-cc08fa10ac7d@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "c3e8c148-42c6-4095-91b3-3df4e9f4d7c9@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "1b471c16-3731-4429-92ad-2911ac5badf5@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "f8d48ae5-0fff-4b9c-bd9f-e02f43d838bb@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "68d90f4c-56fa-4866-82db-07d3e6470905@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "c7fd92b9-7867-4aa2-8d40-41224daa5b3b@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "727e93c8-b1a5-4132-95f1-79baba78e551@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "184ae47a-6f34-4801-a57f-93d2741fc941@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "5307f263-3dbf-48ad-9270-03c9dcadeeb0@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "3b3b66ac-c0c6-4950-ba5d-455570fd167a@f9941",
+        "__uuid__": "d745f282-386d-40f8-9a6d-1788f5d70af8@f9941",
         "__expectedType__": "cc.SpriteFrame"
       }
     ],
-    "frameRate": 32,
+    "frameRate": 16,
     "loop": false,
     "autoDestroy": true,
     "autoPlay": true,
@@ -201,7 +169,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "6cfe267d-336f-42c5-b937-610653885676@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 0,
     "_fillType": 0,
     "_sizeMode": 0,

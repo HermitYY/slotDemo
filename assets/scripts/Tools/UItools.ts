@@ -17,8 +17,9 @@ export class UItools extends Singleton {
      * @param animated 是否跳变显示（默认true）
      * @param duration 跳变持续时间(毫秒)，默认500
      * @param forceDecimal 是否强制保留两位小数，默认true
+     * @param isThanMinNoAnimated 是否小于当前值时，不跳变
      */
-    public showCurrencyValue(value: number, label: Label, animated: boolean = true, duration: number = 500, forceDecimal: boolean = true) {
+    public showCurrencyValue(value: number, label: Label, animated: boolean = true, duration: number = 500, forceDecimal: boolean = true, isThanMinNoAnimated: boolean = true) {
         if (!label) {
             console.warn("Label 未传入");
             return;
@@ -28,7 +29,7 @@ export class UItools extends Singleton {
         const current = parseFloat(label.string.replace(/,/g, "")) || 0;
 
         // 不跳变，直接显示
-        if (!animated || value < current) {
+        if (!animated || (isThanMinNoAnimated && value < current)) {
             label.string = this.formatCurrency(value, forceDecimal);
             return;
         }
@@ -179,6 +180,7 @@ export class UItools extends Singleton {
             autoDestroy?: boolean; // 结束是否销毁特效所在的父节点，默认 true
             scale?: Vec3;
             insertIndex?: number;
+            offsetPosition?: Vec3; // 特效偏移位置
         }
     ): Promise<void> {
         return new Promise(async (resolve) => {
@@ -210,7 +212,7 @@ export class UItools extends Singleton {
                 target.setScale(options.scale);
             }
             if (effectName) {
-                EffectManager.playEffect(effectName, target, Vec3.ZERO, { siblingIndex: options.insertIndex });
+                EffectManager.playEffect(effectName, target, options?.offsetPosition ?? Vec3.ZERO, { siblingIndex: options.insertIndex });
             }
 
             const worldFrom = UItools.getWorldPos(from);

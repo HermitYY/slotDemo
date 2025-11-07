@@ -41,7 +41,8 @@ export class NormalRole extends Component {
         if (this.curArrowLev === 1 && !EffectManager.isEffectActive("Arrow1")) {
             EffectManager.playEffect("Arrow1", this.arrowLevNode, Vec3.ZERO);
         }
-        await this.spineCommon.playFromToBack(0, `daiji${this.curBowLev}`, `shejian${this.curBowLev}`, "daiji1", 0, 0.2, true);
+        await this.spineCommon.playFromToBack(0, `daiji${this.curBowLev}`, `shejian${this.curBowLev}`, `huijian${this.curBowLev}`, 0, 0, false);
+        this.spineCommon.queue(0, "daiji1", true);
         EventManager.emit(E_GAME_EVENT.GAME_MORO_ATTACK_END, { times: data.times });
         this.curBowLev = 1;
         this.curArrowLev = 1;

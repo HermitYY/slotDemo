@@ -104,39 +104,35 @@
     },
     "frames": [
       {
-        "__uuid__": "638cfa21-3261-40ab-9c6f-faa75876c0da@f9941",
+        "__uuid__": "1e9e5761-3278-43f4-b3f8-d7470bfb3192@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "43fe728a-11c9-4564-806a-8778fc59fd10@f9941",
+        "__uuid__": "1026a6a2-04b7-4d40-b666-20bebb8d05b5@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "f349d3a8-4fd1-4314-87a3-829d5344d649@f9941",
+        "__uuid__": "4e571c3a-e970-4b72-b6da-a8cfdd05ddec@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "941245e7-e530-4a56-8c9e-e4574ccb6751@f9941",
+        "__uuid__": "d499e9a0-0b78-4e32-90d3-1f55a1caeb59@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "7c04c3f8-0016-4b4e-b182-89430486221e@f9941",
+        "__uuid__": "a11c6c0c-07f6-4aba-bff2-ba21933d5453@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "566063aa-1476-42ab-b640-8940cf97efa3@f9941",
+        "__uuid__": "6ede086b-52e0-4e85-ba49-58a6a9af072d@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "cb6ee493-2057-4273-80f4-f7ea972235c6@f9941",
+        "__uuid__": "e33460a3-4502-408b-9019-003fd15cc446@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "019115fe-3b73-46f4-a6e3-0517b63aa933@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "95e1c091-daa6-442f-a0e9-05d4d4e4a17d@f9941",
+        "__uuid__": "6d39a791-99fc-48cc-8c26-48c961c3fd99@f9941",
         "__expectedType__": "cc.SpriteFrame"
       }
     ],
@@ -173,7 +169,10 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
+    "_spriteFrame": {
+      "__uuid__": "d499e9a0-0b78-4e32-90d3-1f55a1caeb59@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_type": 0,
     "_fillType": 0,
     "_sizeMode": 0,

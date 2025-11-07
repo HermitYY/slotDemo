@@ -20,7 +20,6 @@ export class GridManager extends Singleton {
     public parseLoginInitInfo(res: proto.newxxs.S2C_LoginPlayerResult_11001) {
         EventManager.emit(E_GAME_EVENT.USER_INFO_RETURN_END);
         EventManager.on(E_GAME_EVENT.GAME_ENTER_MAIN_SCENE, () => {
-            console.log("游戏已进入主界面,发送场景信息");
             EventManager.emit(E_GAME_EVENT.GAME_GRID_INIT_DATA, res.curScene);
         });
     }

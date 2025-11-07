@@ -104,47 +104,27 @@
     },
     "frames": [
       {
-        "__uuid__": "f865ee6b-6588-4435-9c10-eff3c7262037@f9941",
+        "__uuid__": "12db3363-fed5-4f46-916f-b8e615b163f9@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "937da65f-f3b6-49ba-a4b0-f0ebdac33c7c@f9941",
+        "__uuid__": "c961b1db-3f32-4f99-b6f4-23a796647d0d@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "1a6887b8-1896-4766-a29e-6a3bf06a3952@f9941",
+        "__uuid__": "c719d8f2-d797-43d8-b5cc-a6cf56b50e65@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "dfb345cb-b3ba-4c7b-9afe-5a92e0fc7275@f9941",
+        "__uuid__": "b5fedd28-c978-4241-aa03-a1551f8d3ac4@f9941",
         "__expectedType__": "cc.SpriteFrame"
       },
       {
-        "__uuid__": "0bc5cdbd-c3b0-4383-96aa-b4b6122e0c4a@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "6d87cd83-4817-4561-b7af-ca89d39bc977@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "3109d62d-4035-4a1b-8671-d1e90b78b0c0@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "1df27b7b-bc5f-40f4-a1b2-4f3c28a7f433@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "f59b13b7-b901-42ba-9a33-e95f9497071e@f9941",
-        "__expectedType__": "cc.SpriteFrame"
-      },
-      {
-        "__uuid__": "1177cdbf-8ae4-4523-804c-ed4a81ed84ec@f9941",
+        "__uuid__": "baecd2fb-af68-4068-8b2a-28e161624085@f9941",
         "__expectedType__": "cc.SpriteFrame"
       }
     ],
-    "frameRate": 20,
+    "frameRate": 10,
     "loop": false,
     "autoDestroy": true,
     "autoPlay": true,
@@ -178,7 +158,7 @@
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "0bc5cdbd-c3b0-4383-96aa-b4b6122e0c4a@f9941",
+      "__uuid__": "c961b1db-3f32-4f99-b6f4-23a796647d0d@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,

@@ -136,6 +136,7 @@
     "loop": false,
     "autoDestroy": true,
     "autoPlay": true,
+    "isTimeScaleEffected": false,
     "_id": ""
   },
   {

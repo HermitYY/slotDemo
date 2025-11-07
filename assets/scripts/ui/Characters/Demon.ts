@@ -60,11 +60,20 @@ export class Demon extends Component {
 
     async arrowAttackEffect(data: { times: number }) {
         if (!this.isAlive) return;
+        if (this.arrowLev == 1) {
+            UItools.moveEffectWorld(this.arrowBeginNode, this.arrowEndNode, `ArrowBase`, 0.2, {
+                easing: "quadIn",
+                newTarget: this.node,
+                scale: new Vec3(1.5, 1.5, 1),
+                offsetPosition: new Vec3(40, 0, 0),
+            });
+        }
         await UItools.moveEffectWorld(this.arrowBeginNode, this.arrowEndNode, `Arrow${this.arrowLev}`, 0.2, {
-            // scale: this.node.scale,
             easing: "quadIn",
             newTarget: this.node,
+            scale: new Vec3(1.5, 1.5, 1),
         });
+
         this.beAttacked(data.times);
     }
 

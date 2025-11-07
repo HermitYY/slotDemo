@@ -1,7 +1,7 @@
 import { Singleton } from "../common/Singleton";
 import { E_GAME_EVENT, EventManager } from "./EventManager";
 
-export enum E_GAME_SPEED_TYPE {
+export const enum E_GAME_SPEED_TYPE {
     NORMAL = 1,
     FAST = 2,
     // SUPER_FAST = 3,

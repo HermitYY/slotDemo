@@ -52,6 +52,8 @@ export class PopupFreeResults extends BasePopup {
             this.endPanel.active = true;
             AudioControlManager.GetInstance().playSfxLoogGold();
             UItools.GetInstance().showCurrencyValue(curScene.winChips, this.endPanel.getComponentInChildren(Label), true, 1500, false);
+            EffectManager.playEffect("LadybirdTextFlash", this.endPanel, new Vec3(-6, 295));
+            EffectManager.playEffect("LadybirdHandFlash", this.endPanel, new Vec3(0, 18));
             return;
         }
         const comboChips = curScene.curChips;
@@ -73,7 +75,7 @@ export class PopupFreeResults extends BasePopup {
             // 不应该进入 保险用
             this.close();
         }
-        EffectManager.playEffect("LadybirdFlash", this.contentNode, new Vec3(0, 108, 0));
+        EffectManager.playEffect("LadybirdFlash", this.contentNode, new Vec3(8, 108, 0));
     }
 
     override async close(): Promise<void> {
