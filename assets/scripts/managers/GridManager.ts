@@ -3,7 +3,6 @@ import { Singleton } from "../common/Singleton";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import proto from "../network/MLWZ_msg.js";
 import GlobalConfig from "../common/GlobalConfig";
-import { SocketManager } from "../network/SocketManager";
 
 const { ccclass, property } = _decorator;
 
@@ -15,6 +14,25 @@ export class GridManager extends Singleton {
     public get cols() {
         return GlobalConfig.cols;
     }
+
+    // 默认比例表
+    public static fillRatios: [number, number][] = [
+        [1, 1], // NONE
+        [0.6, 0.8], // id1 9
+        [0.6, 0.7], // id2 J
+        [0.7, 0.7], // id3 Q
+        [0.7, 0.7], // id4 K
+        [0.7, 0.8], // id5 A
+        [1.4, 1.4], // id6 魔王 有牙
+        [1.9, 1.7], // id7 神猴
+        [1.6, 1.5], // id8 鸟王
+        [2.3, 2.3], // id9 希多
+        [1.1, 1.1], // id10 绿宝石 倍率
+        [1.1, 1.1], // 绿宝石 展翅
+        [1, 1], // NONE
+        [1, 1], // NONE
+        [1.9, 1.8], // id14 王子
+    ];
 
     // 登录的场景信息
     public parseLoginInitInfo(res: proto.newxxs.S2C_LoginPlayerResult_11001) {

@@ -170,7 +170,7 @@ export class AudioManager extends Singleton {
         this.sfxPool.forEach((s) => (s.volume = this.volumes.sfx / 100));
     }
 
-    // ---------------- BGM ----------------
+    //#region BGM
     /**
      * playBgm：mode=Replace | Queue。若 mode=Replace 则立即替换当前并清空队列；若 Queue 则加入队列等待。
      * 返回 Promise 在该次播放完整播放完毕时 resolve（即一次循环结束时 resolve）。
@@ -286,8 +286,9 @@ export class AudioManager extends Singleton {
             }
         });
     }
+    //#endregion
 
-    // ---------------- SFX ----------------
+    //#region SFX
     /**
      * playSfx(mode, sfx)
      * - Replace: 停止所有 SFX（池中与临时），立即播放自己
@@ -301,6 +302,7 @@ export class AudioManager extends Singleton {
         if (!clip) return Promise.reject(`[AudioManager] SFX not found: ${name}`);
 
         if (!this.sfxRootNode) return Promise.reject("[AudioManager] sfxRoot not initialized");
+        console.log(`播放了音效${sfx}`);
 
         switch (mode) {
             // 停止所有 SFX 然后播放
@@ -381,7 +383,9 @@ export class AudioManager extends Singleton {
         });
     }
 
-    // ---------------- stop helpers ----------------
+    //#endregion
+
+    //#region STOP
     public stopBgm() {
         if (this.bgmPlayTimer) {
             clearTimeout(this.bgmPlayTimer);
@@ -406,6 +410,49 @@ export class AudioManager extends Singleton {
         }
         this.sfxPlayingTimers.clear();
     }
+
+    /**
+     * 停止指定的 SFX（根据枚举名）
+     */
+    public stopSfx(sfx: SfxEnum) {
+        const name = sfx as string;
+
+        // 遍历池内所有 SFX
+        for (const source of this.sfxPool) {
+            const clip = source.clip;
+            if (clip && clip.name === name && source.playing) {
+                try {
+                    source.stop();
+                } catch (e) {}
+            }
+        }
+
+        // 临时节点（动态创建的、未加入池的）
+        if (this.sfxRootNode) {
+            const children = this.sfxRootNode.children;
+            for (const node of children) {
+                const src = node.getComponent(AudioSource);
+                if (src && src.clip && src.clip.name === name && src.playing) {
+                    try {
+                        src.stop();
+                        // 临时节点
+                        if (node.name.startsWith("SFX_src_tmp")) {
+                            node.removeFromParent();
+                            node.destroy();
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+
+        // 清理掉相关的计时器（防止 resolve 重复触发）
+        for (const [id, timer] of this.sfxPlayingTimers.entries()) {
+            clearTimeout(timer);
+            this.sfxPlayingTimers.delete(id);
+        }
+    }
+
+    //#endregion
 }
 
 (window as any).AudioManager = AudioManager.GetInstance();

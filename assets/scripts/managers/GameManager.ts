@@ -23,8 +23,8 @@ export class GameManager extends Component {
         director.addPersistRootNode(this.node);
 
         // 游戏启动时初始化
-        PopupManager.init(find("Canvas/PopupRoot"));
-        AudioManager.GetInstance().init(find("Canvas/AudioRoot/BgmPlayer"), find("Canvas/AudioRoot/SfxPlayers"));
+        PopupManager.init(find("Canvas/MainGame/PopupRoot"));
+        AudioManager.GetInstance().init(find("Canvas/MainGame/AudioRoot/BgmPlayer"), find("Canvas/MainGame/AudioRoot/SfxPlayers"));
     }
 
     start() {}

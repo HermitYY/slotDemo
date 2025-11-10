@@ -1,15 +1,16 @@
 import { Singleton } from "../common/Singleton";
+import { LogicTools } from "../Tools/LogicTools";
 import { AudioManager, BgmEnum, PlayMode, SfxEnum } from "./AudioManager";
 import { GameSpeedManager } from "./GameSpeedManager";
 
 export class AudioControlManager extends Singleton {
     //#region background
     public async playBgmNormalBackground() {
-        return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.Background);
+        // return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.Background);
     }
 
     public async playBgmFreeGameBackground() {
-        return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.FreegameBackground);
+        // return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.FreegameBackground);
     }
     //#endregion
 
@@ -51,6 +52,7 @@ export class AudioControlManager extends Singleton {
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.GridClear9);
     }
     public async playSfxRefresh() {
+        await LogicTools.Delay(200);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Refresh);
     }
     public async playSfxBowUpgrade1() {
@@ -125,6 +127,21 @@ export class AudioControlManager extends Singleton {
     }
     public async playSfxSnicker() {
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Snicker);
+    }
+
+    public async playQuickLowBoom() {
+        await LogicTools.Delay(200);
+        AudioManager.GetInstance().stopSfx(SfxEnum.LowRing);
+        this.playSfxLowBoom();
+    }
+
+    public async playQuickHighBoom() {
+        await LogicTools.Delay(200);
+        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear6);
+        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear7);
+        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear8);
+        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear9);
+        this.playSfxHeightBoom();
     }
     //#endregion
 }

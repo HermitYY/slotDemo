@@ -1,7 +1,7 @@
 import { _decorator, Node, Prefab, Vec3, instantiate, assetManager, UITransform } from "cc";
-import { SlotItem } from "../ui/SlotItem";
 import { GameSpeedManager } from "./GameSpeedManager";
 import { SequenceFramePlay } from "../common/SequenceFramePlay";
+import { GridManager } from "./GridManager";
 
 export class EffectManager {
     private static effectMap: Map<string, Prefab> = new Map();
@@ -246,7 +246,7 @@ export class EffectManager {
             scaleY = scale[1];
         } else {
             // 使用slotItem的缩放比例 slotItem预制件的宽高为80*78
-            const ratios = SlotItem.fillRatios[scale];
+            const ratios = GridManager.fillRatios[scale];
             if (ratios) {
                 scaleX = ratios[0] * (80 / node.getComponent(UITransform).width);
                 scaleY = ratios[1] * (78 / node.getComponent(UITransform).height);

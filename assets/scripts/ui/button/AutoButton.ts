@@ -16,7 +16,7 @@ export class AutoButton extends Component {
     @property(Node)
     StopAutoButton: Node = null!;
 
-    start() {
+    onLoad() {
         EventManager.on(E_GAME_EVENT.GAME_NEW_BET, this.BettingButtonOpacity, this);
         EventManager.on(E_GAME_EVENT.GAME_BET_END, this.BettedButtonOpacity, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoBegin, this);

@@ -38,7 +38,7 @@ export class PopupSetting extends BasePopup {
     start() {
         this.playRotateEffect(-180);
         this.updateSoundButton();
-        const slotMachine = find("Canvas/Grid/SlotGroup/SlotMachine")?.getComponent(SlotMachine);
+        const slotMachine = find("Canvas/MainGame/Grid/SlotGroup/SlotMachine")?.getComponent(SlotMachine);
         slotMachine && this.updateButtonBan(slotMachine.isRolling);
     }
 

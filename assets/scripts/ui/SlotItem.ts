@@ -2,7 +2,6 @@ import { _decorator, Component, Label, Sprite, SpriteFrame, tween, UITransform, 
 import { EffectManager } from "../managers/EffectManager";
 import { UItools } from "../Tools/UItools";
 import { LogicTools } from "../Tools/LogicTools";
-import proto from "../network/MLWZ_msg";
 import { GridManager } from "../managers/GridManager";
 import { AudioControlManager } from "../managers/AudioControlManager";
 
@@ -78,7 +77,7 @@ export class SlotItem extends Component {
         sprite.spriteFrame = this.icons[this.id];
         const tf = this.getComponent(UITransform);
         if (tf) {
-            const ratio = SlotItem.fillRatios[this.id] || [1, 1];
+            const ratio = GridManager.fillRatios[this.id] || [1, 1];
             const cellW = 80;
             const cellH = 78;
             tf.setContentSize(cellW * ratio[0], cellH * ratio[1]);
@@ -91,15 +90,19 @@ export class SlotItem extends Component {
         needPlayEffectArr: Array<{
             index: string | number;
             multiple: string | number;
-        }>
+        }>,
+        isPlayVoice = true
     ): Promise<void> {
         if (this.id !== 10) return;
+
         EffectManager.playEffect("SlotEffectClear_10", this.node, Vec3.ZERO, { siblingIndex: 0 });
         const selfIndex = this.exShowCfg.myGridIndex ?? this.exShowCfg.row * GridManager.GetInstance().cols + this.exShowCfg.column;
         const myItem = needPlayEffectArr.find((item) => item.index == `${selfIndex}`);
         if (!myItem || !this.MultipleLabelNode) return;
         this.MultipleLabelNode.getComponent(Label).string = "x" + myItem.multiple.toString();
-        AudioControlManager.GetInstance().playSfxBeetleMultipleShow();
+        if (isPlayVoice) {
+            AudioControlManager.GetInstance().playSfxBeetleMultipleShow();
+        }
         await LogicTools.Delay((EffectManager.getEffectDuration("SlotEffectClear_10") / 2) * 1000);
         if (!this.MultipleLabelNode) return;
         this.MultipleLabelNode.active = true;

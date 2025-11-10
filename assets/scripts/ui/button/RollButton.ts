@@ -204,15 +204,16 @@ export class RollButton extends Component {
         this.curShowNum = times;
     }
 
-    private countdownChange(newTimes: number) {
-        this.countdown.playStep(newTimes, this.curShowNum, 0.5);
-        this.playBgEffect();
-        this.curShowNum = newTimes;
+    private countdownChange(data: { times: number; isContinue: boolean }) {
+        this.countdown.playStep(data.times, this.curShowNum, 0.5);
+        data.isContinue && this.playBgEffect();
+        this.curShowNum = data.times;
     }
 
     private countdownEnd() {
         this.countdownNode.active = false;
         this.spinNode.active = true;
+        this.BgEffectNode.active = false;
     }
     //#endregion
 }

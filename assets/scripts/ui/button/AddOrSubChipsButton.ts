@@ -15,7 +15,7 @@ export class AddOrSubChipsButton extends Component {
     AddButton: Node = null;
     @property(Node)
     SubmitButton: Node = null;
-    start() {
+    onLoad() {
         this.updateOpacity();
         EventManager.on(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.updateOpacity, this);
         EventManager.on(E_GAME_EVENT.GAME_NEW_BET, this.BettingButtonOpacity, this);

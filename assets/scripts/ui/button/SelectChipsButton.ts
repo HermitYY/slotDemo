@@ -1,4 +1,4 @@
-import { _decorator, Component, Prefab, Label, Vec3, UITransform } from "cc";
+import { _decorator, Component, Prefab, Label, Vec3, UITransform, Button } from "cc";
 import { PopupManager } from "../popup/PopupManager";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { E_GAME_MULTIPLE_TYPE, SocketManager } from "../../network/SocketManager";
@@ -13,9 +13,17 @@ export class SelectChipsButton extends Component {
     @property(Prefab)
     PopupWindow: Prefab = null!;
 
-    protected start(): void {
+    private button: Button = null!;
+
+    protected onLoad(): void {
         EventManager.on(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.updateEffect, this);
+        EventManager.on(E_GAME_EVENT.GAME_NEW_BET, this.selfBan, this);
+        EventManager.on(E_GAME_EVENT.GAME_BET_END, this.selfUnBan, this);
         this.updateEffect();
+    }
+
+    protected onDestroy(): void {
+        EventManager.removeAllByTarget(this);
     }
     onClickSelectChips() {
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
@@ -33,5 +41,15 @@ export class SelectChipsButton extends Component {
         } else {
             EffectManager.stopEffect("ToggleRightButtonEffect");
         }
+    }
+
+    selfBan() {
+        this.button ??= this.node.getComponent(Button);
+        this.button.interactable = false;
+    }
+
+    selfUnBan() {
+        this.button ??= this.node.getComponent(Button);
+        this.button.interactable = true;
     }
 }

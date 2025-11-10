@@ -149,7 +149,7 @@ export class PopupHistoryDetail extends BasePopup {
         this.totalChipsNode.active = curpageInfo.ieEnd == 2 && curpageInfo.curChips > 0;
         this.totalChipsLabel.string = UItools.GetInstance().formatCurrency(curpageInfo.curChips ?? 0, false);
         this.multipleNode.active = curpageInfo.ieEnd == 1;
-        this.multipleLabel.string = curpageInfo.allMultiple + "";
+        this.multipleLabel.string = curpageInfo.curMultiple + "";
     }
 
     updateButtons() {

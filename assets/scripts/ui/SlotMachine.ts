@@ -84,14 +84,14 @@ export class SlotMachine extends Component {
     start() {
         // 按钮禁用
         this.updateRollButtonIsBan(true);
-
+        EventManager.emit(E_GAME_EVENT.GAME_NEW_BET);
         EventManager.on(E_GAME_EVENT.GAME_GRID_INIT_DATA, this.initGrid, this);
         EventManager.emit(E_GAME_EVENT.GAME_ENTER_MAIN_SCENE);
         EventManager.on(E_GAME_EVENT.GAME_GRID_UPDATA_CONSECUTIVE, this.consecutiveBegin, this);
         EventManager.on(E_GAME_EVENT.GAME_GRID_UPDATA_NO_CONSECUTIVE, this.consecutiveEnd, this);
         EventManager.on(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.updateChipGroup, this);
         // 自动相关
-        // EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoModeBegin, this);
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoModeBegin, this);
         // EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.autoModeEnd, this);
         // 免费游戏相关
         EventManager.on(E_GAME_EVENT.GAME_FREE_REFRESH_NO_CONSECUTIVE, this.freeConsecutiveEnd, this);
@@ -143,28 +143,28 @@ export class SlotMachine extends Component {
         const isNormalMode = mode == E_GAME_SCENE_TYPE.NORMAL;
         const isFreeMode = mode == E_GAME_SCENE_TYPE.FREE_GAME;
         // 普通模式按钮组
-        const buttonsNode = (this.ModeParents[0] ??= find("Canvas/Buttons"));
+        const buttonsNode = (this.ModeParents[0] ??= find("Canvas/MainGame/Buttons"));
         buttonsNode.active = isNormalMode;
         // 普通模式赚取文本
-        const normalWinChips = (this.ModeParents[4] ??= find("Canvas/Text/RightRect"));
+        const normalWinChips = (this.ModeParents[4] ??= find("Canvas/MainGame/Text/RightRect"));
         normalWinChips.active = isNormalMode;
         // 模型
-        const normalModel = (this.ModeParents[1] ??= find("Canvas/Mode/NormalModel"));
+        const normalModel = (this.ModeParents[1] ??= find("Canvas/MainGame/Mode/NormalModel"));
         normalModel.active = isNormalMode;
-        const freeModel = (this.ModeParents[2] ??= find("Canvas/Mode/FreeModel"));
+        const freeModel = (this.ModeParents[2] ??= find("Canvas/MainGame/Mode/FreeModel"));
         freeModel.active = isFreeMode;
         // free模式赚的筹码、次数、倍率父节点
-        const gourp = (this.ModeParents[3] ??= find("Canvas/Mode/FreeText"));
+        const gourp = (this.ModeParents[3] ??= find("Canvas/MainGame/Mode/FreeText"));
         gourp.active = isFreeMode;
         // free火背景与normal树叶背景
-        const normalEffectBg = (this.ModeParents[5] ??= find("Canvas/Mode/BgEffect/normal"));
+        const normalEffectBg = (this.ModeParents[5] ??= find("Canvas/MainGame/Mode/BgEffect/normal"));
         normalEffectBg.active = isNormalMode;
-        const freeEffectBg = (this.ModeParents[6] ??= find("Canvas/Mode/BgEffect/free"));
+        const freeEffectBg = (this.ModeParents[6] ??= find("Canvas/MainGame/Mode/BgEffect/free"));
         freeEffectBg.active = isFreeMode;
         // gird背景
-        const normalBg = (this.ModeParents[7] ??= find("Canvas/Grid/normalBg"));
+        const normalBg = (this.ModeParents[7] ??= find("Canvas/MainGame/Grid/normalBg"));
         normalBg.active = isNormalMode;
-        const freeBg = (this.ModeParents[8] ??= find("Canvas/Grid/freeBg"));
+        const freeBg = (this.ModeParents[8] ??= find("Canvas/MainGame/Grid/freeBg"));
         freeBg.active = isFreeMode;
     }
 
@@ -177,6 +177,7 @@ export class SlotMachine extends Component {
         } else {
             // 没在combo 启用按钮
             this.updateRollButtonIsBan(false);
+            EventManager.emit(E_GAME_EVENT.GAME_BET_END);
         }
     }
 
@@ -395,9 +396,9 @@ export class SlotMachine extends Component {
     }
 
     async updateFreeCtrl(curScene: proto.newxxs.ICurScene, isInit: boolean = false) {
-        this.freeTimes = this.freeTimes ??= find("Canvas/Mode/FreeText/RemainingTimes/times");
-        this.freePengali = this.freePengali ??= find("Canvas/Mode/FreeText/Multiple/TotalPengali");
-        this.freeTotalWinChips = this.freeTotalWinChips ??= find("Canvas/Mode/FreeText/RightRect/MoneyGroup/Once");
+        this.freeTimes = this.freeTimes ??= find("Canvas/MainGame/Mode/FreeText/RemainingTimes/times");
+        this.freePengali = this.freePengali ??= find("Canvas/MainGame/Mode/FreeText/Multiple/TotalPengali");
+        this.freeTotalWinChips = this.freeTotalWinChips ??= find("Canvas/MainGame/Mode/FreeText/RightRect/MoneyGroup/Once");
         this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
         const freePengaliLabel = this.freePengali.getComponentInChildren(Label);
         if (+freePengaliLabel.string < curScene.allMultiple) {
@@ -539,7 +540,7 @@ export class SlotMachine extends Component {
                                     }
                                 });
                                 await this._queue.wait(LogicTools.Delay(EffectManager.getEffectDuration(`SlotEffectClear_${icon14}`) * 1000));
-                                this.freeTimes = this.freeTimes ??= find("Canvas/Mode/FreeText/RemainingTimes/times");
+                                this.freeTimes = this.freeTimes ??= find("Canvas/MainGame/Mode/FreeText/RemainingTimes/times");
                                 AudioControlManager.GetInstance().playSfxFireExplosion();
                                 await this._queue.wait(EffectManager.playEffect("FireMultiple", this.freeTimes.parent, Vec3.ZERO));
                                 this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
@@ -606,7 +607,7 @@ export class SlotMachine extends Component {
         }
         this.dropOldColumns();
         const curScene = SocketManager.GetInstance().CurScene;
-        this.spawnNewColumns(curScene);
+        this.spawnNewColumns(curScene, false);
         this.stopEffect();
         this.stopCheckLadybirdEffect();
         EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_END);
@@ -669,12 +670,14 @@ export class SlotMachine extends Component {
      * @param arr
      * @returns
      */
-    private spawnNewColumns(curScene: proto.newxxs.ICurScene): Promise<void> {
+    private spawnNewColumns(curScene: proto.newxxs.ICurScene, isPlayVoice = true): Promise<void> {
         const { gridInfo: newGridArrs } = LogicTools.GetInstance().transGridInfo(curScene);
         return new Promise((resolve) => {
             let finishedCount = 0;
             let totalNew = this.rows * this.cols;
-            AudioControlManager.GetInstance().playSfxRefresh();
+            if (isPlayVoice) {
+                AudioControlManager.GetInstance().playSfxRefresh();
+            }
             for (let c = 0; c < this.cols; c++) {
                 const columnNode = this.columns[c];
                 this.grid[c] = [];
@@ -705,7 +708,8 @@ export class SlotMachine extends Component {
                                         index: item.index,
                                         multiple: +item.multiple,
                                     };
-                                })
+                                }),
+                                isPlayVoice
                             );
                             finishedCount++;
                             if (finishedCount === totalNew) {
@@ -826,6 +830,7 @@ export class SlotMachine extends Component {
                 }
             }
         }
+        console.log(removeGridArr);
         const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab, { maskOpacity: 80 });
         popupMask.setEffectCfg(removeGridArr);
         await popupMask.show();
@@ -991,10 +996,10 @@ export class SlotMachine extends Component {
     private async checkAutoMode() {
         const isAuto = AutoManager.GetInstance().isAutoIng;
         if (isAuto) {
-            await LogicTools.Delay(GameSpeedManager.GetInstance().getRoundEndBackTime() * 1000);
             const autoTimes = AutoManager.GetInstance().autoTimes;
             if (autoTimes > 0) {
                 this.updateRollButtonIsBan(true);
+                await LogicTools.Delay(GameSpeedManager.GetInstance().getRoundEndBackTime() * 1000);
             }
             AutoManager.GetInstance().continueAuto();
             if (autoTimes <= 0) {
@@ -1003,6 +1008,11 @@ export class SlotMachine extends Component {
         } else {
             EventManager.emit(E_GAME_EVENT.GAME_BET_END);
         }
+    }
+
+    private async autoModeBegin() {
+        EventManager.emit(E_GAME_EVENT.GAME_NEW_BET);
+        this.updateRollButtonIsBan(true);
     }
     //#endregion
 
