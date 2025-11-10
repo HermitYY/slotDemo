@@ -5,6 +5,7 @@ import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { AutoManager } from "../../managers/AutoManager";
 import { E_GAME_SPEED_TYPE, GameSpeedManager } from "../../managers/GameSpeedManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
+import { Countdown } from "../../common/Countdown";
 
 const { ccclass, property } = _decorator;
 
@@ -19,24 +20,47 @@ export class RollButton extends Component {
     @property({ type: Node })
     private spinNode: Node = null;
 
+    @property({ type: Node })
+    private countdownNode: Node = null;
+    private countdown: Countdown = null!;
+
+    @property({ type: Node })
+    private BgEffectNode: Node = null;
+
     private spinOp: UIOpacity = null;
 
     private _isPlayingEffect = false;
     private _isPlayingSpinEffect = false;
+
+    private curShowNum = 0;
     private get duration() {
         return Math.max(0, EffectManager.getEffectDuration("RollButton_UpLight") - 0.1);
+    }
+
+    protected start(): void {
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.initNum, this);
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, this.countdownChange, this);
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.countdownEnd, this);
+        this.countdownEnd();
+    }
+
+    protected onDestroy(): void {
+        EventManager.removeAllByTarget(this);
     }
 
     onClick() {
         if (this._isPlayingEffect) return;
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.playEffect();
+        this.playBgEffect();
         this.slotMachine.roll();
     }
 
+    //#region 点击-旋转动画
+
     playEffect() {
         this._isPlayingEffect = true;
-        this.playerScaleEffect();
+        this.playScaleEffect();
         const pos = this.node.position.clone();
         EffectManager.stopEffect("RollButton_UpLight", this.node.parent);
         EffectManager.stopEffect("RollButton_MidLight", this.node);
@@ -100,7 +124,7 @@ export class RollButton extends Component {
             .start();
     }
 
-    playerScaleEffect() {
+    playScaleEffect() {
         const { magnify, shrink, magnify2, shrinkNormal } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
         const startScale = this.node.scale.clone();
         const node = this.node;
@@ -109,6 +133,49 @@ export class RollButton extends Component {
             .to(shrink, { scale: startScale.clone().multiplyScalar(0.9) }, { easing: easing.quadInOut })
             .to(magnify2, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
             .to(shrinkNormal, { scale: startScale }, { easing: easing.quadIn })
+            .start();
+    }
+
+    playBgEffect() {
+        const node = this.BgEffectNode;
+        node.active = true;
+        const startScale = node.scale.clone();
+        const { bgEffectDuration } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
+
+        tween(node)
+            .to(0.15, { scale: startScale.clone().multiplyScalar(1.2) }, { easing: easing.quadOut })
+            .to(0.15, { scale: startScale.clone().multiplyScalar(0.9) }, { easing: easing.quadInOut })
+            .to(0.15, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
+            .to(0.1, { scale: startScale }, { easing: easing.quadIn })
+            .start();
+
+        const effectOp = node.getComponent(UIOpacity) ?? node.addComponent(UIOpacity);
+        const startRotation = node.rotation.clone();
+        tween({ t: 0 })
+            .to(
+                bgEffectDuration,
+                { t: 1 },
+                {
+                    easing: "quadInOut",
+                    onUpdate: (target: any) => {
+                        if (effectOp && effectOp.isValid) {
+                            if (target.t <= 0.5) {
+                                effectOp.opacity = target.t * 255 * 2;
+                            } else {
+                                effectOp.opacity = (1 - (target.t - 0.5) * 2) * 255;
+                            }
+                        }
+                        const additionalRot = new Quat();
+                        Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * target.t);
+                        const currentRot = new Quat();
+                        Quat.multiply(currentRot, startRotation, additionalRot);
+                        node.rotation = currentRot;
+                    },
+                }
+            )
+            .call(() => {
+                node.active = false;
+            })
             .start();
     }
 
@@ -125,4 +192,27 @@ export class RollButton extends Component {
             btn.rotation = newRotation;
         }
     }
+
+    //#endregion
+
+    //#region 自动模式倒计时
+    private initNum(times: number) {
+        this.countdownNode.active = true;
+        this.spinNode.active = false;
+        const countdown = (this.countdown ??= this.countdownNode.getComponent(Countdown));
+        countdown.setValue(times);
+        this.curShowNum = times;
+    }
+
+    private countdownChange(newTimes: number) {
+        this.countdown.playStep(newTimes, this.curShowNum, 0.5);
+        this.playBgEffect();
+        this.curShowNum = newTimes;
+    }
+
+    private countdownEnd() {
+        this.countdownNode.active = false;
+        this.spinNode.active = true;
+    }
+    //#endregion
 }

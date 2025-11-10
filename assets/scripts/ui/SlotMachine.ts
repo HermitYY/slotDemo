@@ -988,39 +988,21 @@ export class SlotMachine extends Component {
     //#region  自动模式相关
 
     /** 检查自动模式 */
-    private checkAutoMode() {
+    private async checkAutoMode() {
         const isAuto = AutoManager.GetInstance().isAutoIng;
         if (isAuto) {
+            await LogicTools.Delay(GameSpeedManager.GetInstance().getRoundEndBackTime() * 1000);
             const autoTimes = AutoManager.GetInstance().autoTimes;
             if (autoTimes > 0) {
                 this.updateRollButtonIsBan(true);
             }
             AutoManager.GetInstance().continueAuto();
-            // this.updateAutoButtonOrPanel();
             if (autoTimes <= 0) {
                 EventManager.emit(E_GAME_EVENT.GAME_BET_END);
             }
         } else {
             EventManager.emit(E_GAME_EVENT.GAME_BET_END);
         }
-    }
-
-    private autoModeBegin() {
-        this.updateRollButtonIsBan(true);
-        this.updateAutoButtonOrPanel();
-        // EffectManager.playEffect("AutoingRollButtonEffect", this.rollButton.node.parent, this.rollButton.node.position.clone());
-    }
-
-    private autoModeEnd() {
-        this.updateAutoButtonOrPanel();
-        // EffectManager.stopEffect("AutoingRollButtonEffect");
-    }
-
-    public updateAutoButtonOrPanel() {
-        const isAuto = AutoManager.GetInstance().isAutoIng;
-        const autoTimes = AutoManager.GetInstance().autoTimes;
-        this.AutoButton.active = !isAuto;
-        this.AutoCloseButton.active = isAuto;
     }
     //#endregion
 

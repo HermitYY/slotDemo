@@ -36,11 +36,11 @@ export class AutoButton extends Component {
     onClickCloseAuto() {
         AutoManager.GetInstance().preStopAuto();
         this.updateButton(false);
-        this.BettedButtonOpacity();
+        // this.BettingButtonOpacity();
     }
 
     BettingButtonOpacity() {
-        if (AutoManager.GetInstance().isAutoIng) return;
+        // if (AutoManager.GetInstance().isAutoIng) return;
         const autoButtonOp = this.AutoButton.getComponent(UIOpacity) ?? this.addComponent(UIOpacity);
         autoButtonOp.opacity = SelectChipsButton.banOpacity;
         this.AutoButton.getComponent(Button).interactable = false;

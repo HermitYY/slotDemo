@@ -1,5 +1,6 @@
 import { Singleton } from "../common/Singleton";
 import { SocketManager } from "../network/SocketManager";
+import { LogicTools } from "../Tools/LogicTools";
 import { E_GAME_EVENT, EventManager } from "./EventManager";
 
 export class AutoManager extends Singleton {
@@ -15,7 +16,7 @@ export class AutoManager extends Singleton {
     public beginAuto(autoTimes: number) {
         if (this._isAuto) {
             this._autoTimes = autoTimes;
-            EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN);
+            EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, autoTimes);
         } else {
             this._isAuto = true;
             this._autoTimes = autoTimes;
@@ -37,11 +38,13 @@ export class AutoManager extends Singleton {
             this.autoRoll();
         }
         this._autoTimes--;
-        isInit && EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN);
+        isInit && EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this._autoTimes + 1);
+        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, this._autoTimes);
     }
 
     public preStopAuto() {
         this._autoTimes = 0;
+        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, this._autoTimes);
     }
 
     private autoRoll() {

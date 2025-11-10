@@ -59,6 +59,8 @@ export const enum E_GAME_EVENT {
 
     /** 自动模式开启--管理类派发 */
     GAME_AUTO_MODE_OPEN,
+    /** 自动模式持续运行--次数更新 */
+    GAME_AUTO_MODE_RUNNING,
     /** 自动模式关闭 */
     GAME_AUTO_MODE_CLOSE,
 
@@ -306,7 +308,7 @@ export class EventManager {
     }
 
     /** 移除所有事件 */
-    public static removeAll(): void {
+    private static removeAll(): void {
         this.events.clear();
         if (this.DEBUG) console.log(`[EventManager] removeAll`);
     }
