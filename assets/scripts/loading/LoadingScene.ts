@@ -29,6 +29,9 @@ export class LoadingScene extends Component {
     @property(Label)
     progressLabel: Label | null = null;
 
+    @property(Node)
+    private beginButton!: Node;
+
     private currentProgress: number = 0;
     private actualProgress: number = 0;
     private elapsedTime: number = 0;
@@ -51,12 +54,13 @@ export class LoadingScene extends Component {
                 if (isTimeout) {
                     console.warn("异常,资源加载超时", result);
                 } else {
-                    this._enterGameScene();
+                    this.beginButtonShow(true);
                     this._loadGameEffect();
                 }
             },
             { timeout: 100000, executeOnTimeout: true }
         );
+        this.beginButtonShow(false);
     }
 
     start() {
@@ -99,9 +103,9 @@ export class LoadingScene extends Component {
 
     async _loadGameEffect() {
         await AudioManager.GetInstance().preloadAll();
-        console.log("[GameManager] 音频资源预加载完成");
+        console.log("音频资源预加载完成");
         await EffectManager.preloadAll();
-        console.log("[GameManager] 特效资源预加载完成");
+        console.log("特效资源预加载完成");
     }
 
     update(deltaTime: number) {
@@ -156,13 +160,17 @@ export class LoadingScene extends Component {
         }
     }
 
-    private _enterGameScene() {
+    private enterGameScene() {
         const bundle = assetManager.getBundle("game");
-        if (!bundle) return console.error("❌ 找不到 game bundle");
+        if (!bundle) return console.error("找不到 game bundle");
 
         bundle.loadScene("mainGame", (err, scene) => {
-            if (err) return console.error("❌ 加载 mainGame 场景失败", err);
+            if (err) return console.error("加载 mainGame 场景失败", err);
             director.runScene(scene);
         });
+    }
+
+    private beginButtonShow(isShow: boolean) {
+        this.beginButton.active = isShow;
     }
 }

@@ -144,7 +144,8 @@ export class AudioManager extends Singleton {
     }
 
     // ---------------- utilities ----------------
-    public checkDuration(name: string): number {
+    public checkDuration(audio: SfxEnum | BgmEnum): number {
+        const name = audio as string;
         const clip = this.clipMap.get(name);
         return clip ? clip.getDuration() : 0;
     }

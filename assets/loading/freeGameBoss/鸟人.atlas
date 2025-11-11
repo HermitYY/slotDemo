@@ -1,0 +1,139 @@
+
+鸟人.png
+size: 1141,445
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+1
+  rotate: true
+  xy: 693, 88
+  size: 173, 119
+  orig: 173, 119
+  offset: 0, 0
+  index: -1
+10
+  rotate: true
+  xy: 960, 9
+  size: 131, 101
+  orig: 131, 101
+  offset: 0, 0
+  index: -1
+11
+  rotate: false
+  xy: 1020, 299
+  size: 119, 144
+  orig: 119, 144
+  offset: 0, 0
+  index: -1
+12
+  rotate: false
+  xy: 1063, 16
+  size: 73, 124
+  orig: 73, 124
+  offset: 0, 0
+  index: -1
+13
+  rotate: true
+  xy: 820, 8
+  size: 101, 138
+  orig: 101, 138
+  offset: 0, 0
+  index: -1
+14
+  rotate: true
+  xy: 767, 276
+  size: 167, 99
+  orig: 167, 99
+  offset: 0, 0
+  index: -1
+15
+  rotate: true
+  xy: 1067, 223
+  size: 74, 67
+  orig: 74, 67
+  offset: 0, 0
+  index: -1
+16
+  rotate: true
+  xy: 814, 111
+  size: 163, 116
+  orig: 163, 116
+  offset: 0, 0
+  index: -1
+2
+  rotate: true
+  xy: 1067, 151
+  size: 70, 67
+  orig: 70, 67
+  offset: 0, 0
+  index: -1
+3
+  rotate: true
+  xy: 438, 30
+  size: 28, 26
+  orig: 28, 26
+  offset: 0, 0
+  index: -1
+4
+  rotate: true
+  xy: 599, 263
+  size: 180, 166
+  orig: 180, 166
+  offset: 0, 0
+  index: -1
+4b5ae760be7024b06fccaefdc70f49bd64545831512d09-m1aPht
+  rotate: false
+  xy: 868, 293
+  size: 150, 150
+  orig: 150, 150
+  offset: 0, 0
+  index: -1
+5
+  rotate: true
+  xy: 438, 5
+  size: 23, 22
+  orig: 23, 22
+  offset: 0, 0
+  index: -1
+6
+  rotate: false
+  xy: 438, 60
+  size: 135, 190
+  orig: 135, 190
+  offset: 0, 0
+  index: -1
+7
+  rotate: true
+  xy: 438, 252
+  size: 191, 159
+  orig: 191, 159
+  offset: 0, 0
+  index: -1
+8
+  rotate: false
+  xy: 693, 4
+  size: 125, 82
+  orig: 125, 82
+  offset: 0, 0
+  index: -1
+9
+  rotate: true
+  xy: 932, 142
+  size: 149, 133
+  orig: 149, 133
+  offset: 0, 0
+  index: -1
+全身残影
+  rotate: true
+  xy: 2, 2
+  size: 441, 434
+  orig: 441, 434
+  offset: 0, 0
+  index: -1
+手部残影
+  rotate: true
+  xy: 575, 65
+  size: 185, 116
+  orig: 185, 116
+  offset: 0, 0
+  index: -1

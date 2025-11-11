@@ -5,6 +5,7 @@ import { RoundBox } from "../../common/RoundBox";
 import { AudioManager } from "../../managers/AudioManager";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { SlotMachine } from "../SlotMachine";
+import { AudioControlManager } from "../../managers/AudioControlManager";
 
 const { ccclass, property } = _decorator;
 
@@ -52,12 +53,14 @@ export class PopupSetting extends BasePopup {
     }
 
     onClickClose() {
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.close();
     }
 
     onClickOpenSound() {
         AudioManager.GetInstance().setVolumeForType("bgm", 100);
         AudioManager.GetInstance().setVolumeForType("sfx", 100);
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.updateSoundButton();
     }
 

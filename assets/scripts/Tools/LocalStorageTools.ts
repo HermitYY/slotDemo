@@ -3,6 +3,7 @@ import { Singleton } from "../common/Singleton";
 export enum StorageKey {
     BGM_VALUE = "music_value",
     SFX_VALUE = "sfx_value",
+    GAME_SPEED = "game_speed",
 }
 
 export class LocalStorageTools extends Singleton {

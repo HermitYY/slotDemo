@@ -1,7 +1,8 @@
 import { Singleton } from "../common/Singleton";
+import { LocalStorageTools, StorageKey } from "../Tools/LocalStorageTools";
 import { E_GAME_EVENT, EventManager } from "./EventManager";
 
-export const enum E_GAME_SPEED_TYPE {
+export enum E_GAME_SPEED_TYPE {
     NORMAL = 1,
     FAST = 2,
     // SUPER_FAST = 3,
@@ -9,13 +10,26 @@ export const enum E_GAME_SPEED_TYPE {
 
 export class GameSpeedManager extends Singleton {
     private _speed: E_GAME_SPEED_TYPE = E_GAME_SPEED_TYPE.NORMAL;
+    private _hasLoadLocalStorage = false;
     /** 切换到指定游戏速度 */
     public switchToSpeed(speed: E_GAME_SPEED_TYPE) {
+        if (this._speed === speed) return;
         this._speed = speed;
+        LocalStorageTools.GetInstance().setItem(StorageKey.GAME_SPEED, speed);
         EventManager.emit(E_GAME_EVENT.GAME_SPEED_UPDATE);
     }
 
     public get speed(): E_GAME_SPEED_TYPE {
+        if (!this._hasLoadLocalStorage) {
+            this._hasLoadLocalStorage = true;
+            const saved = LocalStorageTools.GetInstance().getItem<number>(StorageKey.GAME_SPEED, E_GAME_SPEED_TYPE.NORMAL);
+            // 合法判断
+            if (saved === E_GAME_SPEED_TYPE.NORMAL || saved === E_GAME_SPEED_TYPE.FAST) {
+                this._speed = saved;
+            } else {
+                this._speed = E_GAME_SPEED_TYPE.NORMAL;
+            }
+        }
         return this._speed;
     }
 
@@ -25,7 +39,7 @@ export class GameSpeedManager extends Singleton {
             case E_GAME_SPEED_TYPE.NORMAL:
                 return 1;
             case E_GAME_SPEED_TYPE.FAST:
-                return 2;
+                return 1.5;
             // case E_GAME_SPEED_TYPE.SUPER_FAST:
             //     return 3;
         }

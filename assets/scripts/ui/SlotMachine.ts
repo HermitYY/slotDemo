@@ -16,6 +16,7 @@ import { PopupLayer, PopupShowType } from "./popup/BasePopup";
 import { AbortableQueue } from "../common/AbortableQueue";
 import { PopupFreeResults } from "./popup/PopupFreeResults";
 import { AudioControlManager } from "../managers/AudioControlManager";
+import { AudioManager, SfxEnum } from "../managers/AudioManager";
 
 const { ccclass, property } = _decorator;
 
@@ -245,8 +246,8 @@ export class SlotMachine extends Component {
         });
 
         SocketManager.GetInstance().curBet();
-        this.updateWinChipsText(curScene);
         await this.clearAwardGrid(awardIndexArrs ?? []);
+        this.updateWinChipsText(curScene);
         await this.comboEffect(curScene.comboCount);
     }
 
@@ -359,8 +360,8 @@ export class SlotMachine extends Component {
             });
         });
         SocketManager.GetInstance().curBet();
-        this.updateWinChipsText(curScene);
         await this.clearAwardGrid(awardIndexArrs ?? []);
+        this.updateWinChipsText(curScene);
         await this.comboEffect(curScene.comboCount);
     }
 
@@ -518,8 +519,11 @@ export class SlotMachine extends Component {
                             if (!curScene.curChips || isEnterFree) {
                                 await this._queue.wait(this.updateFreeCtrl(curScene));
                             }
-                            await this._queue.wait(LogicTools.Delay(isAttack || isEnterFree ? 2000 : 0), true);
-                            console.log("回放结束");
+                            let delayTime = 0;
+                            isAttack && (delayTime = 2200);
+                            isEnterFree && (delayTime = 300);
+                            console.log("isAttack", isAttack);
+                            await this._queue.wait(LogicTools.Delay(delayTime), true);
                             EventManager.emit(E_GAME_EVENT.GAME_REPLAY_STOP);
                             return;
                         } else {
@@ -565,8 +569,8 @@ export class SlotMachine extends Component {
                     if (!awardIndexArrs.length) return;
 
                     this.curComboCount++;
-                    this.updateWinChipsText(curScene);
                     this.clearAwardGrid(awardIndexArrs);
+                    this.updateWinChipsText(curScene);
                     await this._queue.wait(this._waitGridDropEnd());
                     if (this._queue.isAborted) return;
                     const nextScene = this._curReplayArr[this._currentReplayIndex + 1];
@@ -830,7 +834,6 @@ export class SlotMachine extends Component {
                 }
             }
         }
-        console.log(removeGridArr);
         const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab, { maskOpacity: 80 });
         popupMask.setEffectCfg(removeGridArr);
         await popupMask.show();
@@ -967,7 +970,7 @@ export class SlotMachine extends Component {
         }
     }
 
-    private updateWinChipsText(curScene: proto.newxxs.ICurScene) {
+    private updateWinChipsText(curScene: proto.newxxs.ICurScene, voiceDuration?: number) {
         const { chipsInfo } = LogicTools.GetInstance().transGridInfo(curScene);
         if (this.chipLabel3) {
             const computeChips = chipsInfo.comboChips || chipsInfo.winChips;
@@ -975,7 +978,11 @@ export class SlotMachine extends Component {
             if (+this.chipLabel3.string.replace(/,/g, "") >= computeChips) {
                 this.chipLabel3.string = "0";
             }
-            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, true, 500, false, false);
+            AudioControlManager.GetInstance().playSfShortGold();
+            if (!voiceDuration) {
+                voiceDuration = AudioManager.GetInstance().checkDuration(SfxEnum.ShortGold) * 800;
+            }
+            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, true, voiceDuration, false, false);
         }
     }
 
@@ -1226,13 +1233,14 @@ export class SlotMachine extends Component {
             });
             if (this._ladybirdCancel) return;
             firstFont.getComponent(Label).string = `x${curScene.allMultiple}`;
+            AudioControlManager.GetInstance().playSfxBeetleMultipleAdd();
             await EffectManager.playEffect("MultipleMove", firstFont.parent, new Vec3(0, this.node.parent.getPosition().y), { siblingIndex: 3 });
         }
         if (this._ladybirdCancel) return;
         const midRect = this.chipLabel3.node.parent.parent;
+        AudioControlManager.GetInstance().playSfxFireBurning();
         await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
         if (this._ladybirdCancel) return;
-        AudioControlManager.GetInstance().playSfxFireBurning();
         EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
         await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent.parent, "", 0.4, {
             target: firstFont,
@@ -1257,11 +1265,12 @@ export class SlotMachine extends Component {
                 if (!this._ladybirdCancel) {
                     await LogicTools.waitNextFrame();
                     if (this._ladybirdCancel) return;
+                    AudioControlManager.GetInstance().playSfxDingling();
                     const localPosIn = multipleLabel.parent.parent.inverseTransformPoint(new Vec3(), multipleLabel.worldPosition);
                     await EffectManager.playEffect("MultipleMoveLight", multipleLabel.parent.parent, new Vec3(localPosIn.x, localPosIn.y - 75), { siblingIndex: 2 });
                     multipleLabel.active = false;
                     if (this._ladybirdCancel) return;
-                    this.updateWinChipsText(curScene);
+                    this.updateWinChipsText(curScene, 800);
                 }
             })
             .start();

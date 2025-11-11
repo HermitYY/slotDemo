@@ -6,11 +6,11 @@ import { GameSpeedManager } from "./GameSpeedManager";
 export class AudioControlManager extends Singleton {
     //#region background
     public async playBgmNormalBackground() {
-        // return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.Background);
+        return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.Background);
     }
 
     public async playBgmFreeGameBackground() {
-        // return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.FreegameBackground);
+        return AudioManager.GetInstance().playBgm(PlayMode.Replace, BgmEnum.FreegameBackground);
     }
     //#endregion
 
@@ -126,6 +126,7 @@ export class AudioControlManager extends Singleton {
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.LoogGold);
     }
     public async playSfxSnicker() {
+        await LogicTools.Delay(100);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Snicker);
     }
 

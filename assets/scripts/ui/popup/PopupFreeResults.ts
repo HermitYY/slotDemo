@@ -5,6 +5,7 @@ import { LogicTools } from "../../Tools/LogicTools";
 import { UItools } from "../../Tools/UItools";
 import { EffectManager } from "../../managers/EffectManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
+import { AudioManager, SfxEnum } from "../../managers/AudioManager";
 
 const { ccclass, property } = _decorator;
 
@@ -51,14 +52,20 @@ export class PopupFreeResults extends BasePopup {
             AudioControlManager.GetInstance().playSfxfreeEndAll();
             this.endPanel.active = true;
             AudioControlManager.GetInstance().playSfxLoogGold();
-            UItools.GetInstance().showCurrencyValue(curScene.winChips, this.endPanel.getComponentInChildren(Label), true, 1500, false);
+            UItools.GetInstance().showCurrencyValue(
+                curScene.winChips,
+                this.endPanel.getComponentInChildren(Label),
+                true,
+                AudioManager.GetInstance().checkDuration(SfxEnum.LoogGold) * 1000,
+                false
+            );
             EffectManager.playEffect("LadybirdTextFlash", this.endPanel, new Vec3(-6, 295));
             EffectManager.playEffect("LadybirdHandFlash", this.endPanel, new Vec3(0, 18));
             return;
         }
         const comboChips = curScene.curChips;
         AudioControlManager.GetInstance().playSfxLoogGold();
-        UItools.GetInstance().showCurrencyValue(comboChips, this.winChips.getComponent(Label), true, 1000, false);
+        UItools.GetInstance().showCurrencyValue(comboChips, this.winChips.getComponent(Label), true, AudioManager.GetInstance().checkDuration(SfxEnum.LoogGold) * 1000, false);
         const bigWinChips = curScene.curBetChips * 5;
         const megaWinChips = curScene.curBetChips * 10;
         const superWinChips = curScene.curBetChips * 20;
