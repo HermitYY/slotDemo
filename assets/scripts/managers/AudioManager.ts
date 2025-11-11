@@ -182,6 +182,10 @@ export class AudioManager extends Singleton {
         if (!clip) return Promise.reject(`[AudioManager] BGM not found: ${name}`);
         if (!this.bgmSource) return Promise.reject("[AudioManager] bgmSource not initialized");
 
+        if (this.bgmPlayingName === name && this.bgmSource.playing) {
+            return Promise.resolve();
+        }
+
         if (mode === PlayMode.Replace) {
             // 清空队列并播放（立即替换）
             this.bgmQueue = [name];

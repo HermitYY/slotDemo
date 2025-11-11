@@ -31,6 +31,8 @@ export class LoadingScene extends Component {
 
     @property(Node)
     private beginButton!: Node;
+    @property(Node)
+    private barGroup!: Node;
 
     private currentProgress: number = 0;
     private actualProgress: number = 0;
@@ -172,5 +174,6 @@ export class LoadingScene extends Component {
 
     private beginButtonShow(isShow: boolean) {
         this.beginButton.active = isShow;
+        this.barGroup.active = !isShow;
     }
 }

@@ -19,18 +19,35 @@ export class GameSpeedManager extends Singleton {
         EventManager.emit(E_GAME_EVENT.GAME_SPEED_UPDATE);
     }
 
+    /** 临时切换到指定游戏速度 */
+    public tempSwitchToSpeed(speed: E_GAME_SPEED_TYPE) {
+        if (this._speed === speed) return;
+        this._speed = speed;
+        EventManager.emit(E_GAME_EVENT.GAME_SPEED_UPDATE);
+    }
+
     public get speed(): E_GAME_SPEED_TYPE {
         if (!this._hasLoadLocalStorage) {
             this._hasLoadLocalStorage = true;
-            const saved = LocalStorageTools.GetInstance().getItem<number>(StorageKey.GAME_SPEED, E_GAME_SPEED_TYPE.NORMAL);
-            // 合法判断
-            if (saved === E_GAME_SPEED_TYPE.NORMAL || saved === E_GAME_SPEED_TYPE.FAST) {
-                this._speed = saved;
-            } else {
-                this._speed = E_GAME_SPEED_TYPE.NORMAL;
-            }
+            this._speed = this.getStorageGameSpeed();
         }
         return this._speed;
+    }
+
+    /** 恢复存储中的游戏速度 */
+    public restoreGameSpeed() {
+        this.switchToSpeed(this.getStorageGameSpeed());
+    }
+
+    /** 读取本地存储中的游戏速度 */
+    public getStorageGameSpeed() {
+        const saved = LocalStorageTools.GetInstance().getItem<number>(StorageKey.GAME_SPEED, E_GAME_SPEED_TYPE.NORMAL);
+        // 合法判断
+        if (saved === E_GAME_SPEED_TYPE.NORMAL || saved === E_GAME_SPEED_TYPE.FAST) {
+            return saved;
+        } else {
+            return E_GAME_SPEED_TYPE.NORMAL;
+        }
     }
 
     /** 得到特效时间缩放比例 */
@@ -61,9 +78,9 @@ export class GameSpeedManager extends Singleton {
     public getNewColumnDropTimeConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { dropTime: 0.45, boundTime: 0.25, boundDis: 6, columnInterval: 0.12, girdInterval: 0.01 };
+                return { dropTime: 0.45, boundTime: 0.25, boundDis: 6, columnInterval: 0.12, girdInterval: 0.01, voiceDelay: 0.3 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { dropTime: 0.4, boundTime: 0.25, boundDis: 8, columnInterval: 0, girdInterval: 0.02 };
+                return { dropTime: 0.4, boundTime: 0.25, boundDis: 8, columnInterval: 0, girdInterval: 0.02, voiceDelay: 0.15 };
             // case E_GAME_SPEED_TYPE.SUPER_FAST:
             //     return { dropTime: 0.2, boundTime: 0.15, columnInterval: 0, girdInterval: 0 };
         }

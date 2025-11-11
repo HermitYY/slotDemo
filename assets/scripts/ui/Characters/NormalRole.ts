@@ -23,6 +23,7 @@ export class NormalRole extends Component {
         EventManager.on(E_GAME_EVENT.GAME_MORO_ATTACK2, this.attack, this);
         EventManager.on(E_GAME_EVENT.GAME_MORO_UPGRADE_BOW, this.upBowLev, this);
         EventManager.on(E_GAME_EVENT.GAME_MORO_UPGRADE_ARROW, this.upArrowLev, this);
+        EventManager.on(E_GAME_EVENT.GAME_HISTORY_REPLAY_END, this.replayEnd, this);
     }
     start() {
         const spine = this.getComponent(sp.Skeleton)!;
@@ -69,6 +70,17 @@ export class NormalRole extends Component {
         for (let index = 1; index <= NormalRole.arrowMaxLev; index++) {
             EffectManager.stopEffect(`Arrow${index}`, this.arrowLevNode);
         }
+    }
+
+    onDisable() {
+        this.replayEnd();
+    }
+
+    replayEnd() {
+        this.stopArrowEffect();
+        this.curArrowLev = 1;
+        this.curBowLev = 1;
+        this.spineCommon.play(0, `daiji${this.curBowLev}`, true);
     }
 
     private get isAlive(): boolean {

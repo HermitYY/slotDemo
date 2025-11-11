@@ -51,8 +51,8 @@ export class AudioControlManager extends Singleton {
     public async playSfxGridClear9() {
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.GridClear9);
     }
-    public async playSfxRefresh() {
-        await LogicTools.Delay(200);
+    public async playSfxRefresh(delayTime: number) {
+        await LogicTools.Delay(delayTime);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Refresh);
     }
     public async playSfxBowUpgrade1() {

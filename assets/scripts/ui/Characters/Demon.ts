@@ -46,6 +46,7 @@ export class Demon extends Component {
             await this.spineCommon.play(0, `挑衅`, false);
             this.spineCommon.queue(0, "待机", true);
         } else {
+            AudioControlManager.GetInstance().playSfxDemonDie();
             await this.spineCommon.play(0, "射穿", false);
             await EffectManager.playEffect("MonsterDie", this.BodyNode, Vec3.ZERO);
             const container = this.node;

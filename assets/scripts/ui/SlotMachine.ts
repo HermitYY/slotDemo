@@ -17,6 +17,7 @@ import { AbortableQueue } from "../common/AbortableQueue";
 import { PopupFreeResults } from "./popup/PopupFreeResults";
 import { AudioControlManager } from "../managers/AudioControlManager";
 import { AudioManager, SfxEnum } from "../managers/AudioManager";
+import { FreeRole } from "./Characters/FreeRole";
 
 const { ccclass, property } = _decorator;
 
@@ -316,7 +317,7 @@ export class SlotMachine extends Component {
         const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab);
         popupMask.setEffectCfg(removeGridArr);
         // 切回普通速率
-        GameSpeedManager.GetInstance().switchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
+        GameSpeedManager.GetInstance().tempSwitchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
         await popupMask.show();
         // freegame载入动画
         AudioControlManager.GetInstance().playBgmEnterFreeGame();
@@ -367,6 +368,7 @@ export class SlotMachine extends Component {
 
     async freeConsecutiveEnd(curScene: proto.newxxs.ICurScene) {
         await this.dropOldColumns();
+        this.updLastFreeTimes(curScene);
         await this.spawnNewColumns(curScene);
         await this.freeRoundEnd(curScene);
         if (!curScene.freeCount) {
@@ -379,6 +381,7 @@ export class SlotMachine extends Component {
     async freeConsecutiveBegin(curScene: proto.newxxs.ICurScene) {
         this.updateChipGroup(curScene);
         await this.dropOldColumns();
+        this.updLastFreeTimes(curScene);
         await this.spawnNewColumns(curScene);
         this.freeComboContinue(curScene);
     }
@@ -393,14 +396,14 @@ export class SlotMachine extends Component {
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
         this.updateRollButtonIsBan(false);
         this.checkAutoMode();
+        GameSpeedManager.GetInstance().restoreGameSpeed();
         // EventManager.emit(E_GAME_EVENT.GAME_FREE_END);
     }
 
     async updateFreeCtrl(curScene: proto.newxxs.ICurScene, isInit: boolean = false) {
-        this.freeTimes = this.freeTimes ??= find("Canvas/MainGame/Mode/FreeText/RemainingTimes/times");
-        this.freePengali = this.freePengali ??= find("Canvas/MainGame/Mode/FreeText/Multiple/TotalPengali");
+        isInit && this.updLastFreeTimes(curScene);
         this.freeTotalWinChips = this.freeTotalWinChips ??= find("Canvas/MainGame/Mode/FreeText/RightRect/MoneyGroup/Once");
-        this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
+        this.freePengali = this.freePengali ??= find("Canvas/MainGame/Mode/FreeText/Multiple/TotalPengali");
         const freePengaliLabel = this.freePengali.getComponentInChildren(Label);
         if (+freePengaliLabel.string < curScene.allMultiple) {
             this.freePengali.active = true;
@@ -409,17 +412,15 @@ export class SlotMachine extends Component {
             AudioControlManager.GetInstance().playSfxFireExplosion();
             EffectManager.playEffect("FireMultiple", this.freePengali.parent, Vec3.ZERO, { siblingIndex: this.freePengali.getSiblingIndex() });
             tween(this.freePengali).to(0.5, { scale: Vec3.ONE }).start();
-            freePengaliLabel.string = `${curScene.allMultiple}`;
-        } else {
-            freePengaliLabel.string = `${curScene.allMultiple}`;
         }
+        freePengaliLabel.string = `${curScene.allMultiple}`;
         UItools.GetInstance().showCurrencyValue(curScene.winChips, this.freeTotalWinChips.getComponent(Label), true, 500, false);
         await LogicTools.Delay(300);
-        const isFreeEnd = !curScene.freeCount;
-        const showType = isFreeEnd ? PopupShowType.FromBottom : null;
-        const customAniOut = isFreeEnd ? "linear" : "backIn";
-        const customAniIn = isFreeEnd ? "linear" : "backOut";
         if ((curScene.curChips > curScene.curBetChips * 5 || !curScene.freeCount) && !isInit) {
+            const isFreeEnd = !curScene.freeCount;
+            const showType = isFreeEnd ? PopupShowType.FromBottom : null;
+            const customAniOut = isFreeEnd ? "linear" : "backIn";
+            const customAniIn = isFreeEnd ? "linear" : "backOut";
             const PopupFreeResults = PopupManager.create<PopupFreeResults>(this.popupFreeResultPrefab, {
                 maskOpacity: 100,
                 maskColor: new Color(75, 75, 75),
@@ -430,6 +431,11 @@ export class SlotMachine extends Component {
             PopupFreeResults.Setdata(curScene);
             await PopupFreeResults.show();
         }
+    }
+
+    private updLastFreeTimes(curScene: proto.newxxs.ICurScene) {
+        this.freeTimes = this.freeTimes ??= find("Canvas/MainGame/Mode/FreeText/RemainingTimes/times");
+        this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
     }
 
     //#endregion
@@ -445,7 +451,7 @@ export class SlotMachine extends Component {
         this._currentReplayIndex = 0;
         const initScene = curSceneArr[0];
         // 开始回放速率设回 NORMAL
-        GameSpeedManager.GetInstance().switchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
+        GameSpeedManager.GetInstance().tempSwitchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
         this._queue.add(() => this._queue!.wait(this.dropOldColumns()));
         this._queue.add(() => this._queue!.wait(this.spawnNewColumns(initScene)));
         this._queue.add(() => this._queue!.wait(this._continueReplayLoopQueueStyle()));
@@ -487,8 +493,6 @@ export class SlotMachine extends Component {
                         });
                         const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab);
                         popupMask.setEffectCfg(removeGridArr);
-                        // 切回普通速率
-                        GameSpeedManager.GetInstance().switchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
                         await this._queue.wait(popupMask.show());
                         if (this._queue.isAborted) {
                             popupMask.close();
@@ -505,6 +509,7 @@ export class SlotMachine extends Component {
                         await this._queue.wait(popupMask.close());
                         this._currentReplayIndex++;
                         await this._queue.wait(this.dropOldColumns());
+                        this.updLastFreeTimes(this._curReplayArr[this._currentReplayIndex]);
                         await this._queue.wait(this.spawnNewColumns(this._curReplayArr[this._currentReplayIndex]), true);
                     } else {
                         if (!curScene?.allCount && !curScene.freeCount) {
@@ -520,7 +525,7 @@ export class SlotMachine extends Component {
                                 await this._queue.wait(this.updateFreeCtrl(curScene));
                             }
                             let delayTime = 0;
-                            isAttack && (delayTime = 2200);
+                            isAttack && (delayTime = 2400);
                             isEnterFree && (delayTime = 300);
                             console.log("isAttack", isAttack);
                             await this._queue.wait(LogicTools.Delay(delayTime), true);
@@ -559,6 +564,7 @@ export class SlotMachine extends Component {
                             if (this._queue.isAborted) return;
                             this._currentReplayIndex++;
                             await this._queue.wait(this.dropOldColumns());
+                            this.updLastFreeTimes(this._curReplayArr[this._currentReplayIndex]);
                             await this._queue.wait(this.spawnNewColumns(this._curReplayArr[this._currentReplayIndex]), true);
                         }
                     }
@@ -616,6 +622,7 @@ export class SlotMachine extends Component {
         this.stopCheckLadybirdEffect();
         EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_END);
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
+        GameSpeedManager.GetInstance().restoreGameSpeed();
     }
     //#endregion
 
@@ -679,8 +686,9 @@ export class SlotMachine extends Component {
         return new Promise((resolve) => {
             let finishedCount = 0;
             let totalNew = this.rows * this.cols;
+            const { columnInterval, girdInterval, dropTime, boundDis, boundTime, voiceDelay } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig();
             if (isPlayVoice) {
-                AudioControlManager.GetInstance().playSfxRefresh();
+                AudioControlManager.GetInstance().playSfxRefresh(voiceDelay * 1000);
             }
             for (let c = 0; c < this.cols; c++) {
                 const columnNode = this.columns[c];
@@ -697,7 +705,6 @@ export class SlotMachine extends Component {
                     slotItem.SetData(id, { row: r, column: c });
 
                     const targetY = -r * this.cellHeight;
-                    const { columnInterval, girdInterval, dropTime, boundDis, boundTime } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig();
                     tween(item)
                         // 每列间隔，每个格子再叠加
                         .delay(columnInterval * c - girdInterval * r)
@@ -1242,11 +1249,13 @@ export class SlotMachine extends Component {
         await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
         if (this._ladybirdCancel) return;
         EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
+        AudioControlManager.GetInstance().playSfxMergeDisperse();
         await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent.parent, "", 0.4, {
             target: firstFont,
             easing: "quadIn",
         });
         if (this._ladybirdCancel) return;
+        AudioControlManager.GetInstance().playSfxMerge();
         EffectManager.playEffect("MultipleBox", midRect.getChildByName("Mask"), new Vec3(0, -203));
         if (this._ladybirdCancel) return;
         this._midRectTween = tween(midRect)
