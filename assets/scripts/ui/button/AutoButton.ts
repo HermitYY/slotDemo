@@ -1,5 +1,5 @@
 import { _decorator, Component, Label, Prefab, UIOpacity, Node, Button } from "cc";
-import { PopupManager } from "../popup/PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "../popup/PopupManager";
 import { AutoManager } from "../../managers/AutoManager";
 import { SelectChipsButton } from "./SelectChipsButton";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
@@ -8,9 +8,6 @@ const { ccclass, property } = _decorator;
 
 @ccclass("AutoButton")
 export class AutoButton extends Component {
-    @property(Prefab)
-    PopupAutoBuy: Prefab = null!;
-
     @property(Node)
     AutoButton: Node = null!;
     @property(Node)
@@ -31,7 +28,7 @@ export class AutoButton extends Component {
     onClick() {
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
         const worldPos = this.node.worldPosition.clone();
-        PopupManager.show(this.PopupAutoBuy, { fromButtonPos: worldPos });
+        PopupManager.show(E_POPUP_TYPE.AutoBuy, { fromButtonPos: worldPos });
     }
 
     onClickCloseAuto() {

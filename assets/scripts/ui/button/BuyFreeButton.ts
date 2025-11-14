@@ -3,7 +3,7 @@ import { E_GAME_MULTIPLE_TYPE, SocketManager } from "../../network/SocketManager
 import { LogicTools } from "../../Tools/LogicTools";
 import { UItools } from "../../Tools/UItools";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
-import { PopupManager } from "../popup/PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "../popup/PopupManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
 const { ccclass, property } = _decorator;
 
@@ -13,8 +13,6 @@ export class BuyFreeButton extends Component {
     needChipslabel: Label = null;
     @property(Label)
     needChipslabelShadow: Label = null;
-    @property(Prefab)
-    PopupWindow: Prefab = null!;
 
     public static banOpacity = 180;
     public static canUseOpacity = 255;
@@ -55,6 +53,6 @@ export class BuyFreeButton extends Component {
         if (isMultiple) return;
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
         const worldPos = this.node.worldPosition.clone();
-        PopupManager.show(this.PopupWindow, { fromButtonPos: worldPos });
+        PopupManager.show(E_POPUP_TYPE.BuyFreeGame, { fromButtonPos: worldPos });
     }
 }

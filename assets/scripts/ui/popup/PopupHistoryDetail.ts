@@ -6,8 +6,9 @@ import { UItools } from "../../Tools/UItools";
 import { HistoryItem } from "../HistoryItem";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { HistoryWindowManager } from "../../managers/HistoryWindowManager";
-import { PopupManager } from "./PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "./PopupManager";
 import { PopupMask } from "./PopupMask";
+import { AudioControlManager } from "../../managers/AudioControlManager";
 const { ccclass, property } = _decorator;
 
 type HistoryItemData = {
@@ -56,15 +57,8 @@ export class PopupHistoryDetail extends BasePopup {
     private leftButton: Node = null;
     @property(Node)
     private rightButton: Node = null;
-
     @property(Node)
     private playButton: Node = null;
-
-    @property(Prefab)
-    private replayControlWindow: Prefab = null;
-    @property(Prefab)
-    public popupMaskPrefab: Prefab = null;
-
     @property(Node)
     private totalChipsNode: Node = null;
     @property(Label)
@@ -159,6 +153,7 @@ export class PopupHistoryDetail extends BasePopup {
 
     onLeftButton() {
         if (this.curPage == 1) return;
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.curPage--;
         this.updateList();
         this.updateButtons();
@@ -166,16 +161,19 @@ export class PopupHistoryDetail extends BasePopup {
 
     onRightButton() {
         if (this.curPage == this.listData.model.moroSlotTracks.length) return;
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.curPage++;
         this.updateList();
         this.updateButtons();
     }
 
     public onClickPlayButton() {
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         HistoryWindowManager.GetInstance().preReqGetorderdetailback(this.listData.batchNo, this.listData.roundId);
     }
 
     onClickClose() {
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
         this.close();
     }
 
@@ -206,13 +204,13 @@ export class PopupHistoryDetail extends BasePopup {
     private responseReplayQuery(data) {
         this.removeLoadDataEffect();
         PopupManager.hideLayer(PopupLayer.History);
-        PopupManager.show(this.replayControlWindow);
+        PopupManager.show(E_POPUP_TYPE.Replay);
     }
 
     /** 播放加载效果 */
     async playLoadDataEffect() {
         this.removeLoadDataEffect();
-        this.popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab, { layer: PopupLayer.History, maskOpacity: 50 });
+        this.popupMask = await PopupManager.create<PopupMask>(E_POPUP_TYPE.Mask, { layer: PopupLayer.History, maskOpacity: 50 });
         this.popupMask.setEffectCfg([
             [
                 {

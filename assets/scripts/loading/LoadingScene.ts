@@ -3,6 +3,7 @@ import { SocketManager } from "../network/SocketManager";
 import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 import { EffectManager } from "../managers/EffectManager";
 import { AudioManager } from "../managers/AudioManager";
+import { AudioControlManager } from "../managers/AudioControlManager";
 
 const { ccclass, property } = _decorator;
 
@@ -162,7 +163,7 @@ export class LoadingScene extends Component {
         }
     }
 
-    private enterGameScene() {
+    public enterGameScene() {
         const bundle = assetManager.getBundle("game");
         if (!bundle) return console.error("找不到 game bundle");
 

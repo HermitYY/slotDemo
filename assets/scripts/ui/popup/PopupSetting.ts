@@ -1,6 +1,6 @@
 import { _decorator, Component, Node, Prefab, tween, easing, Vec3, UIOpacity, Button, find } from "cc";
 import { BasePopup } from "./BasePopup";
-import { PopupManager } from "./PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "./PopupManager";
 import { RoundBox } from "../../common/RoundBox";
 import { AudioManager } from "../../managers/AudioManager";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
@@ -11,12 +11,6 @@ const { ccclass, property } = _decorator;
 
 @ccclass("PopupSetting")
 export class PopupSetting extends BasePopup {
-    @property(Prefab)
-    PopupHistoryWindow: Prefab = null!;
-
-    @property(Prefab)
-    RulesWindow: Prefab = null!;
-
     @property(Node)
     SettingButton: Node = null;
     @property(Node)
@@ -71,11 +65,13 @@ export class PopupSetting extends BasePopup {
     }
 
     onClickRuleWindowOpen() {
-        PopupManager.show(this.RulesWindow, { curstomAniCfg: { customAniOut: "expoOut", customAniIn: "expoIn" } });
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
+        PopupManager.show(E_POPUP_TYPE.Rule, { curstomAniCfg: { customAniOut: "expoOut", customAniIn: "expoIn" } });
     }
 
     onClickHistoryWindowOpen() {
-        PopupManager.show(this.PopupHistoryWindow, { curstomAniCfg: { customAniOut: "expoOut", customAniIn: "expoIn" } });
+        AudioControlManager.GetInstance().playSfxNormalButtonClick();
+        PopupManager.show(E_POPUP_TYPE.HistoryList, { curstomAniCfg: { customAniOut: "expoOut", customAniIn: "expoIn" } });
         this.getComponentInChildren(RoundBox).segment = 10;
     }
 

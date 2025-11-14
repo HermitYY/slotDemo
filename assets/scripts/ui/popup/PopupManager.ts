@@ -4,7 +4,17 @@ import { PopupLayer } from "./BasePopup";
 import { Singleton } from "../../common/Singleton";
 
 export const enum E_POPUP_TYPE {
-    TIPS = "prefab/Popup/PopupTips",
+    Tips = "prefabs/Popup/PopupTips",
+    HistoryDetail = "prefabs/Popup/PopupHistoryDetail",
+    Mask = "prefabs/Popup/PopupMask",
+    FreeResults = "prefabs/Popup/PopupFreeResults",
+    AutoBuy = "prefabs/Popup/PopupAutoBuy",
+    BuyFreeGame = "prefabs/Popup/PopupBuyFreeGame",
+    SelectChips = "prefabs/Popup/PopupSelectChips",
+    Setting = "prefabs/Popup/PopupSetting",
+    Replay = "prefabs/Popup/PopupReplay",
+    Rule = "prefabs/Popup/PopupRule",
+    HistoryList = "prefabs/Popup/PopupHistoryList",
 }
 
 type createPopupCfg = {
@@ -73,8 +83,16 @@ export class PopupManager extends Singleton {
         });
     }
 
-    public static create<T extends BasePopup>(prefab: Prefab, options?: createPopupCfg): T {
-        if (!this._root) throw new Error("PopupManager 未初始化 root");
+    public static create<T extends BasePopup>(prefab: Prefab, options?: createPopupCfg): Promise<T>;
+    public static create<T extends BasePopup>(type: E_POPUP_TYPE, options?: createPopupCfg): Promise<T>;
+    public static async create<T extends BasePopup>(arg: Prefab | E_POPUP_TYPE, options?: createPopupCfg): Promise<T> {
+        let prefab: Prefab;
+
+        if (typeof arg === "string") {
+            prefab = await this._loadPrefab(arg);
+        } else {
+            prefab = arg;
+        }
 
         const node = instantiate(prefab);
         const comp = node.getComponent(BasePopup) as T;
@@ -112,7 +130,7 @@ export class PopupManager extends Singleton {
         } else {
             prefab = arg;
         }
-        const comp = this.create(prefab, options);
+        const comp = await this.create(prefab, options);
         await comp.show();
         return comp;
     }

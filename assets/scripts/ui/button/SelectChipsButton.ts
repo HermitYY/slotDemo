@@ -1,5 +1,5 @@
 import { _decorator, Component, Prefab, Label, Vec3, UITransform, Button } from "cc";
-import { PopupManager } from "../popup/PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "../popup/PopupManager";
 import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 import { E_GAME_MULTIPLE_TYPE, SocketManager } from "../../network/SocketManager";
 import { EffectManager } from "../../managers/EffectManager";
@@ -10,8 +10,6 @@ const { ccclass, property } = _decorator;
 export class SelectChipsButton extends Component {
     public static banOpacity = 120;
     public static canUseOpacity = 255;
-    @property(Prefab)
-    PopupWindow: Prefab = null!;
 
     private button: Button = null!;
 
@@ -30,7 +28,7 @@ export class SelectChipsButton extends Component {
         const nodeWidth = this.node.getComponent(UITransform)?.width || 0;
         const nodeHignt = this.node.getComponent(UITransform)?.height || 0;
         const worldPos = new Vec3(this.node.worldPosition.x - nodeWidth / 2, this.node.worldPosition.y - nodeHignt);
-        PopupManager.show(this.PopupWindow, { fromButtonPos: worldPos });
+        PopupManager.show(E_POPUP_TYPE.SelectChips, { fromButtonPos: worldPos });
     }
 
     updateEffect() {

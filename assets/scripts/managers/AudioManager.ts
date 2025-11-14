@@ -52,6 +52,10 @@ export enum SfxEnum {
     ShortGold = "smallGold",
     Snicker = "snicker",
     FreeEnd2 = "zizizi",
+    timesScroll = "timesScroll",
+    rollFlash = "rollFlash",
+    rollFlashShort = "rollFlashShort",
+    qElastic = "qElastic",
 }
 
 @ccclass("AudioManager")

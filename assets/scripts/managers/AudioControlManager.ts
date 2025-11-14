@@ -1,7 +1,7 @@
 import { Singleton } from "../common/Singleton";
 import { LogicTools } from "../Tools/LogicTools";
 import { AudioManager, BgmEnum, PlayMode, SfxEnum } from "./AudioManager";
-import { GameSpeedManager } from "./GameSpeedManager";
+import { E_GAME_SPEED_TYPE, GameSpeedManager } from "./GameSpeedManager";
 
 export class AudioControlManager extends Singleton {
     //#region background
@@ -128,6 +128,22 @@ export class AudioControlManager extends Singleton {
     public async playSfxSnicker() {
         await LogicTools.Delay(100);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Snicker);
+    }
+
+    public async playSfxtimesScroll() {
+        return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.timesScroll);
+    }
+
+    public async playSfxrollFlash() {
+        if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.NORMAL) {
+            return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.rollFlash);
+        } else {
+            return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.rollFlashShort);
+        }
+    }
+
+    public async playSfxqElastic() {
+        return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.qElastic);
     }
 
     public async playQuickLowBoom() {

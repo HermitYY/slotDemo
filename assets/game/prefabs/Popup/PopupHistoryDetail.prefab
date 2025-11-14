@@ -7345,7 +7345,7 @@
     },
     "IsCanClickMask": false,
     "layer": 3,
-    "showType": 0,
+    "showType": 6,
     "maskSpriteFrame": null,
     "tabletimeLabel": {
       "__id__": 19
@@ -7370,14 +7370,6 @@
     },
     "playButton": {
       "__id__": 22
-    },
-    "replayControlWindow": {
-      "__uuid__": "3e6adaad-19c9-494a-bc0c-4f46a597344b",
-      "__expectedType__": "cc.Prefab"
-    },
-    "popupMaskPrefab": {
-      "__uuid__": "ee373737-6d19-41d1-9e9e-c969eb330290",
-      "__expectedType__": "cc.Prefab"
     },
     "totalChipsNode": {
       "__id__": 180

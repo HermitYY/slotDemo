@@ -55,7 +55,7 @@ export class RollButton extends Component {
 
     onClick() {
         if (this._isPlayingEffect) return;
-        AudioControlManager.GetInstance().playSfxNormalButtonClick();
+        AudioControlManager.GetInstance().playSfxrollFlash();
         this.playEffect();
         this.playBgEffect();
         this.slotMachine.roll();
@@ -221,6 +221,7 @@ export class RollButton extends Component {
         if (this.isPlayScroll) return;
         this.isPlayScroll = true;
         const scrollTime = 0.5;
+        AudioControlManager.GetInstance().playSfxtimesScroll();
         this.countdown.playStep(data.times, this.curShowNum, scrollTime);
         this.playBgEffect();
         this.curShowNum = data.times;
@@ -236,6 +237,7 @@ export class RollButton extends Component {
         }
         this.isPlayScroll = true;
         const scrollTime = 0.5;
+        AudioControlManager.GetInstance().playSfxtimesScroll();
         this.countdown.playStep(0, this.curShowNum, scrollTime);
         this.curShowNum = 0;
         await LogicTools.Delay(scrollTime * 1000);

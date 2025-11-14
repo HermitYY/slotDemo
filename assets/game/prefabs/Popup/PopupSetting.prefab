@@ -155,7 +155,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 33.033,
+      "x": 28.239,
       "y": 0,
       "z": 0
     },
@@ -237,7 +237,7 @@
     },
     "atlas": null,
     "_spriteFrame": {
-      "__uuid__": "7d8f9b89-4fd1-4c9f-a3ab-38ec7cded7ca@f9941",
+      "__uuid__": "4521726a-621a-42df-ad71-fc3dcee0f7b9@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_sizeMode": 0,
@@ -888,7 +888,10 @@
       "b": 124,
       "a": 255
     },
-    "_normalSprite": null,
+    "_normalSprite": {
+      "__uuid__": "38458308-f4ca-4a01-8c58-a133f1218df5@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_hoverSprite": null,
     "_pressedSprite": null,
     "_disabledSprite": null,
@@ -1429,18 +1432,10 @@
     "__prefab": {
       "__id__": 63
     },
-    "closeOnMask": true,
+    "IsCanClickMask": true,
     "layer": 3,
     "showType": 5,
     "maskSpriteFrame": null,
-    "PopupHistoryWindow": {
-      "__uuid__": "a189ec75-1a2c-4dd8-b24b-eb3bc0a0c0ea",
-      "__expectedType__": "cc.Prefab"
-    },
-    "RulesWindow": {
-      "__uuid__": "281aca2c-9e80-4c74-9eb4-8e4b1cde9314",
-      "__expectedType__": "cc.Prefab"
-    },
     "SettingButton": {
       "__id__": 51
     },

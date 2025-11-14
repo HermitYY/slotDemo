@@ -29,12 +29,13 @@ export enum PopupLayer {
 
 export enum PopupShowType {
     None = 0,
-    ScaleFromButton = 1,
+    ScaleFromPos = 1, // 从指定处缩放弹出（有最小显示缩放0.2）
     FadeIn = 2,
     FromTop = 3,
     FromBottom = 4,
-    ScrollFromButtonRight = 5, // 从按钮处像卷轴一样向右展开
-    ScrollFromButtonLeft = 6, // 从按钮处像卷轴一样向左展开
+    ScrollFromPosX = 5, // 从指定处缩放（仅仅缩放X轴）
+    ScrollFromPosY = 6, // 从指定处缩放（仅仅缩放Y轴）
+    ScrollFromPosXY = 7, // 从指定处缩放（X轴Y轴）
 }
 Enum(PopupShowType);
 Enum(PopupLayer);
@@ -187,7 +188,7 @@ export class BasePopup extends Component {
                 this._animNoneIn();
                 this._resolveShow?.();
                 break;
-            case PopupShowType.ScaleFromButton:
+            case PopupShowType.ScaleFromPos:
                 this._animScaleFromButtonIn(() => this._resolveShow?.());
                 break;
             case PopupShowType.FadeIn:
@@ -199,11 +200,14 @@ export class BasePopup extends Component {
             case PopupShowType.FromBottom:
                 this._animFromBottomIn(() => this._resolveShow?.());
                 break;
-            case PopupShowType.ScrollFromButtonRight:
-                this._animScrollFromButtonRightIn(() => this._resolveShow?.());
+            case PopupShowType.ScrollFromPosX:
+                this._animScrollFromPosXIn(() => this._resolveShow?.());
                 break;
-            case PopupShowType.ScrollFromButtonLeft:
-                this._animScrollFromButtonLeftIn(() => this._resolveShow?.());
+            case PopupShowType.ScrollFromPosY:
+                this._animScrollFromPosYIn(() => this._resolveShow?.());
+                break;
+            case PopupShowType.ScrollFromPosXY:
+                this._animScrollFromPosXYIn(() => this._resolveShow?.());
                 break;
         }
 
@@ -227,7 +231,7 @@ export class BasePopup extends Component {
                 this._animNoneOut();
                 done();
                 break;
-            case PopupShowType.ScaleFromButton:
+            case PopupShowType.ScaleFromPos:
                 this._animScaleFromButtonOut(done);
                 break;
             case PopupShowType.FadeIn:
@@ -239,11 +243,14 @@ export class BasePopup extends Component {
             case PopupShowType.FromBottom:
                 this._animFromBottomOut(done);
                 break;
-            case PopupShowType.ScrollFromButtonRight:
-                this._animScrollFromButtonRightOut(done);
+            case PopupShowType.ScrollFromPosX:
+                this._animScrollFromPosXOut(done);
                 break;
-            case PopupShowType.ScrollFromButtonLeft:
-                this._animScrollFromButtonLeftOut(done);
+            case PopupShowType.ScrollFromPosY:
+                this._animScrollFromPosYOut(done);
+                break;
+            case PopupShowType.ScrollFromPosXY:
+                this._animScrollFromPosXYOut(done);
                 break;
             default:
                 this._destroyWithMask(done);
@@ -431,58 +438,8 @@ export class BasePopup extends Component {
             .start();
     }
 
-    /** 卷轴式从按钮向右展开 */
-    private _animScrollFromButtonRightIn(callback?: Function) {
-        if (!this.contentNode) return;
-
-        // 确定起点位置
-        const startPos = this.fromPos ?? new Vec3(0, 0, 0);
-        const parent = this.node.getParent();
-        let localPos = new Vec3();
-        if (parent) {
-            const parentUI = parent.getComponent(UITransform);
-            if (parentUI) {
-                localPos = parentUI.convertToNodeSpaceAR(startPos);
-            }
-        }
-
-        // 保存原始状态
-        const originalPos = this.contentNode.position.clone();
-        const originalScale = this.contentNode.scale.clone();
-
-        // 设置初始位置和卷轴样式缩放（X方向为0）
-        this.contentNode.setPosition(localPos);
-        this.contentNode.setScale(new Vec3(0.01, 1, 1));
-
-        // 动画：卷轴从左往右展开
-        tween(this.contentNode)
-            .parallel(tween().to(0.4, { position: originalPos }, { easing: "backOut" }), tween().to(0.4, { scale: new Vec3(1, 1, 1) }, { easing: "backOut" }))
-            .call(() => callback?.())
-            .start();
-    }
-
-    /** 卷轴式向右收起 */
-    private _animScrollFromButtonRightOut(callback?: Function) {
-        if (!this.contentNode) return;
-
-        const endPos = this.fromPos ?? new Vec3(0, 0, 0);
-        const parent = this.node.getParent();
-        let localPos = new Vec3();
-        if (parent) {
-            const parentUI = parent.getComponent(UITransform);
-            if (parentUI) {
-                localPos = parentUI.convertToNodeSpaceAR(endPos);
-            }
-        }
-
-        tween(this.contentNode)
-            .parallel(tween().to(0.3, { position: localPos }, { easing: "backIn" }), tween().to(0.3, { scale: new Vec3(0, 1, 1) }, { easing: "backIn" }))
-            .call(() => this._destroyWithMask(callback))
-            .start();
-    }
-
-    /** 卷轴式从按钮向左展开 */
-    private _animScrollFromButtonLeftIn(callback?: Function) {
+    /** X轴放大 */
+    private _animScrollFromPosXIn(callback?: Function) {
         if (!this.contentNode) return;
 
         const startPos = this.fromPos ?? new Vec3(0, 0, 0);
@@ -498,20 +455,18 @@ export class BasePopup extends Component {
         const originalPos = this.contentNode.position.clone();
         const originalScale = this.contentNode.scale.clone();
 
-        // 初始位置+镜像缩放
         this.contentNode.setPosition(localPos);
         this.contentNode.setScale(new Vec3(0.01, 1, 1));
-
-        // 动画：卷轴从右往左展开
+        const easing = this?.curstomAniCfg?.customAniOut ?? "backOut";
         tween(this.contentNode)
-            .parallel(tween().to(0.4, { position: originalPos }, { easing: "backOut" }), tween().to(0.4, { scale: new Vec3(1.05, 1, 1) }, { easing: "backOut" }))
-            .to(0.08, { scale: new Vec3(1, 1, 1) })
+            .parallel(tween().to(0.4, { position: originalPos }, { easing }), tween().to(0.4, { scale: new Vec3(1, 1, 1) }, { easing }))
             .call(() => callback?.())
             .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniOut = null);
     }
 
-    /** 卷轴式向左收起 */
-    private _animScrollFromButtonLeftOut(callback?: Function) {
+    /** X轴缩小 */
+    private _animScrollFromPosXOut(callback?: Function) {
         if (!this.contentNode) return;
 
         const endPos = this.fromPos ?? new Vec3(0, 0, 0);
@@ -523,11 +478,109 @@ export class BasePopup extends Component {
                 localPos = parentUI.convertToNodeSpaceAR(endPos);
             }
         }
-
+        const easing = this?.curstomAniCfg?.customAniIn ?? "backIn";
         tween(this.contentNode)
-            .parallel(tween().to(0.3, { position: localPos }, { easing: "backIn" }), tween().to(0.3, { scale: new Vec3(0, 1, 1) }, { easing: "backIn" }))
+            .parallel(tween().to(0.3, { position: localPos }, { easing }), tween().to(0.3, { scale: new Vec3(0, 1, 1) }, { easing }))
             .call(() => this._destroyWithMask(callback))
             .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniIn = null);
+    }
+
+    /** Y轴放大 */
+    private _animScrollFromPosYIn(callback?: Function) {
+        if (!this.contentNode) return;
+
+        const startPos = this.fromPos ?? new Vec3(0, 0, 0);
+        const parent = this.node.getParent();
+        let localPos = new Vec3();
+        if (parent) {
+            const parentUI = parent.getComponent(UITransform);
+            if (parentUI) {
+                localPos = parentUI.convertToNodeSpaceAR(startPos);
+            }
+        }
+
+        const originalPos = this.contentNode.position.clone();
+        const originalScale = this.contentNode.scale.clone();
+
+        this.contentNode.setPosition(localPos);
+        this.contentNode.setScale(new Vec3(1, 0.01, 1));
+        const easing = this?.curstomAniCfg?.customAniOut ?? "backOut";
+        tween(this.contentNode)
+            .parallel(tween().to(0.4, { position: originalPos }, { easing }), tween().to(0.4, { scale: new Vec3(1, 1, 1) }, { easing }))
+            .call(() => callback?.())
+            .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniOut = null);
+    }
+
+    /** Y轴缩小 */
+    private _animScrollFromPosYOut(callback?: Function) {
+        if (!this.contentNode) return;
+
+        const endPos = this.fromPos ?? new Vec3(0, 0, 0);
+        const parent = this.node.getParent();
+        let localPos = new Vec3();
+        if (parent) {
+            const parentUI = parent.getComponent(UITransform);
+            if (parentUI) {
+                localPos = parentUI.convertToNodeSpaceAR(endPos);
+            }
+        }
+        const easing = this?.curstomAniCfg?.customAniIn ?? "backIn";
+        tween(this.contentNode)
+            .parallel(tween().to(0.3, { position: localPos }, { easing }), tween().to(0.3, { scale: new Vec3(1, 0, 1) }, { easing }))
+            .call(() => this._destroyWithMask(callback))
+            .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniIn = null);
+    }
+
+    /** XY轴放大 */
+    private _animScrollFromPosXYIn(callback?: Function) {
+        if (!this.contentNode) return;
+
+        const startPos = this.fromPos ?? new Vec3(0, 0, 0);
+        const parent = this.node.getParent();
+        let localPos = new Vec3();
+        if (parent) {
+            const parentUI = parent.getComponent(UITransform);
+            if (parentUI) {
+                localPos = parentUI.convertToNodeSpaceAR(startPos);
+            }
+        }
+
+        const originalPos = this.contentNode.position.clone();
+        const originalScale = this.contentNode.scale.clone();
+
+        this.contentNode.setPosition(localPos);
+        this.contentNode.setScale(new Vec3(0.01, 0.01, 1));
+
+        const easing = this?.curstomAniCfg?.customAniOut ?? "backOut";
+        tween(this.contentNode)
+            .parallel(tween().to(0.4, { position: originalPos }, { easing }), tween().to(0.4, { scale: Vec3.ONE }, { easing }))
+            .call(() => callback?.())
+            .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniOut = null);
+    }
+
+    /** XY轴缩小 */
+    private _animScrollFromPosXYOut(callback?: Function) {
+        if (!this.contentNode) return;
+
+        const endPos = this.fromPos ?? new Vec3(0, 0, 0);
+        const parent = this.node.getParent();
+        let localPos = new Vec3();
+        if (parent) {
+            const parentUI = parent.getComponent(UITransform);
+            if (parentUI) {
+                localPos = parentUI.convertToNodeSpaceAR(endPos);
+            }
+        }
+        const easing = this?.curstomAniCfg?.customAniIn ?? "backIn";
+        tween(this.contentNode)
+            .parallel(tween().to(0.3, { position: localPos }, { easing }), tween().to(0.3, { scale: new Vec3(0, 0, 1) }, { easing }))
+            .call(() => this._destroyWithMask(callback))
+            .start();
+        this.curstomAniCfg && (this.curstomAniCfg.customAniIn = null);
     }
 
     /** 无动画进入 */

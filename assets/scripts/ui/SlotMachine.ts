@@ -9,7 +9,7 @@ import { UItools } from "../Tools/UItools";
 import { LogicTools } from "../Tools/LogicTools";
 import { AutoManager } from "../managers/AutoManager";
 import { E_GAME_SPEED_TYPE, GameSpeedManager } from "../managers/GameSpeedManager";
-import { PopupManager } from "./popup/PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "./popup/PopupManager";
 import { PopupMask } from "./popup/PopupMask";
 import proto from "../network/MLWZ_msg.js";
 import { PopupLayer, PopupShowType } from "./popup/BasePopup";
@@ -24,10 +24,6 @@ const { ccclass, property } = _decorator;
 export class SlotMachine extends Component {
     @property(Prefab)
     public slotItemPrefab: Prefab = null;
-    @property(Prefab)
-    public popupMaskPrefab: Prefab = null;
-    @property(Prefab)
-    public popupFreeResultPrefab: Prefab = null;
 
     @property([Node])
     public columns: Node[] = []; // 6列容器 (每列一个Node)
@@ -316,7 +312,7 @@ export class SlotMachine extends Component {
                 },
             ];
         });
-        const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab);
+        const popupMask = await PopupManager.create<PopupMask>(E_POPUP_TYPE.Mask);
         popupMask.setEffectCfg(removeGridArr);
         // 切回普通速率
         GameSpeedManager.GetInstance().tempSwitchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
@@ -423,7 +419,7 @@ export class SlotMachine extends Component {
             const showType = isFreeEnd ? PopupShowType.FromBottom : null;
             const customAniOut = isFreeEnd ? "linear" : "backIn";
             const customAniIn = isFreeEnd ? "linear" : "backOut";
-            const PopupFreeResults = PopupManager.create<PopupFreeResults>(this.popupFreeResultPrefab, {
+            const PopupFreeResults = await PopupManager.create<PopupFreeResults>(E_POPUP_TYPE.FreeResults, {
                 maskOpacity: 100,
                 maskColor: new Color(75, 75, 75),
                 fromButtonPos: this.node.parent.getWorldPosition(),
@@ -493,7 +489,7 @@ export class SlotMachine extends Component {
                                 },
                             ];
                         });
-                        const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab);
+                        const popupMask = await PopupManager.create<PopupMask>(E_POPUP_TYPE.Mask);
                         popupMask.setEffectCfg(removeGridArr);
                         await this._queue.wait(popupMask.show());
                         if (this._queue.isAborted) {
@@ -624,8 +620,8 @@ export class SlotMachine extends Component {
         this.stopCheckLadybirdEffect();
         EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_END);
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
-        GameSpeedManager.GetInstance().restoreGameSpeed();
         this.curComboCount = 0;
+        GameSpeedManager.GetInstance().restoreGameSpeed();
     }
     //#endregion
 
@@ -667,7 +663,7 @@ export class SlotMachine extends Component {
                         .call(() => {
                             item.destroy();
                             finished++;
-                            if (finished === 15) {
+                            if (finished === 10) {
                                 resolve();
                             }
                             if (finished === totalItems) {
@@ -744,10 +740,10 @@ export class SlotMachine extends Component {
      */
     private spawnNewColumns(curScene: proto.newxxs.ICurScene, isPlayVoice = true): Promise<void> {
         // 如果上一次动画还没结束，先取消它
-        if (this._cancelSpawnColumns) {
-            this._cancelSpawnColumns();
-            this._cancelSpawnColumns = undefined;
-        }
+        // if (this._cancelSpawnColumns) {
+        //     this._cancelSpawnColumns();
+        //     this._cancelSpawnColumns = undefined;
+        // }
 
         const { gridInfo: newGridArrs } = LogicTools.GetInstance().transGridInfo(curScene);
         return new Promise((resolve) => {
@@ -818,7 +814,7 @@ export class SlotMachine extends Component {
             this._cancelSpawnColumns = () => {
                 // 视口之中的元素
                 const viewArr = targets.filter((item) => item.getPosition().y < item.getComponent(UITransform).height);
-                if (this.oldColumsRealEnd) {
+                if (viewArr.length > 0) {
                     targets.forEach((item, index) => {
                         if (index < Math.ceil(viewArr.length / this.rows) * this.rows) return;
                         Tween.stopAllByTarget(item);
@@ -1009,7 +1005,7 @@ export class SlotMachine extends Component {
                 }
             }
         }
-        const popupMask = PopupManager.create<PopupMask>(this.popupMaskPrefab, { maskOpacity: 80 });
+        const popupMask = await PopupManager.create<PopupMask>(E_POPUP_TYPE.Mask, { maskOpacity: 80 });
         popupMask.setEffectCfg(removeGridArr);
         await popupMask.show();
         popupMask.close();

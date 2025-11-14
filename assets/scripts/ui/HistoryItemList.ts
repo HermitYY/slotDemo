@@ -4,6 +4,7 @@ import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 import { E_GAME_SCENE_TYPE } from "../network/SocketManager";
 import { EffectManager } from "../managers/EffectManager";
 import { LogicTools } from "../Tools/LogicTools";
+import { AudioControlManager } from "../managers/AudioControlManager";
 const { ccclass, property } = _decorator;
 
 @ccclass("HistoryItemList")
@@ -83,7 +84,7 @@ export class HistoryItemList extends Component {
         }
         await LogicTools.Delay(150);
 
-        // 执行下落动画
+        // 执行下落弹入动画
         this._dropInEffect(node, node.scale.clone(), itemHeight);
 
         // 延迟整理布局
@@ -154,6 +155,7 @@ export class HistoryItemList extends Component {
 
     /** 下落 + 弹跳 + 淡入 */
     private _dropInEffect(node: Node, originScale: Vec3, itemHeight: number) {
+        AudioControlManager.GetInstance().playSfxqElastic();
         Tween.stopAllByTarget(node);
 
         const opacity = node.getComponent(UIOpacity)!;
