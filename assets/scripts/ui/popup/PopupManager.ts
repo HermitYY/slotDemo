@@ -1,7 +1,11 @@
-import { Node, Prefab, instantiate, UITransform, Widget, TweenEasing, Color } from "cc";
+import { Node, Prefab, instantiate, UITransform, Widget, TweenEasing, Color, assetManager, resources } from "cc";
 import { BasePopup, PopupShowType } from "./BasePopup";
 import { PopupLayer } from "./BasePopup";
 import { Singleton } from "../../common/Singleton";
+
+export const enum E_POPUP_TYPE {
+    TIPS = "prefab/Popup/PopupTips",
+}
 
 type createPopupCfg = {
     layer?: PopupLayer;
@@ -18,7 +22,7 @@ type createPopupCfg = {
 export class PopupManager extends Singleton {
     private static _root: Node | null = null;
     private static _layerRoots: Record<PopupLayer, Node> = {} as any;
-
+    private static _prefabCache: Map<E_POPUP_TYPE, Prefab> = new Map();
     public static init(root: Node) {
         this._root = root;
         this._createLayers();
@@ -46,6 +50,27 @@ export class PopupManager extends Singleton {
 
             this._layerRoots[layer] = node;
         }
+    }
+
+    private static loadPrefab(path: E_POPUP_TYPE): Promise<Prefab> {
+        return new Promise((resolve, reject) => {
+            const bundle = assetManager.getBundle("game");
+            if (!bundle) {
+                return reject("Bundle game 未加载");
+            }
+
+            const cached = this._prefabCache.get(path);
+            if (cached) {
+                resolve(cached);
+                return;
+            }
+
+            bundle.load(path, Prefab, (err, prefab) => {
+                if (err) return reject(err);
+                this._prefabCache.set(path, prefab);
+                resolve(prefab);
+            });
+        });
     }
 
     public static create<T extends BasePopup>(prefab: Prefab, options?: createPopupCfg): T {
@@ -77,10 +102,32 @@ export class PopupManager extends Singleton {
     }
 
     /** 打开弹窗 prefab */
-    public static async show(prefab: Prefab, options?: createPopupCfg): Promise<BasePopup> {
+    public static async show(prefab: Prefab, options?: createPopupCfg): Promise<BasePopup>;
+    public static async show(type: E_POPUP_TYPE, options?: createPopupCfg): Promise<BasePopup>;
+    public static async show(arg: Prefab | E_POPUP_TYPE, options?: createPopupCfg): Promise<BasePopup> {
+        let prefab: Prefab;
+
+        if (typeof arg === "string") {
+            prefab = await this.loadPrefab(arg);
+        } else {
+            prefab = arg;
+        }
         const comp = this.create(prefab, options);
         await comp.show();
         return comp;
+    }
+
+    public static release(path: E_POPUP_TYPE) {
+        if (!this._prefabCache.has(path)) return;
+        const bundle = assetManager.getBundle("game");
+        if (!bundle) {
+            console.warn("Bundle game 未加载,无法释放");
+            return;
+        }
+        bundle.release(path);
+        // 删除缓存引用
+        this._prefabCache.delete(path);
+        console.log(`PopupManager: 已释放 prefab ${path} 资源 `);
     }
 
     public static clearAll() {

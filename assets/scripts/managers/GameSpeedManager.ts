@@ -75,8 +75,8 @@ export class GameSpeedManager extends Singleton {
     }
 
     /** 得到新列下落时间相关配置 */
-    public getNewColumnDropTimeConfig() {
-        switch (this._speed) {
+    public getNewColumnDropTimeConfig(useCfg?: E_GAME_SPEED_TYPE) {
+        switch (useCfg ?? this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
                 return { dropTime: 0.45, boundTime: 0.25, boundDis: 6, columnInterval: 0.12, girdInterval: 0.01, voiceDelay: 0.3 };
             case E_GAME_SPEED_TYPE.FAST:

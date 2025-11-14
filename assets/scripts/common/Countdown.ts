@@ -145,4 +145,8 @@ export class Countdown extends Component {
         this._currentLabel.node.getComponent(UIOpacity)!.opacity = 255;
         this._nextLabel.node.getComponent(UIOpacity)!.opacity = 0;
     }
+
+    public setNextValue(value: number) {
+        this._nextLabel.string = `${value}`;
+    }
 }

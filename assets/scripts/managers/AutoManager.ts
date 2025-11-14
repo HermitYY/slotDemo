@@ -39,12 +39,12 @@ export class AutoManager extends Singleton {
         }
         this._autoTimes--;
         isInit && EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this._autoTimes + 1);
-        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, { times: this._autoTimes, isContinue: true });
+        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, { times: this._autoTimes });
     }
 
     public preStopAuto() {
         this._autoTimes = 0;
-        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, { times: this._autoTimes, isContinue: false });
+        EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_PRE_STOP);
     }
 
     private autoRoll() {

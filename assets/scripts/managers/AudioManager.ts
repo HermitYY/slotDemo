@@ -307,7 +307,6 @@ export class AudioManager extends Singleton {
         if (!clip) return Promise.reject(`[AudioManager] SFX not found: ${name}`);
 
         if (!this.sfxRootNode) return Promise.reject("[AudioManager] sfxRoot not initialized");
-        console.log(`播放了音效${sfx}`);
 
         switch (mode) {
             // 停止所有 SFX 然后播放

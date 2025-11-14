@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, tween, Vec3, Label, Button, find, Tween, Color, UIOpacity } from "cc";
+import { _decorator, Component, Node, Prefab, instantiate, tween, Vec3, Label, Button, find, Tween, Color, UITransform, Game, debug } from "cc";
 
 import { SlotItem } from "../ui/SlotItem";
 import { EffectManager } from "../managers/EffectManager";
@@ -17,7 +17,6 @@ import { AbortableQueue } from "../common/AbortableQueue";
 import { PopupFreeResults } from "./popup/PopupFreeResults";
 import { AudioControlManager } from "../managers/AudioControlManager";
 import { AudioManager, SfxEnum } from "../managers/AudioManager";
-import { FreeRole } from "./Characters/FreeRole";
 
 const { ccclass, property } = _decorator;
 
@@ -44,8 +43,7 @@ export class SlotMachine extends Component {
     HistoryList: Node = null;
 
     @property(Button)
-    public rollButton: Button = null; // Roll按钮
-
+    rollButton: Button = null; // Roll按钮
     @property(Node)
     AutoButton: Node = null;
     @property(Node)
@@ -60,6 +58,8 @@ export class SlotMachine extends Component {
     HighButton: Node = null;
     @property(Node)
     SettingButton: Node = null;
+    @property(Node)
+    StopDropAniButton: Node = null;
 
     private cellHeight: number = 80; // 格子高度
     private get rows() {
@@ -159,9 +159,9 @@ export class SlotMachine extends Component {
         const gourp = (this.ModeParents[3] ??= find("Canvas/MainGame/Mode/FreeText"));
         gourp.active = isFreeMode;
         // free火背景与normal树叶背景
-        const normalEffectBg = (this.ModeParents[5] ??= find("Canvas/MainGame/Mode/BgEffect/normal"));
+        const normalEffectBg = (this.ModeParents[5] ??= find("Canvas/MainGame/Mode/BgEffectFront/normal"));
         normalEffectBg.active = isNormalMode;
-        const freeEffectBg = (this.ModeParents[6] ??= find("Canvas/MainGame/Mode/BgEffect/free"));
+        const freeEffectBg = (this.ModeParents[6] ??= find("Canvas/MainGame/Mode/BgEffectAfter/free"));
         freeEffectBg.active = isFreeMode;
         // gird背景
         const normalBg = (this.ModeParents[7] ??= find("Canvas/MainGame/Grid/normalBg"));
@@ -267,6 +267,8 @@ export class SlotMachine extends Component {
         SocketManager.GetInstance().curBet(true);
         // 开始旋转 禁用按钮
         this.updateRollButtonIsBan(true);
+        this.StopDropAniButton.active = true;
+        this.isClickQuickDrop = false;
     }
 
     /** 普通回合结束（包括Combo结束与无奖励结束） */
@@ -470,7 +472,7 @@ export class SlotMachine extends Component {
                         isEnterFree = true;
                         this.updateChipGroup(curScene);
                         await this._queue.wait(this.stopEffect());
-                        await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene), true);
+                        // await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene), true);
                         if (this._queue.isAborted) return;
                         this.updateFreeCtrl(curScene, true);
 
@@ -623,10 +625,14 @@ export class SlotMachine extends Component {
         EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_END);
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
         GameSpeedManager.GetInstance().restoreGameSpeed();
+        this.curComboCount = 0;
     }
     //#endregion
 
     //#region 格子动画相关
+    private oldColumsRealEnd = false;
+    private isClickQuickDrop = false;
+
     private getGridNode(indexStr: string | number) {
         let index: number;
         if (typeof indexStr === "string") {
@@ -645,6 +651,7 @@ export class SlotMachine extends Component {
      */
     private dropOldColumns(): Promise<void> {
         return new Promise((resolve) => {
+            this.oldColumsRealEnd = false;
             let totalItems = 0;
             let finished = 0;
 
@@ -660,10 +667,11 @@ export class SlotMachine extends Component {
                         .call(() => {
                             item.destroy();
                             finished++;
-                            // if (finished === totalItems) {
-                            // 加快
-                            if (finished === 1) {
+                            if (finished === 15) {
                                 resolve();
+                            }
+                            if (finished === totalItems) {
+                                this.oldColumsRealEnd = true;
                             }
                         })
                         .start();
@@ -676,12 +684,7 @@ export class SlotMachine extends Component {
         });
     }
 
-    /**
-     * 新的逐列生成
-     * @param arr
-     * @returns
-     */
-    private spawnNewColumns(curScene: proto.newxxs.ICurScene, isPlayVoice = true): Promise<void> {
+    private OldspawnNewColumns(curScene: proto.newxxs.ICurScene, isPlayVoice = true): Promise<void> {
         const { gridInfo: newGridArrs } = LogicTools.GetInstance().transGridInfo(curScene);
         return new Promise((resolve) => {
             let finishedCount = 0;
@@ -731,6 +734,171 @@ export class SlotMachine extends Component {
                 }
             }
         });
+    }
+
+    private _cancelSpawnColumns?: () => void;
+    /**
+     * 新的逐列生成
+     * @param arr
+     * @returns
+     */
+    private spawnNewColumns(curScene: proto.newxxs.ICurScene, isPlayVoice = true): Promise<void> {
+        // 如果上一次动画还没结束，先取消它
+        if (this._cancelSpawnColumns) {
+            this._cancelSpawnColumns();
+            this._cancelSpawnColumns = undefined;
+        }
+
+        const { gridInfo: newGridArrs } = LogicTools.GetInstance().transGridInfo(curScene);
+        return new Promise((resolve) => {
+            let finishedCount = 0;
+            const totalNew = this.rows * this.cols;
+
+            const targets: Node[] = [];
+            const finalYMap = new Map<Node, number>();
+            const finishedSet = new Set<Node>();
+            const speedCfg = this.isClickQuickDrop ? E_GAME_SPEED_TYPE.FAST : GameSpeedManager.GetInstance().speed;
+            const { columnInterval, girdInterval, dropTime, boundDis, boundTime, voiceDelay } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig(speedCfg);
+
+            if (isPlayVoice) {
+                AudioControlManager.GetInstance().playSfxRefresh(voiceDelay * 1000);
+            }
+
+            const onItemFinish = async (node: Node, slotItem: SlotItem) => {
+                if (finishedSet.has(node)) return;
+                finishedSet.add(node);
+
+                await slotItem.LadybirdMultipleEffect(
+                    curScene.curMultiples.map((item) => ({
+                        index: item.index,
+                        multiple: +item.multiple,
+                    })),
+                    isPlayVoice
+                );
+
+                finishedCount++;
+                if (finishedCount === totalNew) {
+                    this._cancelSpawnColumns = undefined;
+                    this.StopDropAniButton.active = false;
+                    resolve();
+                }
+            };
+
+            // 生成节点并记录
+            for (let c = 0; c < this.cols; c++) {
+                const columnNode = this.columns[c];
+                this.grid[c] = [];
+
+                for (let r = 0; r < this.rows; r++) {
+                    const id = newGridArrs[c][r];
+                    this.grid[c][r] = id;
+
+                    const item = instantiate(this.slotItemPrefab);
+                    item.setParent(columnNode);
+                    item.setPosition(0, 400);
+
+                    const slotItem = item.getComponent(SlotItem)!;
+                    slotItem.SetData(id, { row: r, column: c });
+
+                    const targetY = -r * this.cellHeight;
+                    finalYMap.set(item, targetY);
+                    targets.push(item);
+                    tween(item)
+                        .delay(columnInterval * c - girdInterval * r)
+                        .to(dropTime, { position: new Vec3(0, targetY - boundDis * r, 0) }, { easing: "quadIn" })
+                        .to(boundTime, { position: new Vec3(0, targetY, 0) }, { easing: "quadOut" })
+                        .call(() => {
+                            onItemFinish(item, slotItem).catch((e) => console.error("onItemFinish error:", e));
+                        })
+                        .start();
+                }
+            }
+            // 快速时不需要取消下落
+            if (GameSpeedManager.GetInstance().speed === E_GAME_SPEED_TYPE.FAST) return;
+            this._cancelSpawnColumns = () => {
+                // 视口之中的元素
+                const viewArr = targets.filter((item) => item.getPosition().y < item.getComponent(UITransform).height);
+                if (this.oldColumsRealEnd) {
+                    targets.forEach((item, index) => {
+                        if (index < Math.ceil(viewArr.length / this.rows) * this.rows) return;
+                        Tween.stopAllByTarget(item);
+                    });
+                    for (let c = 0; c < this.cols; c++) {
+                        const columnNode = this.columns[c];
+                        const children = columnNode.children;
+                        for (let r = 0; r < children.length; r++) {
+                            const item = children[r];
+                            if (c < Math.ceil(viewArr.length / this.rows)) continue;
+                            item.setPosition(0, 400, 0);
+                            const finalY = finalYMap.get(item);
+                            const slotItem = item.getComponent(SlotItem);
+                            if (!slotItem) continue;
+                            const { girdInterval, dropTime, boundDis, boundTime } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig();
+                            tween(item)
+                                .delay(girdInterval * (children.length - r - 1))
+                                .to(dropTime * 0.8, { position: new Vec3(0, finalY - boundDis * r * 0.5, 0) }, { easing: "cubicOut" })
+                                .to(boundTime * 0.6, { position: new Vec3(0, finalY, 0) }, { easing: "quadOut" })
+                                .call(() => {
+                                    onItemFinish(item, slotItem).catch((e) => console.error("onItemFinish error:", e));
+                                })
+                                .start();
+                        }
+                    }
+                    this._cancelSpawnColumns = undefined;
+                } else {
+                    this._cancelSpawnColumns = undefined;
+                    (async () => {
+                        for (const node of targets) {
+                            if (!node || !node.isValid) continue;
+                            Tween.stopAllByTarget(node);
+                            node.setPosition(0, 400, 0);
+                        }
+                        await this.waitForIsEnd();
+                        const { girdInterval, dropTime, boundDis, boundTime, columnInterval } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig(E_GAME_SPEED_TYPE.FAST);
+                        for (let c = 0; c < this.cols; c++) {
+                            const columnNode = this.columns[c];
+                            const children = columnNode.children;
+                            for (let r = 0; r < children.length; r++) {
+                                const item = children[r];
+                                const finalY = finalYMap.get(item);
+                                const slotItem = item.getComponent(SlotItem);
+                                if (!slotItem) continue;
+                                tween(item)
+                                    .delay(columnInterval * c - girdInterval * r)
+                                    .to(dropTime, { position: new Vec3(0, finalY - boundDis * r, 0) }, { easing: "quadIn" })
+                                    .to(boundTime, { position: new Vec3(0, finalY, 0) }, { easing: "quadOut" })
+                                    .call(() => {
+                                        onItemFinish(item, slotItem).catch((e) => console.error("onItemFinish error:", e));
+                                    })
+                                    .start();
+                            }
+                        }
+                    })();
+                }
+            };
+        });
+    }
+
+    private async waitForIsEnd(): Promise<void> {
+        return new Promise((resolve) => {
+            const check = () => {
+                if (this.oldColumsRealEnd) {
+                    resolve();
+                } else {
+                    LogicTools.Delay(20).then(check);
+                }
+            };
+            check();
+        });
+    }
+
+    public PreCancelSpawnColumnsAni() {
+        this.StopDropAniButton.active = false;
+        this.isClickQuickDrop = true;
+        if (this._cancelSpawnColumns) {
+            this._cancelSpawnColumns();
+            this._cancelSpawnColumns = undefined;
+        }
     }
 
     /**
@@ -1010,10 +1178,16 @@ export class SlotMachine extends Component {
     private async checkAutoMode() {
         const isAuto = AutoManager.GetInstance().isAutoIng;
         if (isAuto) {
-            const autoTimes = AutoManager.GetInstance().autoTimes;
+            let autoTimes = AutoManager.GetInstance().autoTimes;
             if (autoTimes > 0) {
                 this.updateRollButtonIsBan(true);
+            }
+            if (autoTimes > 0) {
                 await LogicTools.Delay(GameSpeedManager.GetInstance().getRoundEndBackTime() * 1000);
+            }
+            autoTimes = AutoManager.GetInstance().autoTimes;
+            if (autoTimes <= 0) {
+                this.updateRollButtonIsBan(false);
             }
             AutoManager.GetInstance().continueAuto();
             if (autoTimes <= 0) {
@@ -1245,10 +1419,13 @@ export class SlotMachine extends Component {
         }
         if (this._ladybirdCancel) return;
         const midRect = this.chipLabel3.node.parent.parent;
-        AudioControlManager.GetInstance().playSfxFireBurning();
-        await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
-        if (this._ladybirdCancel) return;
-        EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
+        // 火效果只有free有
+        if (curScene.scene === E_GAME_SCENE_TYPE.FREE_GAME) {
+            AudioControlManager.GetInstance().playSfxFireBurning();
+            await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
+            if (this._ladybirdCancel) return;
+            EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
+        }
         AudioControlManager.GetInstance().playSfxMergeDisperse();
         await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent.parent, "", 0.4, {
             target: firstFont,

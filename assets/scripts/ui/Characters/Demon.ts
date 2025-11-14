@@ -19,9 +19,12 @@ export class Demon extends Component {
     @property(Node)
     private arrowEndNode: Node = null;
 
+    private origPos: Vec3 = null;
+
     protected onLoad(): void {
         EventManager.on(E_GAME_EVENT.GAME_MORO_UPGRADE_ARROW, this.upArrowLev, this);
         EventManager.on(E_GAME_EVENT.GAME_MORO_ATTACK_END, this.arrowAttackEffect, this);
+        EventManager.on(E_GAME_EVENT.GAME_HISTORY_REPLAY_END, this.replayEnd, this);
     }
 
     start() {
@@ -50,10 +53,10 @@ export class Demon extends Component {
             await this.spineCommon.play(0, "射穿", false);
             await EffectManager.playEffect("MonsterDie", this.BodyNode, Vec3.ZERO);
             const container = this.node;
-            const origPos = container.position.clone();
-            container.setPosition(origPos.x + 350, origPos.y);
+            this.origPos = container.position.clone();
+            container.setPosition(this.origPos.x + 350, this.origPos.y);
             await this.spineCommon.play(0, "复活", false);
-            container.setPosition(origPos);
+            container.setPosition(this.origPos);
             this.spineCommon.queue(0, "待机", true);
         }
         this.arrowLev = 1;
@@ -85,5 +88,12 @@ export class Demon extends Component {
 
     private get isAlive(): boolean {
         return !!this.node && this.node.isValid && this.node.activeInHierarchy;
+    }
+
+    replayEnd() {
+        this.arrowLev = 1;
+        this.spineCommon.play(0, `待机`, true);
+        const container = this.node;
+        this.origPos && container.setPosition(this.origPos);
     }
 }

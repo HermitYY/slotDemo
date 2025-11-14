@@ -6,6 +6,7 @@ import { AutoManager } from "../../managers/AutoManager";
 import { E_GAME_SPEED_TYPE, GameSpeedManager } from "../../managers/GameSpeedManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
 import { Countdown } from "../../common/Countdown";
+import { LogicTools } from "../../Tools/LogicTools";
 
 const { ccclass, property } = _decorator;
 
@@ -27,6 +28,9 @@ export class RollButton extends Component {
     @property({ type: Node })
     private BgEffectNode: Node = null;
 
+    @property({ type: Node })
+    private autoStopButton: Node = null;
+
     private spinOp: UIOpacity = null;
 
     private _isPlayingEffect = false;
@@ -40,6 +44,7 @@ export class RollButton extends Component {
     protected start(): void {
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.initNum, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, this.countdownChange, this);
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_PRE_STOP, this.countPreStop, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.countdownEnd, this);
         this.countdownEnd();
     }
@@ -110,7 +115,12 @@ export class RollButton extends Component {
                     onUpdate: (target: any) => {
                         this.spinOp.opacity = target.t * 255;
                         if (effectOp && effectOp.isValid) {
-                            effectOp.opacity = target.t * 255;
+                            const fadeOutInProgress = 0.7;
+                            if (target.t <= fadeOutInProgress) {
+                                effectOp.opacity = (target.t / fadeOutInProgress) * 255;
+                            } else {
+                                effectOp.opacity = ((1 - target.t) / (1 - fadeOutInProgress)) * 255;
+                            }
                         }
                         const additionalRot = new Quat();
                         Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * 4 * target.t);
@@ -195,8 +205,11 @@ export class RollButton extends Component {
 
     //#endregion
 
-    //#region 自动模式倒计时
+    //#region 自动模式相关
+    private isPlayScroll = false;
+
     private initNum(times: number) {
+        this.updaAutoStopButton(true);
         this.countdownNode.active = true;
         this.spinNode.active = false;
         const countdown = (this.countdown ??= this.countdownNode.getComponent(Countdown));
@@ -204,16 +217,63 @@ export class RollButton extends Component {
         this.curShowNum = times;
     }
 
-    private countdownChange(data: { times: number; isContinue: boolean }) {
-        this.countdown.playStep(data.times, this.curShowNum, 0.5);
-        data.isContinue && this.playBgEffect();
+    private async countdownChange(data: { times: number }) {
+        if (this.isPlayScroll) return;
+        this.isPlayScroll = true;
+        const scrollTime = 0.5;
+        this.countdown.playStep(data.times, this.curShowNum, scrollTime);
+        this.playBgEffect();
         this.curShowNum = data.times;
+        await LogicTools.Delay(scrollTime * 1000);
+        this.isPlayScroll = false;
     }
 
-    private countdownEnd() {
+    private async countPreStop() {
+        this.updaAutoStopButton(false);
+        if (this.isPlayScroll) {
+            this.countdown.setNextValue(0);
+            return;
+        }
+        this.isPlayScroll = true;
+        const scrollTime = 0.5;
+        this.countdown.playStep(0, this.curShowNum, scrollTime);
+        this.curShowNum = 0;
+        await LogicTools.Delay(scrollTime * 1000);
+        this.isPlayScroll = false;
+    }
+
+    private async countdownEnd() {
+        if (this.isPlayScroll) {
+            await this.waitForScrollStop();
+        }
         this.countdownNode.active = false;
         this.spinNode.active = true;
         this.BgEffectNode.active = false;
+        this.updaAutoStopButton(false);
+    }
+
+    private async waitForScrollStop(): Promise<void> {
+        return new Promise((resolve) => {
+            const checkScroll = () => {
+                if (!this.isPlayScroll) {
+                    resolve();
+                } else {
+                    LogicTools.Delay(50).then(checkScroll);
+                }
+            };
+
+            checkScroll();
+        });
+    }
+
+    // 自动模式停止
+    public async onClickAutoStop() {
+        AutoManager.GetInstance().preStopAuto();
+        this.playScaleEffect();
+    }
+
+    private updaAutoStopButton(isShow: boolean) {
+        this.autoStopButton.active = isShow;
     }
     //#endregion
 }

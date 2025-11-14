@@ -63,6 +63,8 @@ export const enum E_GAME_EVENT {
     GAME_AUTO_MODE_RUNNING,
     /** 自动模式关闭 */
     GAME_AUTO_MODE_CLOSE,
+    /** 自动模式预停止 */
+    GAME_AUTO_MODE_PRE_STOP,
 
     /** 下落动画结束 */
     GAME_GRID_DROP_END,

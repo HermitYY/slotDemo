@@ -16,17 +16,17 @@ export class UItools extends Singleton {
      * @param label Label组件
      * @param animated 是否跳变显示（默认true）
      * @param duration 跳变持续时间(毫秒)，默认500
-     * @param forceDecimal 是否强制保留两位小数，默认true
+     * @param forceDecimal 是否强制保留两位小数，默认false
      * @param isThanMinNoAnimated 是否小于当前值时，不跳变
      */
-    public showCurrencyValue(value: number, label: Label, animated: boolean = true, duration: number = 500, forceDecimal: boolean = true, isThanMinNoAnimated: boolean = true) {
+    public showCurrencyValue(value: number, label: Label, animated: boolean = true, duration: number = 500, forceDecimal: boolean = false, isThanMinNoAnimated: boolean = true) {
         if (!label) {
             console.warn("Label 未传入");
             return;
         }
 
         // 当前数值（从Label里读取）
-        const current = parseFloat(label.string.replace(/,/g, "")) || 0;
+        const current = parseFloat(label.string.replace(/\./g, "")) || 0;
 
         // 不跳变，直接显示
         if (!animated || (isThanMinNoAnimated && value < current)) {
@@ -59,15 +59,15 @@ export class UItools extends Singleton {
     /**
      * 英式货币格式化：1234567.89 => "1,234,567.89"
      * @param num 数字
-     * @param forceDecimal 是否强制保留两位小数（默认 true)
+     * @param forceDecimal 是否强制保留两位小数（默认 false)
      */
-    public formatCurrency(num: number, forceDecimal: boolean = true): string {
+    public formatCurrency(num: number, forceDecimal: boolean = false): string {
         if (isNaN(num)) return "0.00";
 
         let formatted: string;
         if (!forceDecimal && Number.isInteger(num)) {
             // 整数，不保留小数
-            formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            formatted = num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         } else {
             // 非整数或强制保留两位小数
             formatted = num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");

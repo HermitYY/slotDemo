@@ -21,6 +21,7 @@ export class AutoButton extends Component {
         EventManager.on(E_GAME_EVENT.GAME_BET_END, this.BettedButtonOpacity, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this.autoBegin, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.autoClose, this);
+        EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_PRE_STOP, this.resAutoPreStop, this);
     }
 
     onDestroy() {
@@ -35,7 +36,6 @@ export class AutoButton extends Component {
 
     onClickCloseAuto() {
         AutoManager.GetInstance().preStopAuto();
-        this.updateButton(false);
         // this.BettingButtonOpacity();
     }
 
@@ -63,5 +63,9 @@ export class AutoButton extends Component {
     updateButton(isAutoIng: boolean) {
         this.AutoButton.active = !isAutoIng;
         this.StopAutoButton.active = isAutoIng;
+    }
+
+    private resAutoPreStop() {
+        this.updateButton(false);
     }
 }
