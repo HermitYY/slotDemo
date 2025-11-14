@@ -52,7 +52,7 @@ export class PopupManager extends Singleton {
         }
     }
 
-    private static loadPrefab(path: E_POPUP_TYPE): Promise<Prefab> {
+    private static _loadPrefab(path: E_POPUP_TYPE): Promise<Prefab> {
         return new Promise((resolve, reject) => {
             const bundle = assetManager.getBundle("game");
             if (!bundle) {
@@ -108,7 +108,7 @@ export class PopupManager extends Singleton {
         let prefab: Prefab;
 
         if (typeof arg === "string") {
-            prefab = await this.loadPrefab(arg);
+            prefab = await this._loadPrefab(arg);
         } else {
             prefab = arg;
         }
@@ -117,6 +117,7 @@ export class PopupManager extends Singleton {
         return comp;
     }
 
+    /** 通常不需要释放 */
     public static release(path: E_POPUP_TYPE) {
         if (!this._prefabCache.has(path)) return;
         const bundle = assetManager.getBundle("game");

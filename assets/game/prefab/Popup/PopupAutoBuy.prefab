@@ -2548,7 +2548,7 @@
     "__prefab": {
       "__id__": 105
     },
-    "closeOnMask": true,
+    "IsCanClickMask": true,
     "layer": 2,
     "showType": 4,
     "maskSpriteFrame": {

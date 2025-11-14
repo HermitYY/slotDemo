@@ -41,8 +41,8 @@ Enum(PopupLayer);
 
 @ccclass("BasePopup")
 export class BasePopup extends Component {
-    @property({ tooltip: "点击遮罩关闭" })
-    closeOnMask: boolean = true;
+    @property({ tooltip: "遮罩是否可被点击" })
+    IsCanClickMask: boolean = true;
 
     @property({ tooltip: "弹窗层级 A>H>B>C", type: PopupLayer })
     layer: PopupLayer = PopupLayer.B;
@@ -148,7 +148,7 @@ export class BasePopup extends Component {
         // 点击事件
         mask.once(Node.EventType.TOUCH_END, (e: EventTouch) => {
             if (e.target === mask) {
-                if (this.closeOnMask) {
+                if (this.IsCanClickMask) {
                     this.close();
                 }
                 e.propagationStopped = true;
@@ -560,5 +560,10 @@ export class BasePopup extends Component {
             this.node.destroy();
             callback?.();
         }
+    }
+
+    /** 点击遮罩事件--默认关闭窗口 */
+    protected onMaskClick() {
+        this.close();
     }
 }

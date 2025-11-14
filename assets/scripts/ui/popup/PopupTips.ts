@@ -1,4 +1,5 @@
 import { _decorator, Component, Node } from "cc";
+import { BasePopup } from "./BasePopup";
 const { ccclass, property } = _decorator;
 
 export const enum E_POPUP_TIPS_SHIW_TYPE {
@@ -8,7 +9,7 @@ export const enum E_POPUP_TIPS_SHIW_TYPE {
 }
 
 @ccclass("PopupTips")
-export class PopupTips extends BarProp {
+export class PopupTips extends BasePopup {
     start() {}
 
     update(deltaTime: number) {}
