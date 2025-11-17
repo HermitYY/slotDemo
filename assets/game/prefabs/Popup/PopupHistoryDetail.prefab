@@ -7652,7 +7652,7 @@
     },
     "IsCanClickMask": false,
     "layer": 3,
-    "showType": 6,
+    "showType": 0,
     "maskSpriteFrame": null,
     "tabletimeLabel": {
       "__id__": 19

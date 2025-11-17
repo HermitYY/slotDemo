@@ -5,6 +5,7 @@ import { EffectManager } from "../managers/EffectManager";
 import { AudioManager } from "../managers/AudioManager";
 import { PopupMask } from "../ui/popup/PopupMask";
 import { PopupTips } from "../ui/popup/PopupTips";
+import { LogicTools } from "../Tools/LogicTools";
 
 const { ccclass, property } = _decorator;
 
@@ -116,9 +117,9 @@ export class LoadingScene extends Component {
 
     async _loadGameEffect() {
         await AudioManager.GetInstance().preloadAll();
-        console.log("音频资源预加载完成");
+        LogicTools.myConsole("音频资源预加载完成");
         await EffectManager.preloadAll();
-        console.log("特效资源预加载完成");
+        LogicTools.myConsole("特效资源预加载完成");
     }
 
     update(deltaTime: number) {

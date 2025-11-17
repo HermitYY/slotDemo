@@ -107,7 +107,7 @@ export class SlotMachine extends Component {
     }
 
     async initGrid(curScene: proto.newxxs.ICurScene) {
-        console.log("得到场景信息，主界面初始化");
+        LogicTools.myConsole("得到场景信息，主界面初始化");
         this.updateChipGroup(curScene);
         const sceneMode = curScene.scene;
         switch (sceneMode) {
@@ -279,6 +279,7 @@ export class SlotMachine extends Component {
     async freeGameInitGrid(curScene: proto.newxxs.ICurScene) {
         this.updateRollButtonIsBan(true);
         this.updateFreeCtrl(curScene, true);
+        this.chipLabel3.string = "";
         // 如果free字段有数据说明是freegame初始化
         if (curScene.free && curScene.free.index) {
             await this.dropOldColumns();
@@ -414,7 +415,9 @@ export class SlotMachine extends Component {
             tween(this.freePengali).to(0.5, { scale: Vec3.ONE }).start();
         }
         freePengaliLabel.string = `${curScene.allMultiple}`;
-        UItools.GetInstance().showCurrencyValue(curScene.winChips, this.freeTotalWinChips.getComponent(Label), true, 500, false);
+        UItools.GetInstance().showCurrencyValue(curScene.winChips, this.freeTotalWinChips.getComponent(Label), {
+            duration: 500,
+        });
         await LogicTools.Delay(300);
         if ((curScene.curChips > curScene.curBetChips * 5 || !curScene.freeCount) && !isInit) {
             const isFreeEnd = !curScene.freeCount;
@@ -469,6 +472,7 @@ export class SlotMachine extends Component {
                         // 1.进入免费模式
                         isEnterFree = true;
                         this.updateChipGroup(curScene);
+                        this.chipLabel3.string = "";
                         await this._queue.wait(this.stopEffect());
                         // await this._queue.wait(this.checkPlayLadybirdMultipleEffect(curScene), true);
                         if (this._queue.isAborted) return;
@@ -527,7 +531,7 @@ export class SlotMachine extends Component {
                             let delayTime = 0;
                             isAttack && (delayTime = 2400);
                             isEnterFree && (delayTime = 300);
-                            console.log("isAttack", isAttack);
+                            LogicTools.myConsole("isAttack", isAttack);
                             await this._queue.wait(LogicTools.Delay(delayTime), true);
                             EventManager.emit(E_GAME_EVENT.GAME_REPLAY_STOP);
                             return;
@@ -886,6 +890,7 @@ export class SlotMachine extends Component {
         });
     }
 
+    /** 更改下落动画 */
     public PreCancelSpawnColumnsAni() {
         this.StopDropAniButton.active = false;
         this.isClickQuickDrop = true;
@@ -1143,14 +1148,15 @@ export class SlotMachine extends Component {
         if (this.chipLabel3) {
             const computeChips = chipsInfo.comboChips || chipsInfo.winChips;
             this.chipLabel3.node.active = computeChips > 0;
-            if (+this.chipLabel3.string.replace(/,/g, "") >= computeChips) {
-                this.chipLabel3.string = "0";
-            }
             AudioControlManager.GetInstance().playSfShortGold();
             if (!voiceDuration) {
                 voiceDuration = AudioManager.GetInstance().checkDuration(SfxEnum.ShortGold) * 800;
             }
-            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, true, voiceDuration, false, false);
+            UItools.GetInstance().showCurrencyValue(computeChips, this.chipLabel3, {
+                duration: voiceDuration,
+                isThanMinNoAnimated: false,
+                isZeroBegin: +this.chipLabel3.string.replace(/\./g, "") >= computeChips,
+            });
         }
     }
 
@@ -1359,7 +1365,7 @@ export class SlotMachine extends Component {
             const item = myCurMultiples[i];
             const slotItem = this.getGridNode(item.index);
             if (!slotItem) {
-                console.log("意外跳过", item.index);
+                LogicTools.myConsole("意外跳过", item.index);
                 continue;
             }
             const multipleFont = slotItem.getChildByName("MultipleFont");

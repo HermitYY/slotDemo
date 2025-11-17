@@ -2,6 +2,7 @@ import { _decorator, Node, Prefab, Vec3, instantiate, assetManager, UITransform 
 import { GameSpeedManager } from "./GameSpeedManager";
 import { SequenceFramePlay } from "../common/SequenceFramePlay";
 import { GridManager } from "./GridManager";
+import { LogicTools } from "../Tools/LogicTools";
 
 export class EffectManager {
     private static effectMap: Map<string, Prefab> = new Map();
@@ -46,7 +47,7 @@ export class EffectManager {
             await loadRecursive(d);
         }
 
-        console.log(`[EffectManager] Loaded ${this.effectMap.size} effects in ${dir} and subdirs`);
+        LogicTools.myConsole(`[EffectManager] Loaded ${this.effectMap.size} effects in ${dir} and subdirs`);
     }
 
     /** 注册别名 */
@@ -163,7 +164,7 @@ export class EffectManager {
             if (remain.length > 0) this.activeEffects.set(name, remain);
             else this.activeEffects.delete(name);
 
-            console.log(`[EffectManager] Stopped ${name} under targetNode`);
+            // LogicTools.myConsole(`[EffectManager] Stopped ${name} under targetNode`);
             return;
         }
 
@@ -177,7 +178,7 @@ export class EffectManager {
         }
 
         this.activeEffects.delete(name);
-        console.log(`[EffectManager] Stopped all effects of ${name}`);
+        // LogicTools.myConsole(`[EffectManager] Stopped all effects of ${name}`);
     }
 
     /** 持续时间 单位秒 */

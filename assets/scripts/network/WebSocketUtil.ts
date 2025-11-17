@@ -1,5 +1,6 @@
 import { _decorator } from "cc";
 import { Singleton } from "../common/Singleton";
+import { LogicTools } from "../Tools/LogicTools";
 const { ccclass } = _decorator;
 
 @ccclass("WebSocketUtil")
@@ -19,12 +20,12 @@ export class WebSocketUtil extends Singleton {
         }
 
         this.onOpenCallback = onOpen;
-        console.log("正在连接 WebSocket:", url);
+        LogicTools.myConsole("正在连接 WebSocket:", url);
         this.ws = new WebSocket(url);
         this.ws.binaryType = "arraybuffer";
 
         this.ws.onopen = (event) => {
-            console.log("WebSocket 连接成功");
+            LogicTools.myConsole("WebSocket 连接成功");
             this.isConnected = true;
             if (this.onOpenCallback) this.onOpenCallback();
         };
@@ -95,7 +96,7 @@ export class WebSocketUtil extends Singleton {
         this.heartTimer = setInterval(() => {
             callback();
         }, 4000);
-        console.log("心跳启动");
+        LogicTools.myConsole("心跳启动");
     }
 
     /** 停止心跳 */

@@ -2,7 +2,7 @@ import GlobalConfig from "../common/GlobalConfig";
 import { Singleton } from "../common/Singleton";
 import { getHistoryList, getHistoryDetail, getHistoryPlaybackDetail } from "../network/request";
 import { E_GAME_EVENT, EventManager } from "./EventManager";
-import { Debounce, Throttle } from "../Tools/LogicTools";
+import { Debounce, LogicTools, Throttle } from "../Tools/LogicTools";
 
 export class HistoryWindowManager extends Singleton {
     public readonly onceRequestPageSize = 10;
@@ -69,7 +69,7 @@ export class HistoryWindowManager extends Singleton {
             });
             if (res.code !== 200) throw new Error("请求历史记录回放失败");
             EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_QUERY_RETURN, res.data.mlist);
-            console.log("回放详情", res.data);
+            LogicTools.myConsole("回放详情", res.data);
         } catch (error) {
             console.error("reqGetorderdetailback() 失败:", error);
         }

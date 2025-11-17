@@ -2,6 +2,7 @@ import { Node, Prefab, instantiate, UITransform, Widget, TweenEasing, Color, ass
 import { BasePopup, PopupShowType } from "./BasePopup";
 import { PopupLayer } from "./BasePopup";
 import { Singleton } from "../../common/Singleton";
+import { LogicTools } from "../../Tools/LogicTools";
 
 export const enum E_POPUP_TYPE {
     Tips = "prefabs/Popup/PopupTips",
@@ -151,7 +152,7 @@ export class PopupManager extends Singleton {
         bundle.release(path);
         // 删除缓存引用
         this._prefabCache.delete(path);
-        console.log(`PopupManager: 已释放 prefab ${path} 资源 `);
+        LogicTools.myConsole(`PopupManager: 已释放 prefab ${path} 资源 `);
     }
 
     public static clearAll() {

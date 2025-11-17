@@ -144,7 +144,7 @@ export class AudioManager extends Singleton {
             });
         }
 
-        console.log(`[AudioManager] preloadAll: loaded ${this.clipMap.size} clips from ${dir}`);
+        LogicTools.myConsole(`[AudioManager] preloadAll: loaded ${this.clipMap.size} clips from ${dir}`);
     }
 
     // ---------------- utilities ----------------

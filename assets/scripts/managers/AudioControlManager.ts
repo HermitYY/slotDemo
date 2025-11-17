@@ -132,6 +132,7 @@ export class AudioControlManager extends Singleton {
     }
 
     public async playSfxtimesScroll() {
+        await LogicTools.Delay(100);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.timesScroll);
     }
 

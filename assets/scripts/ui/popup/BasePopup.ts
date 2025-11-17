@@ -147,10 +147,10 @@ export class BasePopup extends Component {
         // 阻止事件冒泡
         mask.addComponent(BlockInputEvents);
         // 点击事件
-        mask.once(Node.EventType.TOUCH_END, (e: EventTouch) => {
+        mask.on(Node.EventType.TOUCH_END, (e: EventTouch) => {
             if (e.target === mask) {
                 if (this.IsCanClickMask) {
-                    this.close();
+                    this.onMaskClick();
                 }
                 e.propagationStopped = true;
             }
@@ -214,6 +214,29 @@ export class BasePopup extends Component {
         return this._showPromise;
     }
 
+    /** 点击遮罩事件--默认关闭窗口 */
+    protected onMaskClick() {
+        this.close();
+    }
+
+    /** 淡出遮罩并销毁节点 */
+    private _destroyWithMask(callback?: Function) {
+        if (this.maskNode) {
+            const opa = this.maskNode.getComponent(UIOpacity)!;
+            tween(opa)
+                .to(0.18, { opacity: 0 })
+                .call(() => {
+                    this.maskNode!.active = false;
+                    this.node.destroy();
+                    callback?.();
+                })
+                .start();
+        } else {
+            this.node.destroy();
+            callback?.();
+        }
+    }
+
     /** 关闭弹窗 */
     public close() {
         if (!this.contentNode) return Promise.resolve();
@@ -223,6 +246,7 @@ export class BasePopup extends Component {
         });
 
         const done = () => {
+            // 弹窗关闭动画结束
             this._resolveClose?.();
         };
 
@@ -596,27 +620,4 @@ export class BasePopup extends Component {
     }
 
     //#endregion
-
-    /** 淡出遮罩并销毁节点 */
-    private _destroyWithMask(callback?: Function) {
-        if (this.maskNode) {
-            const opa = this.maskNode.getComponent(UIOpacity)!;
-            tween(opa)
-                .to(0.18, { opacity: 0 })
-                .call(() => {
-                    this.maskNode!.active = false;
-                    this.node.destroy();
-                    callback?.();
-                })
-                .start();
-        } else {
-            this.node.destroy();
-            callback?.();
-        }
-    }
-
-    /** 点击遮罩事件--默认关闭窗口 */
-    protected onMaskClick() {
-        this.close();
-    }
 }

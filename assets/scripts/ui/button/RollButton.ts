@@ -134,9 +134,10 @@ export class RollButton extends Component {
             .start();
     }
 
-    playScaleEffect() {
+    public playScaleEffect() {
         const { magnify, shrink, magnify2, shrinkNormal } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
-        const startScale = this.node.scale.clone();
+        // const startScale = this.node.scale.clone();
+        const startScale = Vec3.ONE;
         const node = this.node;
         tween(node)
             .to(magnify, { scale: startScale.clone().multiplyScalar(1.2) }, { easing: easing.quadOut })

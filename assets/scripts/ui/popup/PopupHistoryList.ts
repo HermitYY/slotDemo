@@ -9,6 +9,7 @@ import { E_POPUP_TYPE, PopupManager } from "./PopupManager";
 import { PopupHistoryDetail } from "./PopupHistoryDetail";
 import { PopupMask } from "./PopupMask";
 import { AudioControlManager } from "../../managers/AudioControlManager";
+import { LogicTools } from "../../Tools/LogicTools";
 const { ccclass, property } = _decorator;
 
 @ccclass("PopupHistoryList")
@@ -46,7 +47,7 @@ export class PopupHistoryList extends BasePopup {
     responeListData(data) {
         this.removeLoadDataEffect();
         const listData = data.mlist;
-        console.log("历史数据", listData);
+        LogicTools.myConsole("历史数据", listData);
         const list = this.list.getComponent(CommonList);
         list.addData(listData);
         list.setOnScrollToBottom(() => {
@@ -93,7 +94,7 @@ export class PopupHistoryList extends BasePopup {
     }
 
     async responeListDetail(data) {
-        console.log("历史详情数据", data);
+        LogicTools.myConsole("历史详情数据", data);
         this.removeLoadDataEffect();
         const list = this.list.getComponent(CommonList);
         const curClickItem = list.getItemNodeAt(this.curClickitemIndex);

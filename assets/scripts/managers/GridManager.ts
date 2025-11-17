@@ -3,6 +3,7 @@ import { Singleton } from "../common/Singleton";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import proto from "../network/MLWZ_msg.js";
 import GlobalConfig from "../common/GlobalConfig";
+import { LogicTools } from "../Tools/LogicTools";
 
 const { ccclass, property } = _decorator;
 
@@ -47,21 +48,21 @@ export class GridManager extends Singleton {
         if (curScene.run > 1) {
             if (curScene.comboCount > 1) {
                 // 查询返回 combo持续中
-                console.log("结果:得到下落结果combo继续");
+                LogicTools.myConsole("结果:得到下落结果combo继续");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_QUERY_CONSECUTIVE, curScene);
             } else {
                 // 刷新返回 有combo
-                console.log("结果:刷新有奖励 开始查询下落");
+                LogicTools.myConsole("结果:刷新有奖励 开始查询下落");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_UPDATA_CONSECUTIVE, curScene);
             }
         } else {
             if (curScene.winChips) {
                 // 查询返回 combo结束
-                console.log("结果:得到下落结果combo结束");
+                LogicTools.myConsole("结果:得到下落结果combo结束");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_QUERY_NO_CONSECUTIVE, curScene);
             } else {
                 // 刷新返回 无奖
-                console.log("结果:刷新无奖励");
+                LogicTools.myConsole("结果:刷新无奖励");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_UPDATA_NO_CONSECUTIVE, curScene);
             }
         }
@@ -75,7 +76,7 @@ export class GridManager extends Singleton {
         //         .map(Number)
         //         .filter((i) => i == 14).length > 2
         // ) {
-        //     console.log("找到l");
+        //     LogicTools.myConsole("找到l");
         //     return;
         // } else {
         //     SocketManager.GetInstance().curBet();
@@ -84,16 +85,16 @@ export class GridManager extends Singleton {
         if (curScene.run > 1) {
             if (curScene.comboCount > 1) {
                 // 查询返回 combo持续中
-                console.log("free结果:得到下落结果combo继续");
+                LogicTools.myConsole("free结果:得到下落结果combo继续");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_QUERY_CONSECUTIVE, curScene);
             } else {
                 // 刷新返回 有combo
-                console.log("free结果:刷新有奖励 开始查询下落");
+                LogicTools.myConsole("free结果:刷新有奖励 开始查询下落");
                 EventManager.emit(E_GAME_EVENT.GAME_FREE_REFRESH_CONSECUTIVE, curScene);
             }
         } else {
             if (curScene.free && curScene.free.index) {
-                console.log("进free", curScene);
+                LogicTools.myConsole("进free", curScene);
                 if (curScene.winChips == 1200 || curScene.winChips == 2000 || curScene.winChips == 4000) {
                     EventManager.emit(E_GAME_EVENT.GAME_FREE_INIT, curScene);
                 } else {
@@ -101,11 +102,11 @@ export class GridManager extends Singleton {
                 }
             } else if (curScene.curChips) {
                 // 查询返回 combo结束
-                console.log("free结果:得到下落结果combo结束");
+                LogicTools.myConsole("free结果:得到下落结果combo结束");
                 EventManager.emit(E_GAME_EVENT.GAME_GRID_QUERY_NO_CONSECUTIVE, curScene);
             } else {
                 // 刷新返回 无奖
-                console.log("free结果:刷新无奖励");
+                LogicTools.myConsole("free结果:刷新无奖励");
                 EventManager.emit(E_GAME_EVENT.GAME_FREE_REFRESH_NO_CONSECUTIVE, curScene);
             }
         }

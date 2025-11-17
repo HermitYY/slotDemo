@@ -1,7 +1,6 @@
 import { Singleton } from "../common/Singleton";
 import globalConfig from "../common/GlobalConfig";
 import proto from "../network/MLWZ_msg";
-import { director } from "cc";
 
 export interface InspectablePromise<T> {
     promise: Promise<T>;
@@ -88,6 +87,12 @@ export class LogicTools extends Singleton {
             value: () => value,
             reason: () => reason,
         };
+    }
+
+    public static myConsole(...args: any[]) {
+        if (globalConfig.isShowLog) {
+            LogicTools.myConsole(...args);
+        }
     }
 }
 

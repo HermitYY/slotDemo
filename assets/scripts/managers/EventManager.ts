@@ -1,4 +1,5 @@
 import { macro, director, Scheduler } from "cc";
+import { LogicTools } from "../Tools/LogicTools";
 
 interface Subscription {
     callback: Function;
@@ -232,7 +233,7 @@ export class EventManager {
         const list = this.events.get(eventEnum);
         list.add({ callback, target, once });
 
-        if (this.DEBUG) console.log(`[EventManager] on: ${eventEnum} (${once ? "once" : "normal"})`);
+        if (this.DEBUG) LogicTools.myConsole(`[EventManager] on: ${eventEnum} (${once ? "once" : "normal"})`);
     }
 
     /**
@@ -252,7 +253,7 @@ export class EventManager {
         }
 
         if (list.size === 0) this.events.delete(eventEnum);
-        if (this.DEBUG) console.log(`[EventManager] off: ${eventEnum}`);
+        if (this.DEBUG) LogicTools.myConsole(`[EventManager] off: ${eventEnum}`);
     }
 
     /**
@@ -291,7 +292,7 @@ export class EventManager {
      */
     public static remove(eventEnum: E_GAME_EVENT): void {
         this.events.delete(eventEnum);
-        if (this.DEBUG) console.log(`[EventManager] remove: ${eventEnum}`);
+        if (this.DEBUG) LogicTools.myConsole(`[EventManager] remove: ${eventEnum}`);
     }
 
     /**
@@ -310,13 +311,13 @@ export class EventManager {
                 this.events.delete(eventEnum);
             }
         }
-        if (this.DEBUG) console.log(`[EventManager] offAllByTarget:`, target);
+        if (this.DEBUG) LogicTools.myConsole(`[EventManager] offAllByTarget:`, target);
     }
 
     /** 移除所有事件 */
     private static removeAll(): void {
         this.events.clear();
-        if (this.DEBUG) console.log(`[EventManager] removeAll`);
+        if (this.DEBUG) LogicTools.myConsole(`[EventManager] removeAll`);
     }
 
     /** 获取事件数量（调试用） */
@@ -327,9 +328,9 @@ export class EventManager {
 
     /** 打印当前所有事件（调试） */
     public static dump(): void {
-        console.log("===== EventManager Dump =====");
+        LogicTools.myConsole("===== EventManager Dump =====");
         this.events.forEach((subs, eventEnum) => {
-            console.log(`- ${eventEnum}: ${subs.size} listener(s)`);
+            LogicTools.myConsole(`- ${eventEnum}: ${subs.size} listener(s)`);
         });
     }
 }
@@ -350,7 +351,7 @@ export class EventManager {
 // EventManager.off("game-start", this.onGameStart, this);
 
 // // 查看当前事件数量
-// console.log(EventManager.count());
+// LogicTools.myConsole(EventManager.count());
 
 // // 调试打印
 // EventManager.dump();

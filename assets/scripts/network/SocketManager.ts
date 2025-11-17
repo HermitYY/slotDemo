@@ -6,6 +6,7 @@ import proto from "./MLWZ_msg.js";
 import { loginByToken, getdetailSlot } from "./request";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import { UItools } from "../Tools/UItools";
+import { LogicTools } from "../Tools/LogicTools";
 
 export const enum E_GAME_SCENE_TYPE {
     NORMAL = 1,
@@ -40,7 +41,7 @@ export class SocketManager extends Singleton {
             if (data.data?.state) {
                 GlobalConfig.webScoketUrl = data.data.socketurl;
                 GlobalConfig.ptype = data.data.ptype;
-                console.log("连接地址:", GlobalConfig.webScoketUrl);
+                LogicTools.myConsole("连接地址:", GlobalConfig.webScoketUrl);
 
                 WebSocketUtil.GetInstance().Init(GlobalConfig.webScoketUrl, this.initBack.bind(this));
                 this.bindEvent();
@@ -53,7 +54,7 @@ export class SocketManager extends Singleton {
 
     /** WebSocket 已连接成功 */
     private initBack(): void {
-        console.log("WebSocket connected, start login");
+        LogicTools.myConsole("WebSocket connected, start login");
         this.scoketLogin();
     }
 
@@ -69,7 +70,7 @@ export class SocketManager extends Singleton {
         req.identify = GlobalConfig.user.identify;
         const buffer = proto.newxxs.C2S_BeatTime_10000.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.BeatTime_10000, buffer);
-        // console.log("心跳发送", GlobalConfig.ptype, req.identify);
+        // LogicTools.myConsole("心跳发送", GlobalConfig.ptype, req.identify);
     }
 
     /** 启动心跳定时器 */
@@ -82,7 +83,7 @@ export class SocketManager extends Singleton {
         const request: proto.newxxs.C2S_LoginPlayer_11000 = new proto.newxxs.C2S_LoginPlayer_11000();
         request.token = GlobalConfig.token;
         const buffer = proto.newxxs.C2S_LoginPlayer_11000.encode(request).finish();
-        console.log("发送登录消息");
+        LogicTools.myConsole("发送登录消息");
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.LoginPlayer_11000, buffer);
     }
 
@@ -92,7 +93,7 @@ export class SocketManager extends Singleton {
         // req.identify = GlobalConfig.identify;
         const buffer = proto.newxxs.C2S_CurScene_13000.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.CurScene_13000, buffer);
-        console.log("请求场景信息");
+        LogicTools.myConsole("请求场景信息");
     }
 
     /** 设置倍数 */
@@ -101,7 +102,7 @@ export class SocketManager extends Singleton {
         req.isMultiple = isMultiple ? E_GAME_MULTIPLE_TYPE.IS_MULTIPLE : E_GAME_MULTIPLE_TYPE.NOT_MULTIPLE;
         const buffer = proto.newxxs.C2S_SetMultiple_15000.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.SetMultiple_15000, buffer);
-        console.log(`发送设置倍数:当前为${isMultiple ? "加倍" : "不加倍"}`);
+        LogicTools.myConsole(`发送设置倍数:当前为${isMultiple ? "加倍" : "不加倍"}`);
     }
 
     /** 选择筹码 */
@@ -110,7 +111,7 @@ export class SocketManager extends Singleton {
         req.betChip = this.CurScene.betChips?.[chipIndex];
         const buffer = proto.newxxs.C2S_SelectChips_14002.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.SelectChips_14002, buffer);
-        console.log("发送选择筹码:", chipIndex);
+        LogicTools.myConsole("发送选择筹码:", chipIndex);
     }
 
     /** 下注 */
@@ -131,7 +132,7 @@ export class SocketManager extends Singleton {
         // req.identify = GlobalConfig.identify;
         const buffer = proto.newxxs.C2S_CurBuyFree_12002.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.CurBuyFree_12002, buffer);
-        console.log("发送购买免费");
+        LogicTools.myConsole("发送购买免费");
     }
 
     /** 绑定返回事件 */
@@ -164,7 +165,7 @@ export class SocketManager extends Singleton {
     /** 登录返回 */
     private loginBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_LoginPlayerResult_11001.decode(new Uint8Array(messageBody));
-        console.log("Login result:", res);
+        LogicTools.myConsole("Login result:", res);
         if (res.error === this.Successful_20000 || res.error == this.Successful_none) {
             // GlobalConfig.agentId = res.agentId;
             // GlobalConfig.identify = res.identify;
@@ -172,7 +173,7 @@ export class SocketManager extends Singleton {
             // GlobalConfig.playerId = res.playerId;
             // 不需要启动心跳【心跳消息目前是直接断开websocket】
             // this.startHeart();
-            console.log(GlobalConfig);
+            LogicTools.myConsole(GlobalConfig);
             GridManager.GetInstance().parseLoginInitInfo(res);
             this.CurScene = res.curScene;
         }
@@ -181,7 +182,7 @@ export class SocketManager extends Singleton {
     /** 心跳返回 */
     private heartBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.C2S_BeatTimeResult_10001.decode(new Uint8Array(messageBody));
-        console.log("心跳返回:", res);
+        LogicTools.myConsole("心跳返回:", res);
     }
 
     /** 设置倍数返回 */
@@ -191,19 +192,19 @@ export class SocketManager extends Singleton {
         this.CurScene.betChips = res.betChips;
         this.CurScene.curBetChips = res.curBetChips;
         EventManager.emit(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.CurScene);
-        console.log("设置倍数返回:", res);
+        LogicTools.myConsole("设置倍数返回:", res);
     }
 
     /** 场景返回 */
     private curSceneBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_CurSceneResult_13001.decode(new Uint8Array(messageBody));
-        console.log("场景返回:", res);
+        LogicTools.myConsole("场景返回:", res);
     }
 
     /** 下注返回 */
     private curBetBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_CurBetResult_12001.decode(new Uint8Array(messageBody));
-        console.log("下注返回:", res.curScene);
+        LogicTools.myConsole("下注返回:", res.curScene);
         this.CurScene = res.curScene;
         const curScene = res.curScene;
         if (curScene.scene == E_GAME_SCENE_TYPE.NORMAL && !curScene.allCount) {
@@ -219,7 +220,7 @@ export class SocketManager extends Singleton {
     /** 购买免费返回 */
     private curBuyFreeBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_CurBuyFreeResult_12003.decode(new Uint8Array(messageBody));
-        console.log("购买免费返回:", res);
+        LogicTools.myConsole("购买免费返回:", res);
         // GridManager.GetInstance().parseGridLogicBetInfo(res);
         // GridManager.GetInstance().parseFreeGameLogicBetInfo(res);
         this.CurScene = res.curScene;
@@ -229,7 +230,7 @@ export class SocketManager extends Singleton {
     /** 免费结果返回 */
     private curBuyFreeBack2(messageBody: ArrayBuffer): void {
         // const res = proto.newxxs.S2C_CurFreeResult_12005.decode(new Uint8Array(messageBody));
-        // console.log("免费游戏返回:", res);
+        // LogicTools.myConsole("免费游戏返回:", res);
     }
 
     /** 选择筹码返回 */
@@ -239,19 +240,19 @@ export class SocketManager extends Singleton {
         this.CurScene.buyFreeChips = res.buyFreeChips;
         this.CurScene.scopes = res.scopes;
         EventManager.emit(E_GAME_EVENT.GAME_CHIP_SELECT_UPDATE, this.CurScene);
-        console.log("选择筹码返回:", res);
+        LogicTools.myConsole("选择筹码返回:", res);
     }
 
     /** 公告通知 */
     private noticeBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_NoticeResult_66666.decode(new Uint8Array(messageBody));
-        console.log("公告通知:", res);
+        LogicTools.myConsole("公告通知:", res);
     }
 
     /** 玩家下线通知 */
     private userOutBack(messageBody: ArrayBuffer): void {
         const res = proto.newxxs.S2C_OfflineResult_11002.decode(new Uint8Array(messageBody));
-        console.log("玩家下线:", res);
+        LogicTools.myConsole("玩家下线:", res);
     }
 
     /** 可访问底层 ws 对象 */

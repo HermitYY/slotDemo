@@ -15,19 +15,42 @@ export class UItools extends Singleton {
      * 数值显示为英式货币格式（支持跳变）
      * @param value 目标数值
      * @param label Label组件
-     * @param animated 是否跳变显示（默认true）
+     * @param animated
      * @param duration 跳变持续时间(毫秒)，默认500
      * @param forceDecimal 是否强制保留两位小数，默认false
-     * @param isThanMinNoAnimated 是否小于当前值时，不跳变
+     * @param isThanMinNoAnimated 是否小于当前值时，不跳变, 默认true
+     * @param isZeroBegin 是否从0开始显示，默认false
      */
-    public showCurrencyValue(value: number, label: Label, animated: boolean = true, duration: number = 500, forceDecimal: boolean = false, isThanMinNoAnimated: boolean = true) {
+    public showCurrencyValue(
+        value: number,
+        label: Label,
+        showCfg?: {
+            /** 是否跳变显示（默认true） */
+            animated?: boolean;
+            duration?: number;
+            forceDecimal?: boolean;
+            isThanMinNoAnimated?: boolean;
+            isZeroBegin?: boolean;
+        }
+    ): Tween<any> {
         if (!label) {
             console.warn("Label 未传入");
             return;
         }
 
+        const animated = showCfg?.animated ?? true;
+        const duration = showCfg?.duration ?? 500;
+        const forceDecimal = showCfg?.forceDecimal ?? false;
+        const isThanMinNoAnimated = showCfg?.isThanMinNoAnimated ?? true;
+        const isZeroBegin = showCfg?.isZeroBegin ?? false;
+
         // 当前数值（从Label里读取）
-        const current = parseFloat(label.string.replace(/\./g, "")) || 0;
+        let current = parseFloat(label.string.replace(/\./g, "")) || 0;
+
+        if (isZeroBegin) {
+            label.string = "0" + (forceDecimal ? ".00" : "");
+            current = 0;
+        }
 
         // 不跳变，直接显示
         if (!animated || (isThanMinNoAnimated && value < current)) {
@@ -40,7 +63,7 @@ export class UItools extends Singleton {
 
         // 使用中间对象承载数值
         const temp = { n: current };
-        tween(temp)
+        const myTween = tween(temp)
             .to(
                 duration / 1000,
                 { n: value },
@@ -55,6 +78,7 @@ export class UItools extends Singleton {
                 }
             )
             .start();
+        return myTween;
     }
 
     /**
