@@ -2,7 +2,7 @@ import { _decorator, Prefab, UITransform, Vec3 } from "cc";
 import { BasePopup } from "./BasePopup";
 import { EffectManager } from "../../managers/EffectManager";
 import { AudioControlManager } from "../../managers/AudioControlManager";
-import { LogicTools } from "../../Tools/LogicTools";
+import { InspectablePromise, LogicTools } from "../../Tools/LogicTools";
 import { PlayMode } from "../../managers/AudioManager";
 const { ccclass, property } = _decorator;
 
@@ -119,30 +119,42 @@ export class PopupMask extends BasePopup {
     }
 
     private async playEffectAudio(effectName: string) {
+        let isNatural: boolean;
+        let p: InspectablePromise<boolean>;
         switch (effectName) {
             case "SlotEffectClear_1":
             case "SlotEffectClear_2":
             case "SlotEffectClear_3":
             case "SlotEffectClear_4":
             case "SlotEffectClear_5":
-                await AudioControlManager.GetInstance().playSfxLowRing();
-                AudioControlManager.GetInstance().playSfxLowBoom();
+                isNatural = await AudioControlManager.GetInstance().playSfxLowRing();
+                if (isNatural) {
+                    AudioControlManager.GetInstance().playSfxLowBoom();
+                }
                 break;
             case "SlotEffectClear_6":
-                await AudioControlManager.GetInstance().playSfxGridClear6();
-                AudioControlManager.GetInstance().playSfxHeightBoom();
+                isNatural = await AudioControlManager.GetInstance().playSfxGridClear6();
+                if (isNatural) {
+                    AudioControlManager.GetInstance().playSfxHeightBoom();
+                }
                 break;
             case "SlotEffectClear_7":
-                await AudioControlManager.GetInstance().playSfxGridClear7();
-                AudioControlManager.GetInstance().playSfxHeightBoom();
+                isNatural = await AudioControlManager.GetInstance().playSfxGridClear7();
+                if (isNatural) {
+                    AudioControlManager.GetInstance().playSfxHeightBoom();
+                }
                 break;
             case "SlotEffectClear_8":
-                await AudioControlManager.GetInstance().playSfxGridClear8();
-                AudioControlManager.GetInstance().playSfxHeightBoom();
+                isNatural = await AudioControlManager.GetInstance().playSfxGridClear8();
+                if (isNatural) {
+                    AudioControlManager.GetInstance().playSfxHeightBoom();
+                }
                 break;
             case "SlotEffectClear_9":
-                await AudioControlManager.GetInstance().playSfxGridClear9();
-                AudioControlManager.GetInstance().playSfxHeightBoom();
+                isNatural = await AudioControlManager.GetInstance().playSfxGridClear9();
+                if (isNatural) {
+                    AudioControlManager.GetInstance().playSfxHeightBoom();
+                }
                 break;
             case "SlotEffectClear_14":
                 AudioControlManager.GetInstance().playSfxIcon14();
@@ -152,24 +164,24 @@ export class PopupMask extends BasePopup {
             case "SlotEffectQuickClear_3":
             case "SlotEffectQuickClear_4":
             case "SlotEffectQuickClear_5":
-                AudioControlManager.GetInstance().playSfxLowRing();
-                AudioControlManager.GetInstance().playQuickLowBoom();
+                p = LogicTools.makeInspectable(AudioControlManager.GetInstance().playSfxLowRing());
+                AudioControlManager.GetInstance().playQuickLowBoom(p);
                 break;
             case "SlotEffectQuickClear_6":
-                AudioControlManager.GetInstance().playSfxGridClear6();
-                AudioControlManager.GetInstance().playQuickHighBoom();
+                p = LogicTools.makeInspectable(AudioControlManager.GetInstance().playSfxGridClear6());
+                AudioControlManager.GetInstance().playQuickHighBoom(p);
                 break;
             case "SlotEffectQuickClear_7":
-                AudioControlManager.GetInstance().playSfxGridClear7();
-                AudioControlManager.GetInstance().playQuickHighBoom();
+                p = LogicTools.makeInspectable(AudioControlManager.GetInstance().playSfxGridClear7());
+                AudioControlManager.GetInstance().playQuickHighBoom(p);
                 break;
             case "SlotEffectQuickClear_8":
-                AudioControlManager.GetInstance().playSfxGridClear8();
-                AudioControlManager.GetInstance().playQuickHighBoom();
+                p = LogicTools.makeInspectable(AudioControlManager.GetInstance().playSfxGridClear8());
+                AudioControlManager.GetInstance().playQuickHighBoom(p);
                 break;
             case "SlotEffectQuickClear_9":
-                AudioControlManager.GetInstance().playSfxGridClear9();
-                AudioControlManager.GetInstance().playQuickHighBoom();
+                p = LogicTools.makeInspectable(AudioControlManager.GetInstance().playSfxGridClear9());
+                AudioControlManager.GetInstance().playQuickHighBoom(p);
                 break;
             default:
                 break;

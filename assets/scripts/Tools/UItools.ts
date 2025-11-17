@@ -2,6 +2,7 @@
 import { _decorator, Component, Node, Label, tween, Tween, UITransform, SpriteFrame, Sprite, Mask, Graphics, Vec3, TweenEasing, find, Quat } from "cc";
 import { Singleton } from "../common/Singleton";
 import { EffectManager } from "../managers/EffectManager";
+import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 type Constructor<T> = new (...args: any[]) => T;
 const { ccclass } = _decorator;
 
@@ -273,5 +274,14 @@ export class UItools extends Singleton {
             node.setWorldRotation(worldRot);
             node.setWorldScale(worldScale);
         }
+    }
+
+    /** 错误提示 */
+    public ShowLoadErrorTips() {
+        EventManager.emit(E_GAME_EVENT.NETWORK_ERROR_LOADING);
+    }
+
+    public ShowGameErrorTips() {
+        EventManager.emit(E_GAME_EVENT.NETWORK_ERROR_GAMEING);
     }
 }

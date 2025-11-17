@@ -1,5 +1,5 @@
 import { Singleton } from "../common/Singleton";
-import { LogicTools } from "../Tools/LogicTools";
+import { InspectablePromise, LogicTools } from "../Tools/LogicTools";
 import { AudioManager, BgmEnum, PlayMode, SfxEnum } from "./AudioManager";
 import { E_GAME_SPEED_TYPE, GameSpeedManager } from "./GameSpeedManager";
 
@@ -99,6 +99,7 @@ export class AudioControlManager extends Singleton {
     }
 
     public async playSfxIcon14() {
+        await LogicTools.Delay(200);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.Icon14);
     }
     public async playSfxLowBoom() {
@@ -146,14 +147,18 @@ export class AudioControlManager extends Singleton {
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.qElastic);
     }
 
-    public async playQuickLowBoom() {
+    public async playQuickLowBoom(natural: InspectablePromise<boolean>) {
+        if (natural.isFulfilled()) return;
         await LogicTools.Delay(200);
+        if (natural.isFulfilled()) return;
         AudioManager.GetInstance().stopSfx(SfxEnum.LowRing);
         this.playSfxLowBoom();
     }
 
-    public async playQuickHighBoom() {
+    public async playQuickHighBoom(natural: InspectablePromise<boolean>) {
+        if (natural.isFulfilled()) return;
         await LogicTools.Delay(200);
+        if (natural.isFulfilled()) return;
         AudioManager.GetInstance().stopSfx(SfxEnum.GridClear6);
         AudioManager.GetInstance().stopSfx(SfxEnum.GridClear7);
         AudioManager.GetInstance().stopSfx(SfxEnum.GridClear8);

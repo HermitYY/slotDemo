@@ -244,6 +244,7 @@ export class SlotMachine extends Component {
 
         SocketManager.GetInstance().curBet();
         await this.clearAwardGrid(awardIndexArrs ?? []);
+        this.collapseColumns();
         this.updateWinChipsText(curScene);
         await this.comboEffect(curScene.comboCount);
     }
@@ -360,6 +361,7 @@ export class SlotMachine extends Component {
         });
         SocketManager.GetInstance().curBet();
         await this.clearAwardGrid(awardIndexArrs ?? []);
+        this.collapseColumns();
         this.updateWinChipsText(curScene);
         await this.comboEffect(curScene.comboCount);
     }
@@ -571,12 +573,11 @@ export class SlotMachine extends Component {
                     // 4.combo
                     const { awardIndexArrs } = LogicTools.GetInstance().transGridInfo(curScene);
                     if (!awardIndexArrs.length) return;
-
                     this.curComboCount++;
-                    this.clearAwardGrid(awardIndexArrs);
-                    this.updateWinChipsText(curScene);
-                    await this._queue.wait(this._waitGridDropEnd());
+                    await this.clearAwardGrid(awardIndexArrs, this._queue);
                     if (this._queue.isAborted) return;
+                    this.updateWinChipsText(curScene);
+                    this._queue.wait(this.collapseColumns());
                     const nextScene = this._curReplayArr[this._currentReplayIndex + 1];
                     if (!nextScene) return;
                     await Promise.all([this._queue.wait(this.comboEffect(curScene.comboCount)), this._queue.wait(this.refillColumns(nextScene))]);
@@ -586,15 +587,6 @@ export class SlotMachine extends Component {
                     break;
             }
         }
-    }
-
-    private _gridDropHandler: Function | null = null;
-
-    private _waitGridDropEnd(): Promise<void> {
-        return new Promise((resolve) => {
-            this._gridDropHandler = () => resolve();
-            EventManager.once(E_GAME_EVENT.GAME_GRID_DROP_END, this._gridDropHandler);
-        });
     }
 
     public pauseReplay() {
@@ -609,18 +601,24 @@ export class SlotMachine extends Component {
         PopupManager.showLayer(PopupLayer.History);
         await this._queue?.safeAbort();
         EffectManager.stopEffect("FreeGameLoadEffect");
-        if (this._gridDropHandler) {
-            EventManager.off(E_GAME_EVENT.GAME_GRID_DROP_END, this._gridDropHandler);
-            this._gridDropHandler = null;
+        for (let c = 0; c < this.cols; c++) {
+            const columnNode = this.columns[c];
+            const oldItems = columnNode.children;
+            oldItems.forEach((item, r) => {
+                item.destroy();
+            });
         }
-        this.dropOldColumns();
         const curScene = SocketManager.GetInstance().CurScene;
-        this.spawnNewColumns(curScene, false);
+        this.OldspawnNewColumns(curScene, false);
         this.stopEffect();
         this.stopCheckLadybirdEffect();
         EventManager.emit(E_GAME_EVENT.GAME_HISTORY_REPLAY_END);
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
         this.curComboCount = 0;
+        const { chipsInfo } = LogicTools.GetInstance().transGridInfo(curScene);
+        const computeChips = chipsInfo.comboChips || chipsInfo.winChips;
+        this.chipLabel3.string = `${computeChips}`;
+        AudioManager.GetInstance().stopAllSfx();
         GameSpeedManager.GetInstance().restoreGameSpeed();
     }
     //#endregion
@@ -908,7 +906,8 @@ export class SlotMachine extends Component {
             chips?: number;
             count?: number;
             index?: string;
-        }>
+        }>,
+        abort?: AbortableQueue
     ): Promise<void> {
         let matchedAll: { gridIndex: number; removeId: number }[] = [];
         if (awardArrs.length > 0) {
@@ -926,12 +925,10 @@ export class SlotMachine extends Component {
             });
             await this.removeGridItem(matchedAll);
             awardArrs.forEach((item) => {
+                if (abort?.isAborted) return;
                 EventManager.emit(E_GAME_EVENT.GAME_COMBO_HISTORY_ADD, { id: item.betArea, count: item.count, money: item.chips });
             });
             await LogicTools.waitNextFrame();
-            // 加快
-            // await this.collapseColumns();
-            this.collapseColumns();
         }
         EventManager.emit(E_GAME_EVENT.GAME_GRID_DROP_END);
     }

@@ -76,7 +76,7 @@ export class AudioManager extends Singleton {
     private bgmPlayTimer: any = null;
 
     // SFX 管理（记录正在播放的计时器，用于 Queue 模式判断全部结束）
-    private sfxPlayingTimers: Map<number, any> = new Map();
+    private sfxTimers = new Map<number, { name: string; timer: any; resolve: (natural: boolean) => void }>();
     private sfxTimerIdCounter = 1;
 
     // 音量（0-100）
@@ -298,6 +298,7 @@ export class AudioManager extends Singleton {
     //#endregion
 
     //#region SFX
+
     /**
      * playSfx(mode, sfx)
      * - Replace: 停止所有 SFX（池中与临时），立即播放自己
@@ -305,7 +306,7 @@ export class AudioManager extends Singleton {
      * - Parallel: 立即并行播放（若池中无空闲并且允许扩容则创建临时 source）
      * 返回 Promise: 在该次播放完整播放完毕时 resolve
      */
-    public playSfx(mode: PlayMode, sfx: SfxEnum): Promise<void> {
+    public playSfx(mode: PlayMode, sfx: SfxEnum): Promise<boolean> {
         const name = sfx as string;
         const clip = this.clipMap.get(name);
         if (!clip) return Promise.reject(`[AudioManager] SFX not found: ${name}`);
@@ -319,14 +320,14 @@ export class AudioManager extends Singleton {
                 return this._playSfxOnce(clip);
             case PlayMode.Queue:
                 // 如果当前没有正在播放的 SFX，则直接播放
-                if (this.sfxPlayingTimers.size === 0) {
+                if (this.sfxTimers.size === 0) {
                     return this._playSfxOnce(clip);
                 } else {
                     // 等待所有现有 SFX 完毕后播放
                     return new Promise<void>((resolve) => {
-                        // 当 sfxPlayingTimers 为空时触发
+                        // 当 sfxTimers 为空时触发
                         const check = () => {
-                            if (this.sfxPlayingTimers.size === 0) {
+                            if (this.sfxTimers.size === 0) {
                                 resolve(); // 先 resolve 以便外部知道我们现在将播放
                             } else {
                                 // 等一小段再检查
@@ -344,7 +345,7 @@ export class AudioManager extends Singleton {
     }
 
     // 真正播放一个 sfx clip，返回在该次播放完整播放完毕时 resolve
-    private _playSfxOnce(clip: AudioClip): Promise<void> {
+    private _playSfxOnce(clip: AudioClip): Promise<boolean> {
         // 找空闲 source
         let source = this.sfxPool.find((s) => !s.playing);
         let createdTemp = false;
@@ -373,7 +374,7 @@ export class AudioManager extends Singleton {
         source.play();
 
         // 记录计时器，返回 Promise 在播放结束时 resolve
-        return new Promise<void>((resolve) => {
+        return new Promise<boolean>((resolve) => {
             const id = this.sfxTimerIdCounter++;
             const dur = clip.getDuration() * 1000;
             const timer = setTimeout(() => {
@@ -384,10 +385,15 @@ export class AudioManager extends Singleton {
                     source.node.removeFromParent();
                     source.node.destroy();
                 }
-                this.sfxPlayingTimers.delete(id);
-                resolve();
+                this.sfxTimers.delete(id);
+                resolve(true);
             }, dur);
-            this.sfxPlayingTimers.set(id, timer);
+
+            this.sfxTimers.set(id, {
+                name: clip.name,
+                timer,
+                resolve,
+            });
         });
     }
 
@@ -413,10 +419,11 @@ export class AudioManager extends Singleton {
             } catch (e) {}
         });
         // 清所有计时器
-        for (const t of this.sfxPlayingTimers.values()) {
-            clearTimeout(t);
+        for (const [id, item] of this.sfxTimers.entries()) {
+            clearTimeout(item.timer);
+            this.sfxTimers.delete(id);
+            item.resolve(false);
         }
-        this.sfxPlayingTimers.clear();
     }
 
     /**
@@ -453,10 +460,18 @@ export class AudioManager extends Singleton {
             }
         }
 
-        // 清理掉相关的计时器（防止 resolve 重复触发）
-        for (const [id, timer] of this.sfxPlayingTimers.entries()) {
-            clearTimeout(timer);
-            this.sfxPlayingTimers.delete(id);
+        const needRemove: number[] = [];
+
+        for (const [id, item] of this.sfxTimers.entries()) {
+            if (item.name === name) {
+                clearTimeout(item.timer);
+                item.resolve(false);
+                needRemove.push(id);
+            }
+        }
+
+        for (const id of needRemove) {
+            this.sfxTimers.delete(id);
         }
     }
 

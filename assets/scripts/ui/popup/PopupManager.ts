@@ -33,6 +33,11 @@ export class PopupManager extends Singleton {
     private static _root: Node | null = null;
     private static _layerRoots: Record<PopupLayer, Node> = {} as any;
     private static _prefabCache: Map<E_POPUP_TYPE, Prefab> = new Map();
+
+    public static get IsInit() {
+        return this._root != null;
+    }
+
     public static init(root: Node) {
         this._root = root;
         this._createLayers();

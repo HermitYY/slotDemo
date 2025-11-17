@@ -3,7 +3,8 @@ import { SocketManager } from "../network/SocketManager";
 import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 import { EffectManager } from "../managers/EffectManager";
 import { AudioManager } from "../managers/AudioManager";
-import { AudioControlManager } from "../managers/AudioControlManager";
+import { PopupMask } from "../ui/popup/PopupMask";
+import { PopupTips } from "../ui/popup/PopupTips";
 
 const { ccclass, property } = _decorator;
 
@@ -34,6 +35,8 @@ export class LoadingScene extends Component {
     private beginButton!: Node;
     @property(Node)
     private barGroup!: Node;
+    @property(Node)
+    private errorTips!: Node;
 
     private currentProgress: number = 0;
     private actualProgress: number = 0;
@@ -45,6 +48,8 @@ export class LoadingScene extends Component {
     private iconAOpacity!: UIOpacity;
     private iconBOpacity!: UIOpacity;
     private maxMaskWidth: number = 0;
+
+    private isError: boolean = false;
 
     onLoad(): void {
         const username = "yy123e";
@@ -64,6 +69,11 @@ export class LoadingScene extends Component {
             { timeout: 100000, executeOnTimeout: true }
         );
         this.beginButtonShow(false);
+        EventManager.on(E_GAME_EVENT.NETWORK_ERROR_LOADING, this.showError, this);
+    }
+
+    protected onDestroy(): void {
+        EventManager.removeAllByTarget(this);
     }
 
     start() {
@@ -112,6 +122,8 @@ export class LoadingScene extends Component {
     }
 
     update(deltaTime: number) {
+        if (this.isError) return;
+
         this.elapsedTime += deltaTime;
 
         // 计算受最小加载时间限制的目标进度
@@ -176,5 +188,12 @@ export class LoadingScene extends Component {
     private beginButtonShow(isShow: boolean) {
         this.beginButton.active = isShow;
         this.barGroup.active = !isShow;
+    }
+
+    private showError() {
+        this.errorTips.active = true;
+        this.isError = true;
+        const popup = this.errorTips.getComponent(PopupTips);
+        popup.show();
     }
 }

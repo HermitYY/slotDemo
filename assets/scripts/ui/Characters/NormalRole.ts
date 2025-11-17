@@ -80,7 +80,7 @@ export class NormalRole extends Component {
         this.stopArrowEffect();
         this.curArrowLev = 1;
         this.curBowLev = 1;
-        this.spineCommon.play(0, `daiji${this.curBowLev}`, true);
+        this.spineCommon?.play(0, `daiji${this.curBowLev}`, true);
     }
 
     private get isAlive(): boolean {

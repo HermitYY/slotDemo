@@ -5,6 +5,7 @@ import { GridManager } from "../managers/GridManager";
 import proto from "./MLWZ_msg.js";
 import { loginByToken, getdetailSlot } from "./request";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
+import { UItools } from "../Tools/UItools";
 
 export const enum E_GAME_SCENE_TYPE {
     NORMAL = 1,
@@ -46,6 +47,7 @@ export class SocketManager extends Singleton {
             }
         } catch (e) {
             console.error("SocketManager.Init() 失败:", e);
+            UItools.GetInstance().ShowLoadErrorTips();
         }
     }
 

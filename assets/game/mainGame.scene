@@ -4719,10 +4719,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "PopupWindow": {
-      "__uuid__": "f9f5deb2-c013-4048-954d-8d1010019c3e",
-      "__expectedType__": "cc.Prefab"
-    },
     "_id": "74Iav//xhPUZtsXgurwpmj"
   },
   {
@@ -7845,10 +7841,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "PopupWindow": {
-      "__uuid__": "f9f5deb2-c013-4048-954d-8d1010019c3e",
-      "__expectedType__": "cc.Prefab"
-    },
     "_id": "b7M7ciud1K25dSa/rU2dRM"
   },
   {
@@ -10126,14 +10118,6 @@
       "__uuid__": "30aefc17-a545-43f4-b89d-984b63b20f62",
       "__expectedType__": "cc.Prefab"
     },
-    "popupMaskPrefab": {
-      "__uuid__": "ee373737-6d19-41d1-9e9e-c969eb330290",
-      "__expectedType__": "cc.Prefab"
-    },
-    "popupFreeResultPrefab": {
-      "__uuid__": "b9462eec-73a1-44b9-8a77-16591ae51766",
-      "__expectedType__": "cc.Prefab"
-    },
     "columns": [
       {
         "__id__": 300
@@ -12163,10 +12147,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "PopupAutoBuy": {
-      "__uuid__": "c5beda63-096b-4c58-b430-7943bc923677",
-      "__expectedType__": "cc.Prefab"
-    },
     "AutoButton": {
       "__id__": 356
     },
@@ -12367,10 +12347,6 @@
     },
     "_enabled": true,
     "__prefab": null,
-    "PopupWindow": {
-      "__uuid__": "6d9e5bdc-7468-4bc0-beb0-633bb3fc791a",
-      "__expectedType__": "cc.Prefab"
-    },
     "_id": "acGwZgFk5KmYcNkG58fIrQ"
   },
   {
@@ -13129,10 +13105,6 @@
     },
     "needChipslabelShadow": {
       "__id__": 388
-    },
-    "PopupWindow": {
-      "__uuid__": "eaab2c05-61c1-44c2-a1a2-070a5a7f77b6",
-      "__expectedType__": "cc.Prefab"
     },
     "_id": "b6T2GvG5BLAKZP5EnGMXVc"
   },

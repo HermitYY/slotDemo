@@ -21,6 +21,7 @@ export class FreeGameBoss extends Component {
     protected onLoad(): void {
         EventManager.on(E_GAME_EVENT.GAME_MORO_ATTACK2, this.arrowAttackEffect, this);
         EventManager.on(E_GAME_EVENT.GAME_MORO_ATTACK, this.arrowAttackEffect, this);
+        EventManager.on(E_GAME_EVENT.GAME_HISTORY_REPLAY_END, this.replayEnd, this);
     }
 
     start() {
@@ -77,5 +78,9 @@ export class FreeGameBoss extends Component {
         EffectManager.playEffect("FreeMasterSmellFrie", this.MountPos2, Vec3.ZERO);
         if (!this.isAlive) return;
         this.spineCommon.queue(0, "待机", true);
+    }
+
+    replayEnd() {
+        this.spineCommon?.play(0, `待机`, true);
     }
 }

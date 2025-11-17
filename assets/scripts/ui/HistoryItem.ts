@@ -27,7 +27,6 @@ export class HistoryItem extends Component {
     }
 
     private setUp() {
-        // _data 一定有
         const { id, count, money } = this._data!;
         const slot = this.getComponentInChildren(SlotItem);
         if (slot) {

@@ -3,6 +3,15 @@ import globalConfig from "../common/GlobalConfig";
 import proto from "../network/MLWZ_msg";
 import { director } from "cc";
 
+export interface InspectablePromise<T> {
+    promise: Promise<T>;
+    isFulfilled: () => boolean;
+    isRejected: () => boolean;
+    isPending: () => boolean;
+    value: () => T | undefined;
+    reason: () => any;
+}
+
 export class LogicTools extends Singleton {
     /**
      * 消息解析
@@ -53,6 +62,32 @@ export class LogicTools extends Singleton {
                 resolve();
             });
         });
+    }
+
+    public static makeInspectable<T>(promise: Promise<T>): InspectablePromise<T> {
+        let status: "pending" | "fulfilled" | "rejected" = "pending";
+        let value: T | undefined = undefined;
+        let reason: any = undefined;
+
+        promise.then(
+            (v) => {
+                status = "fulfilled";
+                value = v;
+            },
+            (e) => {
+                status = "rejected";
+                reason = e;
+            }
+        );
+
+        return {
+            promise,
+            isFulfilled: () => status === "fulfilled",
+            isRejected: () => status === "rejected",
+            isPending: () => status === "pending",
+            value: () => value,
+            reason: () => reason,
+        };
     }
 }
 
