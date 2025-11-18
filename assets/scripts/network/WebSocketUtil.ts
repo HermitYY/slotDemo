@@ -1,6 +1,7 @@
 import { _decorator } from "cc";
 import { Singleton } from "../common/Singleton";
 import { LogicTools } from "../Tools/LogicTools";
+import { E_GAME_EVENT, EventManager } from "../managers/EventManager";
 const { ccclass } = _decorator;
 
 @ccclass("WebSocketUtil")
@@ -35,6 +36,7 @@ export class WebSocketUtil extends Singleton {
         };
 
         this.ws.onclose = (event) => {
+            EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
             console.warn("WebSocket 连接已关闭");
             this.isConnected = false;
             this.clearHeart();
@@ -42,6 +44,7 @@ export class WebSocketUtil extends Singleton {
         };
 
         this.ws.onerror = (event) => {
+            EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
             console.error("WebSocket 出错:", event);
             this.isConnected = false;
         };
@@ -49,6 +52,7 @@ export class WebSocketUtil extends Singleton {
 
     public SendMsg(ptype: number | string, messageType: number | string, data: ArrayBuffer | Uint8Array): void {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+            EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
             console.error("WebSocket not connected");
             return;
         }
@@ -67,6 +71,7 @@ export class WebSocketUtil extends Singleton {
         try {
             this.ws.send(bufferWithHeader);
         } catch (error) {
+            EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
             console.error("Failed to send message", error);
         }
     }

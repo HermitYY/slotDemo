@@ -1,6 +1,9 @@
 import { _decorator, Component, find, director, view, ResolutionPolicy } from "cc";
-import { PopupManager } from "../ui/popup/PopupManager";
+import { E_POPUP_TYPE, PopupManager } from "../ui/popup/PopupManager";
 import { AudioManager } from "./AudioManager";
+import { E_GAME_EVENT, EventManager } from "./EventManager";
+import { E_POPUP_TIPS_SHIW_TYPE, PopupTips } from "../ui/popup/PopupTips";
+import { Debounce } from "../Tools/LogicTools";
 
 const { ccclass } = _decorator;
 
@@ -19,26 +22,28 @@ export class GameManager extends Component {
         }
         GameManager._inst = this;
 
-        // 设置为常驻节点（切换场景不销毁）
+        // 设置为常驻节点
         director.addPersistRootNode(this.node);
 
         // 游戏启动时初始化
         PopupManager.init(find("Canvas/MainGame/PopupRoot"));
         AudioManager.GetInstance().init(find("Canvas/MainGame/AudioRoot/BgmPlayer"), find("Canvas/MainGame/AudioRoot/SfxPlayers"));
 
+        EventManager.on(E_GAME_EVENT.NETWORK_ERROR, this.showError, this);
         // view.setDesignResolutionSize(540, 960, ResolutionPolicy.FIXED_HEIGHT);
     }
 
-    private printTimer: number = 0;
-    private readonly PRINT_INTERVAL: number = 3; // 3秒间隔
-
-    protected update(dt: number): void {
-        // this.printTimer += dt;
-        // if (this.printTimer >= this.PRINT_INTERVAL) {
-        //     console.log(view);
-        //     this.printTimer = 0; // 重置计时器
-        // }
+    protected onDestroy(): void {
+        EventManager.removeAllByTarget(this);
     }
 
-    start() {}
+    @Debounce(500)
+    private async showError() {
+        const popup = await PopupManager.create<PopupTips>(E_POPUP_TYPE.Tips);
+        popup.SetText("NETWORK ERROR");
+        popup.SetCloseCallBack(() => {
+            location.reload();
+        });
+        popup.show();
+    }
 }

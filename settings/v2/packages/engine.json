@@ -140,5 +140,8 @@
       "version": ""
     },
     "flags": {}
+  },
+  "macroConfig": {
+    "ENABLE_TRANSPARENT_CANVAS": true
   }
 }

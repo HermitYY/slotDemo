@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from "cc";
+import { _decorator, Component, Label, Node } from "cc";
 import { BasePopup } from "./BasePopup";
 const { ccclass, property } = _decorator;
 
@@ -10,7 +10,25 @@ export const enum E_POPUP_TIPS_SHIW_TYPE {
 
 @ccclass("PopupTips")
 export class PopupTips extends BasePopup {
-    start() {}
+    private isCanCLickMask: boolean = false;
+    private closeCallBack?: () => void;
+    public SetText(text: string) {
+        this.node.getComponentInChildren(Label)!.string = text;
+    }
 
-    update(deltaTime: number) {}
+    public SetCloseCallBack(fn: () => void) {
+        this.closeCallBack = fn;
+    }
+
+    override async show(): Promise<void> {
+        await super.show();
+        this.isCanCLickMask = true;
+        return;
+    }
+
+    protected override onMaskClick(): void {
+        if (!this.isCanCLickMask) return;
+        if (this.closeCallBack) this.closeCallBack();
+        this.close();
+    }
 }

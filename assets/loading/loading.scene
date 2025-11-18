@@ -2014,13 +2014,13 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 36,
-      "g": 109,
-      "b": 48,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_spriteFrame": {
-      "__uuid__": "2fddd4c9-115e-4277-bc00-52902fd5d797@f9941",
+      "__uuid__": "fe35cd89-0cdf-48ce-9f3b-4084caa282cc@f9941",
       "__expectedType__": "cc.SpriteFrame"
     },
     "_type": 0,
@@ -2123,9 +2123,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 245,
-      "g": 0,
-      "b": 0,
+      "r": 255,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_string": "NETWORK ERROR",
@@ -2202,7 +2202,7 @@
     "_enabled": true,
     "__prefab": null,
     "IsCanClickMask": true,
-    "layer": 2,
+    "layer": 4,
     "showType": 3,
     "maskSpriteFrame": {
       "__uuid__": "2fddd4c9-115e-4277-bc00-52902fd5d797@f9941",

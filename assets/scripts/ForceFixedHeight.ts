@@ -6,13 +6,13 @@ const DESIGN_H = 960;
 
 @ccclass("FixedResolution")
 export class FixedResolution extends Component {
-    // start() {
-    //     view.setDesignResolutionSize(DESIGN_W, DESIGN_H, ResolutionPolicy.FIXED_HEIGHT);
-    //     view.resizeWithBrowserSize(true);
+    start() {
+        view.setDesignResolutionSize(DESIGN_W, DESIGN_H, ResolutionPolicy.FIXED_HEIGHT);
+        view.resizeWithBrowserSize(true);
 
-    //     this.applyDomClamp();
-    //     window.addEventListener("resize", () => this.applyDomClamp());
-    // }
+        this.applyDomClamp();
+        window.addEventListener("resize", () => this.applyDomClamp());
+    }
 
     // applyDomClamp() {
     //     const frame = view.getFrameSize();
@@ -50,7 +50,7 @@ export class FixedResolution extends Component {
         const expectedCanvasWidth = Math.round(DESIGN_W * scale);
 
         // 调整 canvas CSS
-        const canvas = document.querySelector("#Cocos3dGameContainer") as HTMLCanvasElement;
+        const canvas = document.querySelector("#GameCanvas") as HTMLCanvasElement;
         if (canvas) {
             canvas.style.width = expectedCanvasWidth + "px";
             canvas.style.height = frameHeight + "px";

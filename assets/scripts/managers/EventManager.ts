@@ -13,10 +13,8 @@ export const enum E_GAME_EVENT {
     RESOURCE_LOAD_END,
     /** 用户登录信息返回 */
     USER_INFO_RETURN_END,
-    /** 网络错误--加载(可能socket失败 可能加载资源失败) */
-    NETWORK_ERROR_LOADING,
-    /** 网络错误--运行(可能socket失败 断线 消息错误) */
-    NETWORK_ERROR_GAMEING,
+    /** 网络错误 */
+    NETWORK_ERROR,
 
     /** 进入主游戏界面 */
     GAME_ENTER_MAIN_SCENE,

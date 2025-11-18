@@ -5,7 +5,7 @@ import { EffectManager } from "../managers/EffectManager";
 import { AudioManager } from "../managers/AudioManager";
 import { PopupMask } from "../ui/popup/PopupMask";
 import { PopupTips } from "../ui/popup/PopupTips";
-import { LogicTools } from "../Tools/LogicTools";
+import { Debounce, LogicTools } from "../Tools/LogicTools";
 
 const { ccclass, property } = _decorator;
 
@@ -70,7 +70,7 @@ export class LoadingScene extends Component {
             { timeout: 100000, executeOnTimeout: true }
         );
         this.beginButtonShow(false);
-        EventManager.on(E_GAME_EVENT.NETWORK_ERROR_LOADING, this.showError, this);
+        EventManager.on(E_GAME_EVENT.NETWORK_ERROR, this.showError, this);
     }
 
     protected onDestroy(): void {
@@ -191,10 +191,15 @@ export class LoadingScene extends Component {
         this.barGroup.active = !isShow;
     }
 
+    @Debounce(500)
     private showError() {
         this.errorTips.active = true;
         this.isError = true;
         const popup = this.errorTips.getComponent(PopupTips);
+        popup.SetText("NETWORK ERROR");
+        popup.SetCloseCallBack(() => {
+            location.reload();
+        });
         popup.show();
     }
 }

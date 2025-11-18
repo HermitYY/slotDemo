@@ -5,7 +5,6 @@ import { GridManager } from "../managers/GridManager";
 import proto from "./MLWZ_msg.js";
 import { loginByToken, getdetailSlot } from "./request";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
-import { UItools } from "../Tools/UItools";
 import { LogicTools } from "../Tools/LogicTools";
 
 export const enum E_GAME_SCENE_TYPE {
@@ -28,7 +27,10 @@ export class SocketManager extends Singleton {
     public async Init(username: string, password: string): Promise<void> {
         try {
             const res = await loginByToken({ username, password });
-            if (res.code !== 200) throw new Error("登录失败");
+            if (res.code !== 200) {
+                EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
+                throw new Error("登录失败");
+            }
 
             GlobalConfig.token = res.data.authorization;
             GlobalConfig.user.identify = res.data.authorization;
@@ -48,7 +50,7 @@ export class SocketManager extends Singleton {
             }
         } catch (e) {
             console.error("SocketManager.Init() 失败:", e);
-            UItools.GetInstance().ShowLoadErrorTips();
+            EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
         }
     }
 
@@ -61,6 +63,7 @@ export class SocketManager extends Singleton {
     /** WebSocket 关闭 */
     private oncloseBack(): void {
         console.warn("WebSocket 已关闭");
+        EventManager.emit(E_GAME_EVENT.NETWORK_ERROR);
         WebSocketUtil.GetInstance().stopHeart();
     }
 
