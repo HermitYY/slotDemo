@@ -1,6 +1,5 @@
 import { Singleton } from "../common/Singleton";
 import { SocketManager } from "../network/SocketManager";
-import { LogicTools } from "../Tools/LogicTools";
 import { E_GAME_EVENT, EventManager } from "./EventManager";
 
 export class AutoManager extends Singleton {

@@ -2,6 +2,7 @@
 import { _decorator, assetManager, AudioClip, AudioSource, Component, Node } from "cc";
 import { Singleton } from "../common/Singleton";
 import { LocalStorageTools, StorageKey } from "../Tools/LocalStorageTools";
+import { LogicTools } from "../Tools/LogicTools";
 const { ccclass } = _decorator;
 
 /** 播放模式 */
@@ -58,12 +59,16 @@ export enum SfxEnum {
     qElastic = "qElastic",
 }
 
+interface SfxSource extends AudioSource {
+    __busy?: boolean;
+}
+
 @ccclass("AudioManager")
 export class AudioManager extends Singleton {
     // audio sources
     private bgmSource: AudioSource | null = null;
     private sfxRootNode: Node | null = null;
-    private sfxPool: AudioSource[] = [];
+    private sfxPool: SfxSource[] = [];
     private maxSfxPool = 8; // 初始池大小
     private allowPoolGrow = true; // 无空闲时是否创建临时 source
 
@@ -100,6 +105,7 @@ export class AudioManager extends Singleton {
             const n = new Node(`SFX_src_${i}`);
             n.parent = sfxRoot;
             const s = n.addComponent(AudioSource);
+            s["__busy"] = false;
             this.sfxPool.push(s);
         }
 
@@ -347,7 +353,8 @@ export class AudioManager extends Singleton {
     // 真正播放一个 sfx clip，返回在该次播放完整播放完毕时 resolve
     private _playSfxOnce(clip: AudioClip): Promise<boolean> {
         // 找空闲 source
-        let source = this.sfxPool.find((s) => !s.playing);
+        // let source = this.sfxPool.find((s) => !s.playing);
+        let source = this.sfxPool.find((s: SfxSource) => !s.__busy);
         let createdTemp = false;
         if (!source) {
             if (this.sfxPool.length < this.maxSfxPool) {
@@ -371,6 +378,7 @@ export class AudioManager extends Singleton {
         source.clip = clip;
         source.loop = false;
         source.volume = this.volumes.sfx / 100;
+        source.__busy = true;
         source.play();
 
         // 记录计时器，返回 Promise 在播放结束时 resolve
@@ -382,6 +390,7 @@ export class AudioManager extends Singleton {
                 // 如果是临时源，销毁节点
                 if (createdTemp && source && source.node) {
                     source.stop();
+                    source.__busy = false;
                     source.node.removeFromParent();
                     source.node.destroy();
                 }
@@ -415,6 +424,7 @@ export class AudioManager extends Singleton {
         // 停所有 pool 中的 source
         this.sfxPool.forEach((s) => {
             try {
+                s.__busy = false;
                 s.stop();
             } catch (e) {}
         });
@@ -437,6 +447,7 @@ export class AudioManager extends Singleton {
             const clip = source.clip;
             if (clip && clip.name === name && source.playing) {
                 try {
+                    source.__busy = false;
                     source.stop();
                 } catch (e) {}
             }

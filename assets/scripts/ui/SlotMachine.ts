@@ -264,7 +264,9 @@ export class SlotMachine extends Component {
         SocketManager.GetInstance().curBet(true);
         // 开始旋转 禁用按钮
         this.updateRollButtonIsBan(true);
-        this.StopDropAniButton.active = true;
+        if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.NORMAL) {
+            this.StopDropAniButton.active = true;
+        }
         this.isClickQuickDrop = false;
     }
 
@@ -555,8 +557,8 @@ export class SlotMachine extends Component {
                                 await this._queue.wait(LogicTools.Delay(EffectManager.getEffectDuration(`SlotEffectClear_${icon14}`) * 1000));
                                 this.freeTimes = this.freeTimes ??= find("Canvas/MainGame/Mode/FreeText/RemainingTimes/times");
                                 AudioControlManager.GetInstance().playSfxFireExplosion();
-                                await this._queue.wait(EffectManager.playEffect("FireMultiple", this.freeTimes.parent, Vec3.ZERO));
                                 this.freeTimes.getComponent(Label).string = `${curScene.freeCount}`;
+                                await this._queue.wait(EffectManager.playEffect("FireMultiple", this.freeTimes.parent, Vec3.ZERO));
                             }
                             await this._queue.wait(this.stopEffect());
                             if (curScene.curChips) {
@@ -568,7 +570,9 @@ export class SlotMachine extends Component {
                             if (this._queue.isAborted) return;
                             this._currentReplayIndex++;
                             await this._queue.wait(this.dropOldColumns());
-                            this.updLastFreeTimes(this._curReplayArr[this._currentReplayIndex]);
+                            if (this._curReplayArr[this._currentReplayIndex].freeCount <= +this.freeTimes.getComponent(Label).string) {
+                                this.updLastFreeTimes(this._curReplayArr[this._currentReplayIndex]);
+                            }
                             await this._queue.wait(this.spawnNewColumns(this._curReplayArr[this._currentReplayIndex]), true);
                         }
                     }

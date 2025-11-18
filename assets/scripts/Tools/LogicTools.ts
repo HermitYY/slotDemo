@@ -91,7 +91,7 @@ export class LogicTools extends Singleton {
 
     public static myConsole(...args: any[]) {
         if (globalConfig.isShowLog) {
-            LogicTools.myConsole(...args);
+            console.log(...args);
         }
     }
 }

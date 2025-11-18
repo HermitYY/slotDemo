@@ -6,7 +6,7 @@
       "width": 540,
       "height": 960,
       "fitHeight": true,
-      "fitWidth": true
+      "fitWidth": false
     }
   }
 }

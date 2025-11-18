@@ -95,7 +95,12 @@ export class GridManager extends Singleton {
         } else {
             if (curScene.free && curScene.free.index) {
                 LogicTools.myConsole("进free", curScene);
-                if (curScene.winChips == 1200 || curScene.winChips == 2000 || curScene.winChips == 4000) {
+                if (
+                    !!~curScene.scopes
+                        .slice(curScene.scopes.length - 3)
+                        .map((item) => item.chips)
+                        .indexOf(curScene.winChips)
+                ) {
                     EventManager.emit(E_GAME_EVENT.GAME_FREE_INIT, curScene);
                 } else {
                     EventManager.emit(E_GAME_EVENT.GAME_NORMAL_INTER_FREE, curScene);
