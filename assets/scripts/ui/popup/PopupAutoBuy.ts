@@ -4,7 +4,6 @@ import { SocketManager } from "../../network/SocketManager";
 import { LogicTools } from "../../Tools/LogicTools";
 import { UItools } from "../../Tools/UItools";
 import { AutoManager } from "../../managers/AutoManager";
-import { E_GAME_EVENT, EventManager } from "../../managers/EventManager";
 
 const { ccclass, property } = _decorator;
 
@@ -115,7 +114,8 @@ export class PopupAutoBuy extends BasePopup {
     }
 
     public beginAuto() {
-        AutoManager.GetInstance().beginAuto(PopupAutoBuy.times[this.selectedIndex]);
         this.close();
+        if (!SocketManager.GetInstance().checkChipAmount(SocketManager.GetInstance().CurScene.curBetChips)) return false;
+        AutoManager.GetInstance().beginAuto(PopupAutoBuy.times[this.selectedIndex]);
     }
 }

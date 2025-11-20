@@ -111,9 +111,10 @@ export class SocketManager extends Singleton {
     }
 
     /** 选择筹码 */
-    public selectChips(chipIndex: number): void {
+    public selectChips(chipIndex: number): boolean {
         const req = new proto.newxxs.C2S_SelectChips_14002();
         req.betChip = this.CurScene.betChips?.[chipIndex];
+        if (!this.checkChipAmount(req.betChip)) return false;
         const buffer = proto.newxxs.C2S_SelectChips_14002.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.SelectChips_14002, buffer);
         LogicTools.myConsole("发送选择筹码:", chipIndex);

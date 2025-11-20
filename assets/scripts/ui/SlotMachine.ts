@@ -359,8 +359,9 @@ export class SlotMachine extends Component {
                 await this.checkPlayLadybirdMultipleEffect(endScene);
                 this.comboAttack();
                 await this.freeRoundEnd(endScene);
-                if (!endScene.freeCount) this.freeEnd();
-                else SocketManager.GetInstance().curBet(true);
+                if (!endScene.freeCount) {
+                    this.freeEnd(endScene);
+                } else SocketManager.GetInstance().curBet(true);
             });
         });
         SocketManager.GetInstance().curBet();
@@ -376,7 +377,7 @@ export class SlotMachine extends Component {
         await this.spawnNewColumns(curScene);
         await this.freeRoundEnd(curScene);
         if (!curScene.freeCount) {
-            this.freeEnd();
+            this.freeEnd(curScene);
         } else {
             SocketManager.GetInstance().curBet(true);
         }
@@ -396,10 +397,11 @@ export class SlotMachine extends Component {
     }
 
     /** free整个结束 */
-    freeEnd() {
+    freeEnd(curScene: proto.newxxs.ICurScene) {
         this.toggleSceneNode(E_GAME_SCENE_TYPE.NORMAL);
         this.updateRollButtonIsBan(false);
         this.checkAutoMode();
+        this.updateChipGroup(curScene);
         GameSpeedManager.GetInstance().restoreGameSpeed();
         // EventManager.emit(E_GAME_EVENT.GAME_FREE_END);
     }
@@ -1201,6 +1203,10 @@ export class SlotMachine extends Component {
                 this.updateRollButtonIsBan(false);
             }
             AutoManager.GetInstance().continueAuto();
+            autoTimes = AutoManager.GetInstance().autoTimes;
+            if (autoTimes <= 0) {
+                this.updateRollButtonIsBan(false);
+            }
             if (autoTimes <= 0) {
                 EventManager.emit(E_GAME_EVENT.GAME_BET_END);
             }

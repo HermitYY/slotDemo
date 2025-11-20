@@ -35,6 +35,9 @@ export class AutoManager extends Singleton {
             return;
         } else {
             this.autoRoll();
+            if (this._autoTimes < 0) {
+                return;
+            }
         }
         this._autoTimes--;
         isInit && EventManager.emit(E_GAME_EVENT.GAME_AUTO_MODE_OPEN, this._autoTimes + 1);
@@ -49,6 +52,7 @@ export class AutoManager extends Singleton {
     private autoRoll() {
         if (!SocketManager.GetInstance().buyBet(true)) {
             this.preStopAuto();
+            this.stopAuto();
         }
     }
 }
