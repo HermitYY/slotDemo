@@ -25,7 +25,6 @@ export class HTMLBackground extends Component {
             return;
         }
 
-        // 新版 Cocos 的正确取法：image = ImageAsset
         const imageAsset = this.bgSprite.texture instanceof Texture2D ? this.bgSprite.texture.image : ((this.bgSprite.texture as any).image as ImageAsset);
 
         if (!imageAsset) {
@@ -33,9 +32,7 @@ export class HTMLBackground extends Component {
             return;
         }
 
-        // 构建后的最终 URL
         const url = imageAsset.url;
-
         const div = document.createElement("div");
         this._div = div;
 

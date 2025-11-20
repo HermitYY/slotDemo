@@ -18,10 +18,7 @@ export class LoadingScene extends Component {
     public bar!: Node;
 
     @property(Node)
-    public iconA!: Node;
-
-    @property(Node)
-    public iconB!: Node;
+    public ladybird!: Node;
 
     @property
     public minLoadTime: number = 10; // 最小加载时间（秒）
@@ -46,8 +43,6 @@ export class LoadingScene extends Component {
 
     private maskTransform!: UITransform;
     private barTransform!: UITransform;
-    private iconAOpacity!: UIOpacity;
-    private iconBOpacity!: UIOpacity;
     private maxMaskWidth: number = 0;
 
     private isError: boolean = false;
@@ -81,16 +76,10 @@ export class LoadingScene extends Component {
         // 获取组件
         this.maskTransform = this.mask.getComponent(UITransform)!;
         this.barTransform = this.bar.getComponent(UITransform)!;
-        this.iconAOpacity = this.iconA.getComponent(UIOpacity)!;
-        this.iconBOpacity = this.iconB.getComponent(UIOpacity)!;
 
         // 初始化 mask 宽度
         this.maxMaskWidth = this.barTransform.width;
         this.maskTransform.width = 0;
-
-        // 初始化图标透明度
-        this.iconAOpacity.opacity = 255;
-        this.iconBOpacity.opacity = 0;
 
         this.elapsedTime = 0;
 
@@ -162,18 +151,7 @@ export class LoadingScene extends Component {
         const barLeft = this.bar.getPosition().x - this.maxMaskWidth / 2;
         const xPos = barLeft + this.maxMaskWidth * progress;
 
-        this.iconA.setPosition(xPos, this.iconA.getPosition().y, 0);
-        this.iconB.setPosition(xPos, this.iconB.getPosition().y, 0);
-
-        // 淡入淡出过渡图标
-        if (progress < this.iconSwitchProgress) {
-            this.iconAOpacity.opacity = 255;
-            this.iconBOpacity.opacity = 0;
-        } else {
-            const t = (progress - this.iconSwitchProgress) / (1 - this.iconSwitchProgress);
-            this.iconAOpacity.opacity = 255 * (1 - t);
-            this.iconBOpacity.opacity = 255 * t;
-        }
+        this.ladybird.setPosition(xPos, this.ladybird.getPosition().y, 0);
     }
 
     public enterGameScene() {

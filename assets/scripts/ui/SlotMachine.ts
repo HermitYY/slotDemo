@@ -276,7 +276,6 @@ export class SlotMachine extends Component {
     }
 
     //#endregion
-
     //#region freeGame模式
     async freeGameInitGrid(curScene: proto.newxxs.ICurScene) {
         this.updateRollButtonIsBan(true);
@@ -290,6 +289,7 @@ export class SlotMachine extends Component {
             SocketManager.GetInstance().curBet();
         } else {
             this.toggleSceneNode(E_GAME_SCENE_TYPE.FREE_GAME);
+            GameSpeedManager.GetInstance().tempSwitchToSpeed(E_GAME_SPEED_TYPE.NORMAL);
             if (curScene.run > 1) {
                 this.freeComboContinue(curScene);
             } else {
@@ -411,10 +411,15 @@ export class SlotMachine extends Component {
         if (+freePengaliLabel.string < curScene.allMultiple) {
             this.freePengali.active = true;
             this.freePengali.scale = new Vec3(2.5, 2.5, 2.5);
-            // 爆炸效果
-            AudioControlManager.GetInstance().playSfxFireExplosion();
-            EffectManager.playEffect("FireMultiple", this.freePengali.parent, Vec3.ZERO, { siblingIndex: this.freePengali.getSiblingIndex() });
-            tween(this.freePengali).to(0.5, { scale: Vec3.ONE }).start();
+            tween(this.freePengali)
+                .to(0.25, { scale: new Vec3(2.5, 2.5, 2.5).clone().multiplyScalar(0.6) })
+                .call(() => {
+                    // 爆炸效果
+                    AudioControlManager.GetInstance().playSfxFireExplosion();
+                    EffectManager.playEffect("FireMultiple", this.freePengali.parent, Vec3.ZERO, { siblingIndex: this.freePengali.getSiblingIndex() });
+                })
+                .to(0.25, { scale: Vec3.ONE })
+                .start();
         }
         freePengaliLabel.string = `${curScene.allMultiple}`;
         UItools.GetInstance().showCurrencyValue(curScene.winChips, this.freeTotalWinChips.getComponent(Label), {
@@ -939,7 +944,6 @@ export class SlotMachine extends Component {
             });
             await LogicTools.waitNextFrame();
         }
-        EventManager.emit(E_GAME_EVENT.GAME_GRID_DROP_END);
     }
 
     private async removeGridItem(matched: { gridIndex: number; removeId: number }[]): Promise<void> {
@@ -1069,7 +1073,7 @@ export class SlotMachine extends Component {
                         .start();
                 }
             }
-
+            EventManager.emit(E_GAME_EVENT.GAME_GRID_DROP_END);
             // 没有任何需要移动的节点
             if (totalTweens === 0) resolve();
         });
@@ -1106,6 +1110,10 @@ export class SlotMachine extends Component {
                     const targetY = -targetRow * this.cellHeight;
                     item.setPosition(0, startY, 0);
                     const { dropTime, boundTime, boundDis, girdInterval } = GameSpeedManager.GetInstance().getFillTimeConfig();
+
+                    // return { dropTime: 0.4, boundTime: 0.1, boundDis: 15, girdInterval: 0.015 };
+                    // case E_GAME_SPEED_TYPE.FAST:
+                    // return { dropTime: 0.3, boundTime: 0.08, boundDis: 8, girdInterval: 0.015 };
                     tween(item)
                         // 每格间隔
                         .delay(girdInterval * (need - g - 1))
@@ -1136,7 +1144,6 @@ export class SlotMachine extends Component {
     }
 
     //#endregion
-
     //#region 筹码文本及提示文本
     private updateChipGroup(curScene: proto.newxxs.ICurScene) {
         const { chipsInfo } = LogicTools.GetInstance().transGridInfo(curScene);
@@ -1317,7 +1324,6 @@ export class SlotMachine extends Component {
     }
 
     //#endregion
-
     //#region 甲虫倍率效果相关
     public stopCheckLadybirdEffect() {
         this._ladybirdCancel = true;
@@ -1424,11 +1430,16 @@ export class SlotMachine extends Component {
         const midRect = this.chipLabel3.node.parent.parent;
         // 火效果只有free有
         if (curScene.scene === E_GAME_SCENE_TYPE.FREE_GAME) {
+            if (curScene.allMultiple <= curScene.curMultiple) {
+                await LogicTools.Delay(1500);
+                if (this._ladybirdCancel) return;
+            }
             AudioControlManager.GetInstance().playSfxFireBurning();
             await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
             if (this._ladybirdCancel) return;
             EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
         }
+        if (this._ladybirdCancel) return;
         AudioControlManager.GetInstance().playSfxMergeDisperse();
         await UItools.moveEffectWorld(gatherPos, this.chipLabel3.node.parent.parent, "", 0.4, {
             target: firstFont,

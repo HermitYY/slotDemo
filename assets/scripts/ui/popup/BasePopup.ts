@@ -54,15 +54,17 @@ export class BasePopup extends Component {
     @property({ type: SpriteFrame, tooltip: "用于遮罩的纯色贴图 (white sprite)" })
     maskSpriteFrame: SpriteFrame | null = null;
 
-    protected maskNode: Node | null = null;
     protected contentNode: Node | null = null;
     protected fromPos: Vec3 | null = null;
     protected curstomAniCfg: {
         customAniOut?: TweenEasing;
         customAniIn?: TweenEasing;
     };
+
     protected maskOpacity: number = 180;
+    protected maskNode: Node | null = null;
     protected maskColor: Color = new Color(0, 0, 0);
+    protected _onMaskTouchEnd: ((e: EventTouch) => void) | null = null;
     protected changeShowType?: PopupShowType = null;
 
     protected _showPromise?: Promise<void>;
@@ -120,6 +122,7 @@ export class BasePopup extends Component {
 
     private _createMask() {
         const mask = new Node("Mask");
+        this.maskNode;
         mask.layer = this.node.layer;
         mask.parent = this.node;
         const uiTrans = mask.addComponent(UITransform);
@@ -147,14 +150,15 @@ export class BasePopup extends Component {
         // 阻止事件冒泡
         mask.addComponent(BlockInputEvents);
         // 点击事件
-        mask.on(Node.EventType.TOUCH_END, (e: EventTouch) => {
+        this._onMaskTouchEnd = (e: EventTouch) => {
             if (e.target === mask) {
                 if (this.IsCanClickMask) {
                     this.onMaskClick();
                 }
                 e.propagationStopped = true;
             }
-        });
+        };
+        mask.on(Node.EventType.TOUCH_END, this._onMaskTouchEnd, this);
 
         this.maskNode = mask;
         mask.active = false;
@@ -249,6 +253,12 @@ export class BasePopup extends Component {
             // 弹窗关闭动画结束
             this._resolveClose?.();
         };
+
+        // 即时解除mask事件绑定
+        if (this._onMaskTouchEnd) {
+            this.maskNode.off(Node.EventType.TOUCH_END, this._onMaskTouchEnd, this);
+            this._onMaskTouchEnd = null;
+        }
 
         switch (this.changeShowType ?? this.showType) {
             case PopupShowType.None:

@@ -34,7 +34,7 @@ export class RollButton extends Component {
     private spinOp: UIOpacity = null;
 
     private _isPlayingEffect = false;
-    private _isPlayingSpinEffect = false;
+    private _isAutoRotate = true;
 
     private curShowNum = 0;
     private get duration() {
@@ -77,18 +77,23 @@ export class RollButton extends Component {
         midLightNode.scale = Vec3.ZERO;
         tween(midLightNode)
             .to(this.duration / 6, { scale: new Vec3(3.2, 1.8, 1.8) })
-            .to(this.duration / 6, { scale: Vec3.ZERO })
+            .to(this.duration / 8, { scale: new Vec3(1.6, 0.9, 0.9) })
             .call(() => {
                 this.playRotateEffect(() => {
-                    this._isPlayingSpinEffect = false;
+                    this._isAutoRotate = true;
                     this._isPlayingEffect = false;
                 });
             })
+            .to(this.duration / 8, { scale: Vec3.ZERO })
             .start();
 
         tween(this.spinOp)
             .to(this.duration / 6, { opacity: 0 })
             .start();
+
+        if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.FAST) {
+            this._isAutoRotate = false;
+        }
     }
 
     playRotateEffect(onFinish?: () => void) {
@@ -98,7 +103,7 @@ export class RollButton extends Component {
             return;
         }
 
-        this._isPlayingSpinEffect = true;
+        this._isAutoRotate = false;
         const smellButtonNode = this.smallButton;
         const startRotation = smellButtonNode.rotation.clone();
         EffectManager.playEffect("RollButton_OutLight", smellButtonNode, Vec3.ZERO);
@@ -114,12 +119,13 @@ export class RollButton extends Component {
                     easing: "quadInOut",
                     onUpdate: (target: any) => {
                         this.spinOp.opacity = target.t * 255;
+                        const maxLight = 120;
                         if (effectOp && effectOp.isValid) {
-                            const fadeOutInProgress = 0.7;
+                            const fadeOutInProgress = 0.6;
                             if (target.t <= fadeOutInProgress) {
-                                effectOp.opacity = (target.t / fadeOutInProgress) * 255;
+                                effectOp.opacity = (target.t / fadeOutInProgress) * maxLight;
                             } else {
-                                effectOp.opacity = ((1 - target.t) / (1 - fadeOutInProgress)) * 255;
+                                effectOp.opacity = ((1 - target.t) / (1 - fadeOutInProgress)) * maxLight;
                             }
                         }
                         const additionalRot = new Quat();
@@ -150,14 +156,15 @@ export class RollButton extends Component {
     playBgEffect() {
         const node = this.BgEffectNode;
         node.active = true;
-        const startScale = node.scale.clone();
-        const { bgEffectDuration } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
+        node.scale = Vec3.ONE.clone().multiplyScalar(0.8);
+        const startScale = Vec3.ONE.clone();
+        const { bgEffectDuration, bgEffectTurn } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
 
         tween(node)
-            .to(0.15, { scale: startScale.clone().multiplyScalar(1.2) }, { easing: easing.quadOut })
-            .to(0.15, { scale: startScale.clone().multiplyScalar(0.9) }, { easing: easing.quadInOut })
-            .to(0.15, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
-            .to(0.1, { scale: startScale }, { easing: easing.quadIn })
+            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.01) }, { easing: easing.quadOut })
+            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.02) }, { easing: easing.quadInOut })
+            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
+            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(0.6) }, { easing: easing.quadIn })
             .start();
 
         const effectOp = node.getComponent(UIOpacity) ?? node.addComponent(UIOpacity);
@@ -169,18 +176,24 @@ export class RollButton extends Component {
                 {
                     easing: "quadInOut",
                     onUpdate: (target: any) => {
+                        const spinPrecent = 0.1;
+                        const spinPrecent2 = 0.9;
                         if (effectOp && effectOp.isValid) {
-                            if (target.t <= 0.5) {
-                                effectOp.opacity = target.t * 255 * 2;
+                            if (target.t <= spinPrecent) {
+                                effectOp.opacity = target.t * 255 * (1 / spinPrecent);
+                            } else if (target.t <= spinPrecent2) {
                             } else {
-                                effectOp.opacity = (1 - (target.t - 0.5) * 2) * 255;
+                                effectOp.opacity = (1 - (target.t - spinPrecent2) / (1 - spinPrecent2)) * 255;
                             }
                         }
-                        const additionalRot = new Quat();
-                        Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * target.t);
-                        const currentRot = new Quat();
-                        Quat.multiply(currentRot, startRotation, additionalRot);
-                        node.rotation = currentRot;
+                        if (target.t >= 0.2 && target.t <= 0.95) {
+                            const additionalRot = new Quat();
+                            let t = Math.round(target.t * 60) / 60;
+                            Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * bgEffectTurn * t);
+                            const currentRot = new Quat();
+                            Quat.multiply(currentRot, startRotation, additionalRot);
+                            node.rotation = currentRot;
+                        }
                     },
                 }
             )
@@ -191,7 +204,7 @@ export class RollButton extends Component {
     }
 
     update(deltaTime: number) {
-        if (!this._isPlayingSpinEffect && this.smallButton) {
+        if (this._isAutoRotate && this.smallButton) {
             const btn = this.smallButton as Node & { rotation: Quat };
             const { rotateSpeed: rotateSpeedBase } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
             const rotateSpeed = AutoManager.GetInstance().isAutoIng ? rotateSpeedBase * 8 : rotateSpeedBase;

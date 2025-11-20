@@ -317,8 +317,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 79.98015129160216,
-      "height": 50.39999999999999
+      "width": 80,
+      "height": 50.4
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -356,7 +356,7 @@
     "_string": "通用弹窗",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 26.916666666666668,
+    "_actualFontSize": 20,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 40,

@@ -204,6 +204,7 @@ export class PopupHistoryDetail extends BasePopup {
     private responseReplayQuery(data) {
         this.removeLoadDataEffect();
         PopupManager.hideLayer(PopupLayer.History);
+        // PopupManager.show(E_POPUP_TYPE.Replay, { fromButtonPos: { x: 270, y: 170, z: 0 } });
         PopupManager.show(E_POPUP_TYPE.Replay);
     }
 

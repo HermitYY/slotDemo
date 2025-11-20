@@ -16,6 +16,7 @@ export const enum E_POPUP_TYPE {
     Replay = "prefabs/Popup/PopupReplay",
     Rule = "prefabs/Popup/PopupRule",
     HistoryList = "prefabs/Popup/PopupHistoryList",
+    MyBank = "prefabs/Popup/PopupMyBank",
 }
 
 type createPopupCfg = {

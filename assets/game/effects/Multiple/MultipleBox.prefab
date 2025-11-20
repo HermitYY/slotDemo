@@ -138,7 +138,7 @@
     ],
     "frameRate": 20,
     "loop": false,
-    "autoDestroy": true,
+    "autoDestroy": false,
     "autoPlay": true,
     "isTimeScaleEffected": false,
     "_id": ""
@@ -201,6 +201,7 @@
       "__id__": 0
     },
     "fileId": "c3TfbV8/lM5768d+awMHRz",
+    "instance": null,
     "targetOverrides": null
   }
 ]

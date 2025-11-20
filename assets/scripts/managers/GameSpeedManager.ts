@@ -114,9 +114,9 @@ export class GameSpeedManager extends Singleton {
     public getRollButtonRotateSpeedConfig() {
         switch (this._speed) {
             case E_GAME_SPEED_TYPE.NORMAL:
-                return { rotateSpeed: 30, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1, bgEffectDuration: 1.5 };
+                return { rotateSpeed: 30, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1, bgEffectDuration: 1.6, bgEffectTurn: 2.2 };
             case E_GAME_SPEED_TYPE.FAST:
-                return { rotateSpeed: 50, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1, bgEffectDuration: 1 };
+                return { rotateSpeed: 50, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1, bgEffectDuration: 0.8, bgEffectTurn: 1.5 };
             // case E_GAME_SPEED_TYPE.SUPER_FAST:
             //     return { rotateSpeed: 80, magnify: 0.15, shrink: 0.15, magnify2: 0.15, shrinkNormal: 0.1 };
 
