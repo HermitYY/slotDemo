@@ -55,10 +55,10 @@ export class RollButton extends Component {
 
     onClick() {
         if (this._isPlayingEffect) return;
+        if (!this.slotMachine.roll()) return;
         AudioControlManager.GetInstance().playSfxrollFlash();
         this.playEffect();
         this.playBgEffect();
-        this.slotMachine.roll();
     }
 
     //#region 点击-旋转动画

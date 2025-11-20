@@ -4,6 +4,7 @@ import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import proto from "../network/MLWZ_msg.js";
 import GlobalConfig from "../common/GlobalConfig";
 import { LogicTools } from "../Tools/LogicTools";
+import { SocketManager } from "../network/SocketManager";
 
 const { ccclass, property } = _decorator;
 
@@ -79,9 +80,9 @@ export class GridManager extends Singleton {
         //     LogicTools.myConsole("找到l");
         //     return;
         // } else {
-        //     SocketManager.GetInstance().curBet();
-        //     return;
         // }
+        // SocketManager.GetInstance().curBet();
+        // return;
         if (curScene.run > 1) {
             if (curScene.comboCount > 1) {
                 // 查询返回 combo持续中

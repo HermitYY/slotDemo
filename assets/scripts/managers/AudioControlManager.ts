@@ -140,7 +140,7 @@ export class AudioControlManager extends Singleton {
         if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.NORMAL) {
             return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.rollFlash);
         } else {
-            return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.rollFlashShort);
+            return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.NormalButtonClick);
         }
     }
 

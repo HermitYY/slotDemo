@@ -23,9 +23,6 @@ export class LoadingScene extends Component {
     @property
     public minLoadTime: number = 10; // 最小加载时间（秒）
 
-    @property({ tooltip: "进度条达到多少百分比切换图标" })
-    public iconSwitchProgress: number = 0.5; // 0~1
-
     @property(Label)
     progressLabel: Label | null = null;
 
@@ -130,7 +127,7 @@ export class LoadingScene extends Component {
             this._updateMaskAndIcons(progress);
 
             if (this.progressLabel) {
-                this.progressLabel.string = `${Math.floor(progress * 100)}%`;
+                this.progressLabel.string = `Memuat sumber daya [${(progress * 100).toFixed(2)}%]`;
             }
         }
 

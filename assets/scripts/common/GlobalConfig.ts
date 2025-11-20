@@ -18,6 +18,6 @@ const globalConfig = {
     },
     rows: 5,
     cols: 6,
-    isShowLog: false,
+    isShowLog: true,
 };
 export default globalConfig;

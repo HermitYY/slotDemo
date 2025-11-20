@@ -259,15 +259,16 @@ export class SlotMachine extends Component {
         this.endRound();
     }
 
-    async roll() {
-        if (this.rolling || AutoManager.GetInstance().isAutoIng) return;
-        SocketManager.GetInstance().curBet(true);
+    roll() {
+        if (this.rolling || AutoManager.GetInstance().isAutoIng) return false;
+        if (!SocketManager.GetInstance().buyBet(true)) return false;
         // 开始旋转 禁用按钮
         this.updateRollButtonIsBan(true);
         if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.NORMAL) {
             this.StopDropAniButton.active = true;
         }
         this.isClickQuickDrop = false;
+        return true;
     }
 
     /** 普通回合结束（包括Combo结束与无奖励结束） */

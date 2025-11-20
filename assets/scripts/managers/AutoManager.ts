@@ -47,7 +47,8 @@ export class AutoManager extends Singleton {
     }
 
     private autoRoll() {
-        // EventManager.emit(E_GAME_EVENT.GAME_GRID_ROLL_ANIMATION);
-        SocketManager.GetInstance().curBet(true);
+        if (!SocketManager.GetInstance().buyBet(true)) {
+            this.preStopAuto();
+        }
     }
 }

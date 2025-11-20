@@ -6,6 +6,8 @@ import proto from "./MLWZ_msg.js";
 import { loginByToken, getdetailSlot } from "./request";
 import { EventManager, E_GAME_EVENT } from "../managers/EventManager";
 import { LogicTools } from "../Tools/LogicTools";
+import { E_POPUP_TYPE, PopupManager } from "../ui/popup/PopupManager";
+import { PopupTips } from "../ui/popup/PopupTips";
 
 export const enum E_GAME_SCENE_TYPE {
     NORMAL = 1,
@@ -117,18 +119,26 @@ export class SocketManager extends Singleton {
         LogicTools.myConsole("发送选择筹码:", chipIndex);
     }
 
-    /** 下注 */
-    public curBet(isNewBet: boolean = false): void {
+    /** 下注 返回是否下注成功 */
+    public buyBet(isNewBet: boolean = false): boolean {
+        if (!this.checkChipAmount(this.CurScene.curBetChips)) return false;
+        return this.curBet(isNewBet);
+    }
+
+    /** 下一轮 */
+    public curBet(isNewBet: boolean = false): boolean {
         const req = new proto.newxxs.C2S_CurBet_12000();
         const buffer = proto.newxxs.C2S_CurBet_12000.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.CurBet_12000, buffer);
         if (isNewBet) {
             EventManager.emit(E_GAME_EVENT.GAME_NEW_BET);
         }
+        return true;
     }
 
-    /** 购买免费 */
-    public curBuyFree(): void {
+    /** 购买免费 返回是否购买成功*/
+    public curBuyFree(): boolean {
+        if (!this.checkChipAmount(this.CurScene.curBetChips * 100)) return false;
         const req = new proto.newxxs.C2S_CurBuyFree_12002();
         req.batchno = this.CurScene.batchno;
         req.round = 1;
@@ -136,6 +146,7 @@ export class SocketManager extends Singleton {
         const buffer = proto.newxxs.C2S_CurBuyFree_12002.encode(req).finish();
         WebSocketUtil.GetInstance().SendMsg(GlobalConfig.ptype, proto.newxxs.enSignalType_Moro.CurBuyFree_12002, buffer);
         LogicTools.myConsole("发送购买免费");
+        return true;
     }
 
     /** 绑定返回事件 */
@@ -266,6 +277,24 @@ export class SocketManager extends Singleton {
     /** 关闭连接 */
     public closeScoket(): void {
         WebSocketUtil.GetInstance().close();
+    }
+
+    /** 是否通过筹码金额检查 */
+    public checkChipAmount(amount: number, showTips: boolean = true): boolean {
+        const checkMoney = this.CurScene.surChips;
+        if (amount > checkMoney) {
+            if (showTips) {
+                this.showMoneyNotEnoughTips();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    private async showMoneyNotEnoughTips() {
+        const tips = await PopupManager.create<PopupTips>(E_POPUP_TYPE.Tips);
+        tips.SetText("Pembelian gagal");
+        tips.show();
     }
 }
 

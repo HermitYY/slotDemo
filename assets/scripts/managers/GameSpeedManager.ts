@@ -137,3 +137,5 @@ export class GameSpeedManager extends Singleton {
         }
     }
 }
+
+(window as any).SpeedManager = GameSpeedManager.GetInstance();
