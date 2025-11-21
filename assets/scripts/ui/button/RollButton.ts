@@ -65,6 +65,7 @@ export class RollButton extends Component {
 
     playEffect() {
         this._isPlayingEffect = true;
+        this._isAutoRotate = false;
         this.playScaleEffect();
         const pos = this.node.position.clone();
         EffectManager.stopEffect("RollButton_UpLight", this.node.parent);
@@ -98,19 +99,30 @@ export class RollButton extends Component {
 
     playRotateEffect(onFinish?: () => void) {
         if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.FAST) {
-            this.spinOp.opacity = 255;
+            tween({ t: 0 })
+                .to(
+                    0.15,
+                    { t: 1 },
+                    {
+                        easing: "quadInOut",
+                        onUpdate: (target: any) => {
+                            this.spinOp.opacity = target.t * 255;
+                        },
+                    }
+                )
+                .start();
             onFinish && onFinish();
             return;
         }
 
-        this._isAutoRotate = false;
         const smellButtonNode = this.smallButton;
         const startRotation = smellButtonNode.rotation.clone();
         EffectManager.playEffect("RollButton_OutLight", smellButtonNode, Vec3.ZERO);
         const outLight = EffectManager.getEffectNode("RollButton_OutLight", smellButtonNode);
         const effectOp = outLight.getComponent(UIOpacity) ?? outLight.addComponent(UIOpacity);
-        outLight.eulerAngles = new Vec3(0, 0, 95);
+        outLight.eulerAngles = new Vec3(0, 0, 98);
         effectOp.opacity = 0;
+        effectOp.node.scale = Vec3.ONE;
         tween({ t: 0 })
             .to(
                 (this.duration / 3) * 2,
@@ -118,14 +130,16 @@ export class RollButton extends Component {
                 {
                     easing: "quadInOut",
                     onUpdate: (target: any) => {
-                        this.spinOp.opacity = target.t * 255;
-                        const maxLight = 120;
+                        // this.spinOp.opacity = target.t * 255;
+                        const maxLight = 200;
                         if (effectOp && effectOp.isValid) {
-                            const fadeOutInProgress = 0.6;
+                            const fadeOutInProgress = 0.2;
                             if (target.t <= fadeOutInProgress) {
+                                this.spinOp.opacity = (target.t / fadeOutInProgress) * 255;
                                 effectOp.opacity = (target.t / fadeOutInProgress) * maxLight;
+                            } else if (target.t <= 0.7) {
                             } else {
-                                effectOp.opacity = ((1 - target.t) / (1 - fadeOutInProgress)) * maxLight;
+                                effectOp.opacity = ((1 - target.t) / (1 - 0.7)) * maxLight;
                             }
                         }
                         const additionalRot = new Quat();
