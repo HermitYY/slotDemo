@@ -28,6 +28,9 @@ export class SlotMachine extends Component {
     @property([Node])
     public columns: Node[] = []; // 6列容器 (每列一个Node)
 
+    @property(Node)
+    CloudGoup: Node = null;
+
     @property(Label) // 筹码文本
     chipLabel: Label = null;
     @property(Label) // 单次筹码
@@ -100,10 +103,13 @@ export class SlotMachine extends Component {
         EventManager.on(E_GAME_EVENT.GAME_REPLAY_PAUSE, this.pauseReplay, this);
         EventManager.on(E_GAME_EVENT.GAME_REPLAY_STOP, this.replayStop, this);
         EventManager.on(E_GAME_EVENT.GAME_REPLAY_CONTINUE, this.resumeReplay, this);
+
+        this.playCloudMoveEffect();
     }
 
     onDestroy() {
         EventManager.removeAllByTarget(this);
+        clearInterval(this._cloundTimer);
     }
 
     async initGrid(curScene: proto.newxxs.ICurScene) {
@@ -164,6 +170,8 @@ export class SlotMachine extends Component {
         normalBg.active = isNormalMode;
         const freeBg = (this.ModeParents[8] ??= find("Canvas/MainGame/Grid/freeBg"));
         freeBg.active = isFreeMode;
+        // 云朵
+        this.CloudGoup.active = isNormalMode;
     }
 
     //#region 普通模式
@@ -726,15 +734,16 @@ export class SlotMachine extends Component {
                         // 最后缓和落到目标
                         .to(boundTime, { position: new Vec3(0, targetY, 0) }, { easing: "quadOut" })
                         .call(async () => {
-                            await slotItem.LadybirdMultipleEffect(
-                                curScene.curMultiples.map((item) => {
+                            await slotItem.SlotItemEffect({
+                                needPlayMultipleEffectArr: curScene.curMultiples.map((item) => {
                                     return {
                                         index: item.index,
                                         multiple: +item.multiple,
                                     };
                                 }),
-                                isPlayVoice
-                            );
+                                freeInfo: curScene.free,
+                                isPlayVoice,
+                            });
                             finishedCount++;
                             if (finishedCount === totalNew) {
                                 resolve();
@@ -778,13 +787,14 @@ export class SlotMachine extends Component {
                 if (finishedSet.has(node)) return;
                 finishedSet.add(node);
 
-                await slotItem.LadybirdMultipleEffect(
-                    curScene.curMultiples.map((item) => ({
+                await slotItem.SlotItemEffect({
+                    needPlayMultipleEffectArr: curScene.curMultiples.map((item) => ({
                         index: item.index,
                         multiple: +item.multiple,
                     })),
-                    isPlayVoice
-                );
+                    freeInfo: curScene.free,
+                    isPlayVoice,
+                });
 
                 finishedCount++;
                 if (finishedCount === totalNew) {
@@ -1127,14 +1137,15 @@ export class SlotMachine extends Component {
                         .call(async () => {
                             // 精确对齐
                             item.setPosition(0, targetY, 0);
-                            await slotItem.LadybirdMultipleEffect(
-                                curScene.curMultiples.map((item) => {
+                            await slotItem.SlotItemEffect({
+                                needPlayMultipleEffectArr: curScene.curMultiples.map((item) => {
                                     return {
                                         index: item.index,
                                         multiple: +item.multiple,
                                     };
-                                })
-                            );
+                                }),
+                                freeInfo: curScene.free,
+                            });
                             finished++;
                             if (finished === totalNew) resolve();
                         })
@@ -1328,6 +1339,30 @@ export class SlotMachine extends Component {
 
         // 全部播放完才resolve
         return Promise.all(tasks).then(() => {});
+    }
+
+    /** 随机云移动效果 */
+    private _cloundTimer: number = null;
+    private async playCloudMoveEffect() {
+        const ui = this.CloudGoup.getComponent(UITransform);
+        const halfW = ui.width / 2;
+        const halfH = ui.height / 2;
+        const runEffect = () => {
+            const randomX = (Math.random() * 2 - 1) * halfW;
+            const randomY = (Math.random() * 2 - 1) * halfH;
+            UItools.moveEffectWorld(
+                this.CloudGoup,
+                new Vec3(this.CloudGoup.getWorldPosition().x - 500, this.CloudGoup.getWorldPosition().y, 0),
+                `cloud${Math.floor(Math.random() * 3) + 1}`,
+                Math.floor(Math.random() * (30 - 15 + 1)) + 15,
+                {
+                    newTarget: this.CloudGoup,
+                    offsetPosition: new Vec3(randomX, randomY, 0),
+                }
+            );
+        };
+        runEffect();
+        this._cloundTimer = setInterval(runEffect, 5000);
     }
 
     //#endregion

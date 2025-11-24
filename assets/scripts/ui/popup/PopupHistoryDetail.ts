@@ -112,7 +112,7 @@ export class PopupHistoryDetail extends BasePopup {
     }
 
     updateList() {
-        const { allList, curPageGirdData, awardIdArr, multipleArr } = this.parseInfo();
+        const { allList, curPageGirdData, awardIdArr, multipleArr, awardList } = this.parseInfo();
         const list = this.getComponentInChildren(CommonList);
         list.setData(curPageGirdData);
         list.getItemArray().forEach((item, index) => {
@@ -120,7 +120,10 @@ export class PopupHistoryDetail extends BasePopup {
             const slotItem = item.getComponent(SlotItem);
             slotItem.SetData(id, { isSelect: !!~awardIdArr.indexOf(id), myGridIndex: index });
             slotItem.historyDetailSelectedEffect();
-            slotItem.LadybirdMultipleEffect(multipleArr);
+            const freeInfo = {
+                index: awardIdArr[1] == 14 ? "1" : "",
+            };
+            slotItem.SlotItemEffect({ needPlayMultipleEffectArr: multipleArr, freeInfo });
         });
         this.timesLabel.string = `${this.curPage}/${allList.length}`;
         this.updateAwardList();

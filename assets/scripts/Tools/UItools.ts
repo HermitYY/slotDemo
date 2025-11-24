@@ -340,4 +340,21 @@ export class UItools extends Singleton {
 
         return clone;
     }
+
+    /** 在某节点大小范围内随机生成一个节点 */
+    static spawnRandomInArea(parentNode: Node, prefab: Node) {
+        const newNode = instantiate(prefab);
+        newNode.setParent(parentNode);
+        const ui = parentNode.getComponent(UITransform);
+        if (!ui) {
+            console.error("parentNode 需要有 UITransform 才能有 width / height");
+            return;
+        }
+        const halfW = ui.width / 2;
+        const halfH = ui.height / 2;
+        const randomX = (Math.random() * 2 - 1) * halfW;
+        const randomY = (Math.random() * 2 - 1) * halfH;
+        newNode.setPosition(new Vec3(randomX, randomY, 0));
+        return newNode;
+    }
 }

@@ -85,19 +85,32 @@ export class SlotItem extends Component {
         this._inited = true;
     }
 
+    public async SlotItemEffect(showData: {
+        needPlayMultipleEffectArr: Array<{
+            index: string | number;
+            multiple: string | number;
+        }>;
+        freeInfo: { index?: string };
+        isPlayVoice?: boolean;
+    }): Promise<void> {
+        const needPlayMultipleEffectArr = showData.needPlayMultipleEffectArr;
+        const freeInfo = showData.freeInfo;
+        const isPlayVoice = showData?.isPlayVoice ?? true;
+        await Promise.all([this.LadybirdMultipleEffect(needPlayMultipleEffectArr, isPlayVoice), this.MoroIconEffect(freeInfo)]);
+    }
+
     /** 瓢虫多倍效果 */
-    public async LadybirdMultipleEffect(
-        needPlayEffectArr: Array<{
+    private async LadybirdMultipleEffect(
+        needPlayMultipleEffectArr: Array<{
             index: string | number;
             multiple: string | number;
         }>,
         isPlayVoice = true
-    ): Promise<void> {
+    ) {
         if (this.id !== 10) return;
-
         EffectManager.playEffect("SlotEffectClear_10", this.node, Vec3.ZERO, { siblingIndex: 0 });
         const selfIndex = this.exShowCfg.myGridIndex ?? this.exShowCfg.row * GridManager.GetInstance().cols + this.exShowCfg.column;
-        const myItem = needPlayEffectArr.find((item) => item.index == `${selfIndex}`);
+        const myItem = needPlayMultipleEffectArr.find((item) => item.index == `${selfIndex}`);
         if (!myItem || !this.MultipleLabelNode) return;
         this.MultipleLabelNode.getComponent(Label).string = "x" + myItem.multiple.toString();
         if (isPlayVoice) {
@@ -118,13 +131,19 @@ export class SlotItem extends Component {
         });
     }
 
+    /** Moro图标PNG效果 */
+    private async MoroIconEffect(freeInfo: { index?: string }) {
+        if (this.id !== 14 || freeInfo?.index) return;
+        EffectManager.playEffect("SlotMoroShowPNG", this.node, new Vec3(0, -3, 0), { siblingIndex: 0 });
+    }
+
     public historyDetailSelectedEffect() {
         if (this?.exShowCfg?.isSelect) {
             // 获取当前节点的UITransform
             const itemTransform = this.getComponent(UITransform);
             if (!itemTransform) return;
             if (this.id == 14) {
-                EffectManager.playEffect(`SlotEffectClear_${this.id}`, this.node, Vec3.ZERO);
+                // EffectManager.playEffect(`SlotEffectClear_${this.id}`, this.node, Vec3.ZERO);
                 return;
             }
             // 创建选中效果节点（作为子节点）
