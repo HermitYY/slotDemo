@@ -109,7 +109,10 @@ export class SlotMachine extends Component {
 
     onDestroy() {
         EventManager.removeAllByTarget(this);
-        clearInterval(this._cloundTimer);
+        if (this._cloudCallback) {
+            this.unschedule(this._cloudCallback);
+            this._cloudCallback = null;
+        }
     }
 
     async initGrid(curScene: proto.newxxs.ICurScene) {
@@ -286,6 +289,8 @@ export class SlotMachine extends Component {
 
     //#endregion
     //#region freeGame模式
+    private _myPopupFreeResults: PopupFreeResults = null;
+
     async freeGameInitGrid(curScene: proto.newxxs.ICurScene) {
         this.updateRollButtonIsBan(true);
         this.updateFreeCtrl(curScene, true);
@@ -423,13 +428,13 @@ export class SlotMachine extends Component {
             this.freePengali.active = true;
             this.freePengali.scale = new Vec3(2.5, 2.5, 2.5);
             tween(this.freePengali)
-                .to(0.25, { scale: new Vec3(2.5, 2.5, 2.5).clone().multiplyScalar(0.6) })
+                .to(0.18, { scale: new Vec3(2.5, 2.5, 2.5).clone().multiplyScalar(0.5) })
                 .call(() => {
                     // 爆炸效果
                     AudioControlManager.GetInstance().playSfxFireExplosion();
                     EffectManager.playEffect("FireMultiple", this.freePengali.parent, Vec3.ZERO, { siblingIndex: this.freePengali.getSiblingIndex() });
                 })
-                .to(0.25, { scale: Vec3.ONE })
+                .to(0.18, { scale: Vec3.ONE })
                 .start();
         }
         freePengaliLabel.string = `${curScene.allMultiple}`;
@@ -449,8 +454,10 @@ export class SlotMachine extends Component {
                 curstomAniCfg: { customAniOut, customAniIn },
                 changeShowType: showType,
             });
+            this._myPopupFreeResults = PopupFreeResults;
             PopupFreeResults.Setdata(curScene);
             await PopupFreeResults.show();
+            this._myPopupFreeResults = null;
         }
     }
 
@@ -642,6 +649,7 @@ export class SlotMachine extends Component {
         const { chipsInfo } = LogicTools.GetInstance().transGridInfo(curScene);
         const computeChips = chipsInfo.comboChips || chipsInfo.winChips;
         this.chipLabel3.string = `${computeChips}`;
+        this._myPopupFreeResults && this._myPopupFreeResults.close();
         AudioManager.GetInstance().stopAllSfx();
         GameSpeedManager.GetInstance().restoreGameSpeed();
     }
@@ -1342,18 +1350,25 @@ export class SlotMachine extends Component {
     }
 
     /** 随机云移动效果 */
-    private _cloundTimer: number = null;
-    private async playCloudMoveEffect() {
+    private _cloudCallback: Function | null = null;
+
+    private playCloudMoveEffect() {
         const ui = this.CloudGoup.getComponent(UITransform);
         const halfW = ui.width / 2;
         const halfH = ui.height / 2;
+
         const runEffect = () => {
             const randomX = (Math.random() * 2 - 1) * halfW;
-            const randomY = (Math.random() * 2 - 1) * halfH;
+            let randomY = (Math.random() * 2 - 1) * halfH;
+            const cloudId = Math.floor(Math.random() * 3) + 1;
+            // 大云固定在上方附近
+            if (cloudId === 2) {
+                randomY = Math.random() * halfH * 0.5 + halfH * 0.5;
+            }
             UItools.moveEffectWorld(
                 this.CloudGoup,
                 new Vec3(this.CloudGoup.getWorldPosition().x - 500, this.CloudGoup.getWorldPosition().y, 0),
-                `cloud${Math.floor(Math.random() * 3) + 1}`,
+                `cloud${cloudId}`,
                 Math.floor(Math.random() * (30 - 15 + 1)) + 15,
                 {
                     newTarget: this.CloudGoup,
@@ -1362,7 +1377,8 @@ export class SlotMachine extends Component {
             );
         };
         runEffect();
-        this._cloundTimer = setInterval(runEffect, 5000);
+        this._cloudCallback = runEffect;
+        this.schedule(runEffect, 10);
     }
 
     //#endregion
@@ -1461,7 +1477,6 @@ export class SlotMachine extends Component {
             await UItools.moveEffectWorld(totalPengaliFatherNode, gatherPos, "", 0.4, {
                 target: totalPengaliFatherNode,
                 easing: "quadIn",
-                scale: new Vec3(1.3, 1.3, 1.3),
             });
             if (this._ladybirdCancel) return;
             firstFont.getComponent(Label).string = `x${curScene.allMultiple}`;

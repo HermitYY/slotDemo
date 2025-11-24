@@ -117,7 +117,7 @@ export class PopupFreeResults extends BasePopup {
             this.closeResolve();
             this.closeResolve = null;
         }
-
+        AudioManager.GetInstance().stopSfx(SfxEnum.LoogGold);
         // 调用父类的close方法
         await super.close();
     }
