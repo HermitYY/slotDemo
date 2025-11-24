@@ -36,6 +36,7 @@ export class AudioControlManager extends Singleton {
     }
 
     public async playSfxBeetleMultipleShow() {
+        await LogicTools.Delay(250);
         return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.BeetleMultipleShow);
     }
 

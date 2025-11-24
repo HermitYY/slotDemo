@@ -64,7 +64,8 @@ export class EffectManager {
         pos: Vec3,
         effectCfg?: {
             siblingIndex?: number;
-            loopImmediate?: boolean;
+            loopImmediate?: boolean; // 是否立刻返回resolve (循环特效为立刻 一次性可设置是否立刻 一次性默认为持续时间后返回resolve)
+            effectCallBack?: (effectNode: Node) => void;
         }
     ): Promise<void> {
         return new Promise((resolve) => {
@@ -102,6 +103,11 @@ export class EffectManager {
                 resolve();
                 return;
             }
+
+            if (effectCfg?.effectCallBack) {
+                effectCfg.effectCallBack(eff);
+            }
+
             // 循环特效需要手动停止 或者 传参立即停止
             if (seq.loop && effectCfg?.loopImmediate) return resolve();
             eff.once(Node.EventType.NODE_DESTROYED, () => {

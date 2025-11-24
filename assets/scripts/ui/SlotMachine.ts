@@ -785,6 +785,7 @@ export class SlotMachine extends Component {
             const finalYMap = new Map<Node, number>();
             const finishedSet = new Set<Node>();
             const speedCfg = this.isClickQuickDrop ? E_GAME_SPEED_TYPE.FAST : GameSpeedManager.GetInstance().speed;
+            this.isClickQuickDrop = false;
             const { columnInterval, girdInterval, dropTime, boundDis, boundTime, voiceDelay } = GameSpeedManager.GetInstance().getNewColumnDropTimeConfig(speedCfg);
 
             if (isPlayVoice) {
@@ -927,6 +928,7 @@ export class SlotMachine extends Component {
         if (this._cancelSpawnColumns) {
             this._cancelSpawnColumns();
             this._cancelSpawnColumns = undefined;
+            this.isClickQuickDrop = false;
         }
     }
 
@@ -1365,14 +1367,17 @@ export class SlotMachine extends Component {
             if (cloudId === 2) {
                 randomY = Math.random() * halfH * 0.5 + halfH * 0.5;
             }
+            const randScale = LogicTools.random(0.7, 1.2);
             UItools.moveEffectWorld(
                 this.CloudGoup,
                 new Vec3(this.CloudGoup.getWorldPosition().x - 500, this.CloudGoup.getWorldPosition().y, 0),
                 `cloud${cloudId}`,
-                Math.floor(Math.random() * (30 - 15 + 1)) + 15,
+                LogicTools.random(15, 30, true),
                 {
                     newTarget: this.CloudGoup,
                     offsetPosition: new Vec3(randomX, randomY, 0),
+                    fadeOutTime: 1,
+                    scale: new Vec3(randScale, randScale, 1),
                 }
             );
         };

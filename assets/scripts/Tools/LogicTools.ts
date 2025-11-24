@@ -98,6 +98,15 @@ export class LogicTools extends Singleton {
         return q;
     }
 
+    /** 随机数 [min, max] */
+    public static random(min: number, max: number, isInteger = false): number {
+        if (isInteger) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        } else {
+            return Math.random() * (max - min) + min;
+        }
+    }
+
     public static myConsole(...args: any[]) {
         if (globalConfig.isShowLog) {
             console.log(...args);

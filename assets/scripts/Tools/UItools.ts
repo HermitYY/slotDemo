@@ -1,5 +1,5 @@
 // import { _decorator, Label, tween, Tween } from "cc";
-import { _decorator, Component, Node, Label, tween, Tween, UITransform, SpriteFrame, Sprite, Mask, Graphics, Vec3, TweenEasing, find, Quat, instantiate } from "cc";
+import { _decorator, Component, Node, Label, tween, Tween, UITransform, SpriteFrame, Sprite, Mask, Graphics, Vec3, TweenEasing, find, Quat, instantiate, UIOpacity } from "cc";
 import { Singleton } from "../common/Singleton";
 import { EffectManager } from "../managers/EffectManager";
 import { LogicTools } from "./LogicTools";
@@ -196,7 +196,7 @@ export class UItools extends Singleton {
         from: Node | Vec3,
         to: Node | Vec3,
         effectName: string,
-        duration: number,
+        duration: number, // 持续时间 秒
         options?: {
             target?: Node; // 承载特效的节点(父节点)，可选
             newTarget?: Node; // 在无target参数的情况使用该节点下创建新节点来承载特效
@@ -204,8 +204,9 @@ export class UItools extends Singleton {
             angle?: Vec3; // 初始欧拉角
             autoDestroy?: boolean; // 结束是否销毁特效所在的父节点，默认 true
             scale?: Vec3;
-            insertIndex?: number;
+            insertIndex?: number; // 插入位置
             offsetPosition?: Vec3; // 特效偏移位置
+            fadeOutTime?: number; // 特效淡出时长 秒 默认不淡出 有任意值则淡出
         }
     ): Promise<void> {
         return new Promise(async (resolve) => {
@@ -236,8 +237,34 @@ export class UItools extends Singleton {
             if (options?.scale) {
                 target.setScale(options.scale);
             }
+
             if (effectName) {
-                EffectManager.playEffect(effectName, target, options?.offsetPosition ?? Vec3.ZERO, { siblingIndex: options.insertIndex });
+                let effectCallBack: (effect: Node) => void = null;
+                if (options?.fadeOutTime) {
+                    effectCallBack = (effect) => {
+                        tween({ t: 0 })
+                            .to(
+                                options.fadeOutTime,
+                                { t: 1 },
+                                {
+                                    easing: "quadOut",
+                                    onUpdate: (target: any) => {
+                                        const effectOp = effect.getComponent(UIOpacity) ?? effect.addComponent(UIOpacity);
+                                        const maxLight = 255;
+                                        if (effectOp && effectOp.isValid) {
+                                            effectOp.opacity = target.t * maxLight;
+                                        }
+                                    },
+                                }
+                            )
+                            .start();
+                    };
+                }
+
+                EffectManager.playEffect(effectName, target, options?.offsetPosition ?? Vec3.ZERO, {
+                    siblingIndex: options.insertIndex,
+                    effectCallBack,
+                });
             }
 
             const worldFrom = UItools.getWorldPos(from);
