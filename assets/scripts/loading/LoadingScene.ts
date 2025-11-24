@@ -43,6 +43,7 @@ export class LoadingScene extends Component {
     private maxMaskWidth: number = 0;
 
     private isError: boolean = false;
+    private isLoadInfoReturn: boolean = false;
 
     onLoad(): void {
         const username = "yy123e";
@@ -63,6 +64,13 @@ export class LoadingScene extends Component {
         );
         this.beginButtonShow(false);
         EventManager.on(E_GAME_EVENT.NETWORK_ERROR, this.showError, this);
+        EventManager.on(
+            E_GAME_EVENT.USER_INFO_RETURN_END,
+            () => {
+                this.isLoadInfoReturn = true;
+            },
+            this
+        );
     }
 
     protected onDestroy(): void {
@@ -127,7 +135,7 @@ export class LoadingScene extends Component {
             this._updateMaskAndIcons(progress);
 
             if (this.progressLabel) {
-                this.progressLabel.string = `Memuat sumber daya [${(progress * 100).toFixed(2)}%]`;
+                this.progressLabel.string = `Memuat sumber daya [${(progress * 100 - (this.isLoadInfoReturn ? 0 : 0.01)).toFixed(2)}%]`;
             }
         }
 

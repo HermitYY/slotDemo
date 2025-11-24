@@ -313,6 +313,7 @@ export class AudioManager extends Singleton {
      * 返回 Promise: 在该次播放完整播放完毕时 resolve
      */
     public playSfx(mode: PlayMode, sfx: SfxEnum): Promise<boolean> {
+        LogicTools.myConsole("播放了" + sfx + "音效");
         const name = sfx as string;
         const clip = this.clipMap.get(name);
         if (!clip) return Promise.reject(`[AudioManager] SFX not found: ${name}`);

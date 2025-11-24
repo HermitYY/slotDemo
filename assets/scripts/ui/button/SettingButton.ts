@@ -8,7 +8,7 @@ export class SettingButton extends Component {
     onClickOpen() {
         AudioControlManager.GetInstance().playSfxNormalButtonClick();
         const worldPos = this.node.worldPosition.clone();
-        // worldPos.x += 106;
+        worldPos.x -= 25;
         PopupManager.show(E_POPUP_TYPE.Setting, { fromButtonPos: worldPos });
     }
 }

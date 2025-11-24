@@ -1,7 +1,8 @@
 // import { _decorator, Label, tween, Tween } from "cc";
-import { _decorator, Component, Node, Label, tween, Tween, UITransform, SpriteFrame, Sprite, Mask, Graphics, Vec3, TweenEasing, find, Quat } from "cc";
+import { _decorator, Component, Node, Label, tween, Tween, UITransform, SpriteFrame, Sprite, Mask, Graphics, Vec3, TweenEasing, find, Quat, instantiate } from "cc";
 import { Singleton } from "../common/Singleton";
 import { EffectManager } from "../managers/EffectManager";
+import { LogicTools } from "./LogicTools";
 type Constructor<T> = new (...args: any[]) => T;
 const { ccclass } = _decorator;
 
@@ -297,5 +298,46 @@ export class UItools extends Singleton {
             node.setWorldRotation(worldRot);
             node.setWorldScale(worldScale);
         }
+    }
+
+    /**
+     * 复制一个节点到指定父节点
+     * @param parent   新复制出来的节点将设置到此父节点下
+     * @param target   需要复制的目标节点
+     * @param hideOriginal 是否隐藏原节点（默认 false）
+     * @returns Node  返回新复制出的节点
+     */
+    static copyNode(parent: Node, target: Node, hideOriginal: boolean = false): Node {
+        if (!parent || !target) {
+            console.warn("copyNode 参数不能为空");
+            return null!;
+        }
+
+        // 1. 获取目标节点世界坐标
+        const worldPos = target.getWorldPosition(new Vec3());
+
+        // 2. 获取目标节点世界旋转
+        const worldRot = LogicTools.sanitizeQuat(target.getWorldRotation());
+
+        // 3. 获取目标节点世界缩放
+        const worldScale = target.getWorldScale(new Vec3());
+
+        // 4. 实例化
+        const clone = instantiate(target);
+
+        // 5. 挂载到新父节点（必须在设置 transform 之前）
+        clone.setParent(parent);
+
+        // 6. 恢复世界变换
+        clone.setWorldPosition(worldPos);
+        clone.setWorldRotation(worldRot);
+        clone.setWorldScale(worldScale);
+
+        // 7. 可选隐藏原节点
+        if (hideOriginal) {
+            target.active = false;
+        }
+
+        return clone;
     }
 }

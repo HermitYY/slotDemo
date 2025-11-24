@@ -17,9 +17,10 @@ export class RollButton extends Component {
 
     @property({ type: Node })
     public smallButton: Node = null;
-
     @property({ type: Node })
     private spinNode: Node = null;
+    @property({ type: Node })
+    private smallRunNode: Node = null;
 
     @property({ type: Node })
     private countdownNode: Node = null;
@@ -27,6 +28,8 @@ export class RollButton extends Component {
 
     @property({ type: Node })
     private BgEffectNode: Node = null;
+    @property({ type: Node })
+    private BgEffectNode2: Node = null;
 
     @property({ type: Node })
     private autoStopButton: Node = null;
@@ -46,7 +49,7 @@ export class RollButton extends Component {
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_RUNNING, this.countdownChange, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_PRE_STOP, this.countPreStop, this);
         EventManager.on(E_GAME_EVENT.GAME_AUTO_MODE_CLOSE, this.countdownEnd, this);
-        this.countdownEnd();
+        this.countdownEnd(true);
     }
 
     protected onDestroy(): void {
@@ -106,6 +109,7 @@ export class RollButton extends Component {
                     {
                         easing: "quadInOut",
                         onUpdate: (target: any) => {
+                            this.spinOp ??= this.spinNode.getComponent(UIOpacity);
                             this.spinOp.opacity = target.t * 255;
                         },
                     }
@@ -117,12 +121,46 @@ export class RollButton extends Component {
 
         const smellButtonNode = this.smallButton;
         const startRotation = smellButtonNode.rotation.clone();
-        EffectManager.playEffect("RollButton_OutLight", smellButtonNode, Vec3.ZERO);
-        const outLight = EffectManager.getEffectNode("RollButton_OutLight", smellButtonNode);
-        const effectOp = outLight.getComponent(UIOpacity) ?? outLight.addComponent(UIOpacity);
-        outLight.eulerAngles = new Vec3(0, 0, 98);
+        // EffectManager.playEffect("RollButton_OutLight", smellButtonNode, Vec3.ZERO);
+        // const outLight = EffectManager.getEffectNode("RollButton_OutLight", smellButtonNode);
+        // const effectOp = outLight.getComponent(UIOpacity) ?? outLight.addComponent(UIOpacity);
+        // outLight.eulerAngles = new Vec3(0, 0, 98);
+        // effectOp.opacity = 0;
+        // tween({ t: 0 })
+        //     .to(
+        //         (this.duration / 3) * 2,
+        //         { t: 1 },
+        //         {
+        //             easing: "quadInOut",
+        //             onUpdate: (target: any) => {
+        //                 // this.spinOp.opacity = target.t * 255;
+        //                 const maxLight = 150;
+        //                 if (effectOp && effectOp.isValid) {
+        //                     const fadeOutInProgress = 0.2;
+        //                     if (target.t <= fadeOutInProgress) {
+        //                         this.spinOp.opacity = (target.t / fadeOutInProgress) * 255;
+        //                         effectOp.opacity = (target.t / fadeOutInProgress) * maxLight;
+        //                     } else if (target.t <= 0.7) {
+        //                     } else {
+        //                         effectOp.opacity = ((1 - target.t) / (1 - 0.7)) * maxLight;
+        //                     }
+        //                 }
+        //                 const additionalRot = new Quat();
+        //                 Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * 4 * target.t);
+        //                 const currentRot = new Quat();
+        //                 Quat.multiply(currentRot, startRotation, additionalRot);
+        //                 smellButtonNode.rotation = currentRot;
+        //             },
+        //         }
+        //     )
+        //     .call(() => onFinish && onFinish())
+        //     .start();
+
+        this.smallRunNode.active = true;
+
+        const effectOp = this.smallRunNode.getComponent(UIOpacity) ?? this.smallRunNode.addComponent(UIOpacity);
+        // outLight.eulerAngles = new Vec3(0, 0, 98);
         effectOp.opacity = 0;
-        effectOp.node.scale = Vec3.ONE;
         tween({ t: 0 })
             .to(
                 (this.duration / 3) * 2,
@@ -130,16 +168,17 @@ export class RollButton extends Component {
                 {
                     easing: "quadInOut",
                     onUpdate: (target: any) => {
-                        // this.spinOp.opacity = target.t * 255;
-                        const maxLight = 200;
+                        const maxLight = 255;
                         if (effectOp && effectOp.isValid) {
                             const fadeOutInProgress = 0.2;
+                            const fadeOutInProgress2 = 0.7;
                             if (target.t <= fadeOutInProgress) {
-                                this.spinOp.opacity = (target.t / fadeOutInProgress) * 255;
                                 effectOp.opacity = (target.t / fadeOutInProgress) * maxLight;
-                            } else if (target.t <= 0.7) {
+                            } else if (target.t <= fadeOutInProgress2) {
                             } else {
-                                effectOp.opacity = ((1 - target.t) / (1 - 0.7)) * maxLight;
+                                effectOp.opacity = ((1 - target.t) / (1 - fadeOutInProgress2)) * maxLight;
+                                this.spinOp ??= this.spinNode.getComponent(UIOpacity);
+                                this.spinOp.opacity = ((target.t - fadeOutInProgress2) / (1 - fadeOutInProgress2)) * maxLight;
                             }
                         }
                         const additionalRot = new Quat();
@@ -160,29 +199,41 @@ export class RollButton extends Component {
         const startScale = Vec3.ONE;
         const node = this.node;
         tween(node)
-            .to(magnify, { scale: startScale.clone().multiplyScalar(1.2) }, { easing: easing.quadOut })
-            .to(shrink, { scale: startScale.clone().multiplyScalar(0.9) }, { easing: easing.quadInOut })
-            .to(magnify2, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
-            .to(shrinkNormal, { scale: startScale }, { easing: easing.quadIn })
+            .to(magnify, { scale: startScale.clone().multiplyScalar(0.8) }, { easing: easing.quadIn })
+            .to(shrink, { scale: startScale.clone().multiplyScalar(0.93) }, { easing: easing.quadInOut })
+            // .to(magnify2, { scale: startScale.clone().multiplyScalar(1.1) }, { easing: easing.quadOut })
+            .to(shrinkNormal, { scale: startScale }, { easing: easing.quadInOut })
             .start();
     }
 
     playBgEffect() {
         const node = this.BgEffectNode;
+        const node2 = this.BgEffectNode2;
         node.active = true;
-        node.scale = Vec3.ONE.clone().multiplyScalar(0.8);
+        node2.active = true;
+        // node.scale = Vec3.ONE.clone().multiplyScalar(0.8);
+        node2.scale = Vec3.ONE.clone().multiplyScalar(0.8);
         const startScale = Vec3.ONE.clone();
+        const startScale2 = Vec3.ONE.clone();
         const { bgEffectDuration, bgEffectTurn } = GameSpeedManager.GetInstance().getRollButtonRotateSpeedConfig();
 
-        tween(node)
-            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.01) }, { easing: easing.quadOut })
-            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.02) }, { easing: easing.quadInOut })
-            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
-            .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(0.6) }, { easing: easing.quadIn })
+        // tween(node)
+        //     .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1) }, { easing: easing.quadOut })
+        //     .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.0) }, { easing: easing.quadInOut })
+        //     .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(1.05) }, { easing: easing.quadOut })
+        //     .to(bgEffectDuration / 4, { scale: startScale.clone().multiplyScalar(0.6) }, { easing: easing.quadIn })
+        //     .start();
+        tween(node2)
+            .to(bgEffectDuration / 4, { scale: startScale2.clone().multiplyScalar(1) }, { easing: easing.quadOut })
+            .to(bgEffectDuration / 4, { scale: startScale2.clone().multiplyScalar(1.04) }, { easing: easing.quadInOut })
+            .to(bgEffectDuration / 4, { scale: startScale2.clone().multiplyScalar(1.04) }, { easing: easing.quadOut })
+            .to(bgEffectDuration / 4, { scale: startScale2.clone().multiplyScalar(0.6) }, { easing: easing.quadIn })
             .start();
 
         const effectOp = node.getComponent(UIOpacity) ?? node.addComponent(UIOpacity);
+        const effectOp2 = node.getComponent(UIOpacity) ?? node.addComponent(UIOpacity);
         const startRotation = node.rotation.clone();
+        const startRotation2 = node2.rotation.clone();
         tween({ t: 0 })
             .to(
                 bgEffectDuration,
@@ -200,13 +251,28 @@ export class RollButton extends Component {
                                 effectOp.opacity = (1 - (target.t - spinPrecent2) / (1 - spinPrecent2)) * 255;
                             }
                         }
+                        if (effectOp2 && effectOp2.isValid) {
+                            if (target.t <= spinPrecent) {
+                                effectOp2.opacity = target.t * 255 * (1 / spinPrecent);
+                            } else if (target.t <= spinPrecent2) {
+                            } else {
+                                effectOp2.opacity = (1 - (target.t - spinPrecent2) / (1 - spinPrecent2)) * 255;
+                            }
+                        }
                         if (target.t >= 0.2 && target.t <= 0.95) {
                             const additionalRot = new Quat();
-                            let t = Math.round(target.t * 60) / 60;
-                            Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * bgEffectTurn * t);
+                            let t = Math.round(target.t * 90) / 90;
+                            Quat.fromAxisAngle(additionalRot, Vec3.FORWARD, Math.PI * bgEffectTurn * 0.8 * t);
                             const currentRot = new Quat();
                             Quat.multiply(currentRot, startRotation, additionalRot);
                             node.rotation = currentRot;
+
+                            const additionalRot2 = new Quat();
+                            let t2 = Math.round(target.t * 60) / 60;
+                            Quat.fromAxisAngle(additionalRot2, Vec3.FORWARD, Math.PI * bgEffectTurn * 1.2 * t2);
+                            const currentRot2 = new Quat();
+                            Quat.multiply(currentRot2, startRotation2, additionalRot2);
+                            node2.rotation = currentRot2;
                         }
                     },
                 }
@@ -272,12 +338,35 @@ export class RollButton extends Component {
         this.isPlayScroll = false;
     }
 
-    private async countdownEnd() {
+    private async countdownEnd(isInit: boolean = false) {
         if (this.isPlayScroll) {
             await this.waitForScrollStop();
         }
-        this.countdownNode.active = false;
+        // this.countdownNode.active = false;
         this.spinNode.active = true;
+        if (!isInit) {
+            this.spinOp ??= this.spinNode.getComponent(UIOpacity);
+            this.spinNode.active = true;
+            this.spinOp.opacity = 0;
+            const numberOp = this.countdownNode.getComponent(UIOpacity) ?? this.countdownNode.addComponent(UIOpacity);
+            tween({ t: 0 })
+                .to(
+                    0.15,
+                    { t: 1 },
+                    {
+                        easing: "quadOut",
+                        onUpdate: (target: any) => {
+                            numberOp.opacity = (1 - target.t) * 255;
+                            this.spinOp.opacity = target.t * 255;
+                        },
+                    }
+                )
+                .call(() => {
+                    this.countdownNode.active = false;
+                    numberOp.opacity = 255;
+                })
+                .start();
+        }
         this.BgEffectNode.active = false;
         this.updaAutoStopButton(false);
     }

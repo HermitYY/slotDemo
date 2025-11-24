@@ -30,6 +30,7 @@ export class LocalStorageTools extends Singleton {
         try {
             const data = localStorage.getItem(key);
             if (data === null) return defaultValue;
+            if (data === "undefined") return defaultValue;
             return JSON.parse(data) as T;
         } catch (e) {
             console.error(`localStorage getItem error [${key}]`, e);

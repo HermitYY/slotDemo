@@ -110,7 +110,6 @@ export class PopupFreeResults extends BasePopup {
 
     override async close(): Promise<void> {
         if (this.isClosed) return;
-
         this.isClosed = true;
 
         // 先resolve Promise，让show方法返回

@@ -1,6 +1,7 @@
 import { Singleton } from "../common/Singleton";
 import globalConfig from "../common/GlobalConfig";
 import proto from "../network/MLWZ_msg";
+import { Quat } from "cc";
 
 export interface InspectablePromise<T> {
     promise: Promise<T>;
@@ -87,6 +88,14 @@ export class LogicTools extends Singleton {
             value: () => value,
             reason: () => reason,
         };
+    }
+
+    /** 修复四元数NaN */
+    public static sanitizeQuat(q: Quat): Quat {
+        if (isNaN(q.x) || isNaN(q.y) || isNaN(q.z) || isNaN(q.w)) {
+            return Quat.IDENTITY.clone(); // 或 new Quat(0,0,0,1)
+        }
+        return q;
     }
 
     public static myConsole(...args: any[]) {

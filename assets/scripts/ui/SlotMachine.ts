@@ -16,7 +16,7 @@ import { PopupLayer, PopupShowType } from "./popup/BasePopup";
 import { AbortableQueue } from "../common/AbortableQueue";
 import { PopupFreeResults } from "./popup/PopupFreeResults";
 import { AudioControlManager } from "../managers/AudioControlManager";
-import { AudioManager, SfxEnum } from "../managers/AudioManager";
+import { AudioManager, PlayMode, SfxEnum } from "../managers/AudioManager";
 
 const { ccclass, property } = _decorator;
 
@@ -32,7 +32,7 @@ export class SlotMachine extends Component {
     chipLabel: Label = null;
     @property(Label) // 单次筹码
     chipLabel2: Label = null;
-    @property(Label) // 目前赢的筹码
+    @property(Label) // 目前赢的筹码 上方钱数
     chipLabel3: Label = null;
 
     @property(Node)
@@ -1391,7 +1391,7 @@ export class SlotMachine extends Component {
                 curMultip = item.multiple;
             }
             multipleFont.setParent(this.node.parent.parent);
-            await UItools.moveEffectWorld(slotItem, gatherPos, "", 0.7, {
+            await UItools.moveEffectWorld(slotItem, gatherPos, "", 0.6, {
                 target: multipleFont,
                 autoDestroy: i !== 0,
                 easing: "backIn",
@@ -1417,13 +1417,13 @@ export class SlotMachine extends Component {
             cloneFreePengali.setParent(totalPengaliFatherNode);
             cloneFreePengali.setPosition(0, 8, 0);
             this.freePengali.active = false;
-            await UItools.moveEffectWorld(cloneWorldPos, new Vec3(gatherPos.x + 100, gatherPos.y), "TotalMultiple", 0.7, {
+            await UItools.moveEffectWorld(cloneWorldPos, new Vec3(gatherPos.x + 100, gatherPos.y), "TotalMultiple", 0.5, {
                 target: totalPengaliFatherNode,
                 autoDestroy: false,
                 insertIndex: 0,
             });
             if (this._ladybirdCancel) return;
-            await UItools.moveEffectWorld(totalPengaliFatherNode, gatherPos, "", 0.6, {
+            await UItools.moveEffectWorld(totalPengaliFatherNode, gatherPos, "", 0.4, {
                 target: totalPengaliFatherNode,
                 easing: "quadIn",
                 scale: new Vec3(1.3, 1.3, 1.3),
@@ -1437,14 +1437,26 @@ export class SlotMachine extends Component {
         const midRect = this.chipLabel3.node.parent.parent;
         // 火效果只有free有
         if (curScene.scene === E_GAME_SCENE_TYPE.FREE_GAME) {
-            if (curScene.allMultiple <= curScene.curMultiple) {
-                await LogicTools.Delay(1500);
+            let multipleBoxFireTask: () => Promise<void> = null;
+            // 当前是否无累加倍数
+            const isNowNotFreeMultiple = curScene.allMultiple <= curScene.curMultiple;
+            multipleBoxFireTask = async () => {
+                if (isNowNotFreeMultiple) {
+                    await LogicTools.Delay(1500);
+                    if (this._ladybirdCancel) return;
+                }
+                AudioControlManager.GetInstance().playSfxFireBurning();
+                await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
                 if (this._ladybirdCancel) return;
-            }
-            AudioControlManager.GetInstance().playSfxFireBurning();
-            await EffectManager.playEffect("MultipleBoxFire", midRect, new Vec3(0, 3, 0));
-            if (this._ladybirdCancel) return;
-            EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
+                EffectManager.playEffect("MultipleBoxFireing", midRect, new Vec3(0, 28, 0));
+            };
+            // 现在都不等待
+            // if (isNowNotFreeMultiple) {
+            //     multipleBoxFireTask();
+            // } else {
+            //     await multipleBoxFireTask();
+            // }
+            multipleBoxFireTask();
         }
         if (this._ladybirdCancel) return;
         AudioControlManager.GetInstance().playSfxMergeDisperse();
@@ -1453,6 +1465,7 @@ export class SlotMachine extends Component {
             easing: "quadIn",
         });
         if (this._ladybirdCancel) return;
+        // 火框伸缩
         AudioControlManager.GetInstance().playSfxMerge();
         EffectManager.playEffect("MultipleBox", midRect.getChildByName("Mask"), new Vec3(0, -203));
         if (this._ladybirdCancel) return;
@@ -1462,27 +1475,43 @@ export class SlotMachine extends Component {
             .start();
         await LogicTools.Delay(200);
         if (this._ladybirdCancel) return;
+        // 倍率出现、缩小
         const multipleLabel = this.chipLabel3.node.parent.getChildByName("Multiple");
         multipleLabel.active = true;
         multipleLabel.getComponent(Label).string = `x${curScene.allMultiple ?? curScene.curMultiple}`;
         multipleLabel.scale = new Vec3(2, 2, 2);
         this._midRectTween2 = tween(multipleLabel)
-            .to(0.6, { scale: Vec3.ONE }, { easing: "backIn" })
+            .to(0.6, { scale: new Vec3(1.2, 1.2, 1.2) }, { easing: "backIn" })
             .call(async () => {
                 if (!this._ladybirdCancel) {
                     await LogicTools.waitNextFrame();
                     if (this._ladybirdCancel) return;
+
                     AudioControlManager.GetInstance().playSfxDingling();
                     const localPosIn = multipleLabel.parent.parent.inverseTransformPoint(new Vec3(), multipleLabel.worldPosition);
                     await EffectManager.playEffect("MultipleMoveLight", multipleLabel.parent.parent, new Vec3(localPosIn.x, localPosIn.y - 75), { siblingIndex: 2 });
-                    multipleLabel.active = false;
                     if (this._ladybirdCancel) return;
-                    this.updateWinChipsText(curScene, 800);
+                    await LogicTools.Delay(200);
+                    if (this._ladybirdCancel) return;
+                    const cloneMoney = UItools.copyNode(this.node.parent.parent, this.chipLabel3.node, true);
+                    const cloneMultipleLabel = UItools.copyNode(this.node.parent.parent, multipleLabel, true);
+                    const midX = (cloneMoney.getWorldPosition().x + cloneMultipleLabel.getWorldPosition().x) * 0.5;
+                    UItools.moveEffectWorld(cloneMultipleLabel, new Vec3(midX, cloneMultipleLabel.getWorldPosition().y, 0), "", 0.3, {
+                        target: cloneMultipleLabel,
+                        easing: "quadIn",
+                    });
+                    UItools.moveEffectWorld(cloneMoney, new Vec3(midX, cloneMoney.getWorldPosition().y, 0), "", 0.3, {
+                        target: cloneMoney,
+                        easing: "quadIn",
+                    });
+                    await LogicTools.Delay(300);
+                    if (this._ladybirdCancel) return;
+                    this.updateWinChipsText(curScene, 600);
                 }
             })
             .start();
 
-        await LogicTools.Delay(1500);
+        await LogicTools.Delay(2300);
         if (this._ladybirdCancel) return;
         EffectManager.stopEffect("MultipleBoxFireing", midRect);
     }

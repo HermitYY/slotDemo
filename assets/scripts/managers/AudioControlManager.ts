@@ -137,10 +137,10 @@ export class AudioControlManager extends Singleton {
     }
 
     public async playSfxrollFlash() {
+        return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.NormalButtonClick);
         if (GameSpeedManager.GetInstance().speed == E_GAME_SPEED_TYPE.NORMAL) {
             return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.rollFlash);
         } else {
-            return AudioManager.GetInstance().playSfx(PlayMode.Parallel, SfxEnum.NormalButtonClick);
         }
     }
 
@@ -160,10 +160,10 @@ export class AudioControlManager extends Singleton {
         if (natural.isFulfilled()) return;
         await LogicTools.Delay(200);
         if (natural.isFulfilled()) return;
-        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear6);
-        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear7);
-        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear8);
-        AudioManager.GetInstance().stopSfx(SfxEnum.GridClear9);
+        // AudioManager.GetInstance().stopSfx(SfxEnum.GridClear6);
+        // AudioManager.GetInstance().stopSfx(SfxEnum.GridClear7);
+        // AudioManager.GetInstance().stopSfx(SfxEnum.GridClear8);
+        // AudioManager.GetInstance().stopSfx(SfxEnum.GridClear9);
         this.playSfxHeightBoom();
     }
     //#endregion
